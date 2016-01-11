@@ -69,6 +69,11 @@ The script will automatically create the output file [path]_sample.adoc_, replac
 
 At the moment, the script assumes the input uses the GitHub-flavor Markdown (GFM) syntax.
 
+== Alternatives
+
+* https://github.com/bodiam/markdown-to-asciidoc[markdown-to-asciidoc] (Java-based)
+* http://pandoc.org[pandoc] (cli, Haskell-based)
+
 == Authors
 
 *{project-name}* was written by {email}[{author}].
