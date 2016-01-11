@@ -1,0 +1,81 @@
+= {project-name}
+Dan Allen <https://github.com/mojavelinux>
+// Aliases:
+:project-name: Kramdown AsciiDoc
+:project-handle: kramdown-asciidoc
+// URIs:
+:uri-repo: https://github.com/opendevise/kramdown-asciidoc
+:uri-asciidoc: http://asciidoc.org
+:uri-rvm: http://rvm.io
+:uri-install-rvm: https://rvm.io/rvm/install
+
+A Kramdown converter for converting Markdown content to {uri-asciidoc}[AsciiDoc].
+
+== Installation
+
+Currently, {project-name} is only available in source form.
+You'll need to retrieve the source and run the application out the source directory.
+
+=== Retrieve the source code
+
+Simply copy the {uri-repo}[GitHub repository URL] and pass it to the `git clone` command:
+
+[subs=attributes+]
+ $ git clone {uri-repo}
+
+Next, switch to the project directory:
+
+[subs=attributes+]
+ $ cd {project-handle}
+
+=== Prepare RVM (optional)
+
+We recommend using {uri-rvm}[RVM] when developing applications with Ruby.
+Follow the {uri-install-rvm}[installation instructions] on the RVM site to setup RVM and install Ruby.
+
+Once you have RVM setup, we recommend creating a new gemset to work with {project-name}:
+
+[subs=attributes+]
+ $ rvm use default@{project-handle}-dev --create
+
+We like RVM because it keeps the dependencies required by various projects isolated from each other and from your system.
+
+=== Install the dependencies
+
+The dependencies needed to use {project-name} are defined in the [path]_Gemfile_ at the root of the project.
+You'll use Bundler to install these dependencies.
+
+To check if you have Bundler available, use the `bundle` command to query the version installed:
+
+ $ bundle --version
+
+If it's not installed, use the `gem` command to install it.
+
+ $ gem install bundler
+
+Then, use the `bundle` command to install the project dependencies:
+
+ $ bundle
+
+NOTE: You must invoke `bundle` from the project's root directory so it can locate the [path]_Gemfile_.
+
+== Usage
+
+Convert a Markdown file to AsciiDoc:
+
+ $ bin/kramdown-asciidoc sample.md
+
+The script will automatically create the output file [path]_sample.adoc_, replacing the Markdown file extension, `.md` with the AsciiDoc file extension, `.adoc`.
+
+At the moment, the script assumes the input uses the GitHub-flavor Markdown (GFM) syntax.
+
+== Authors
+
+*{project-name}* was written by {email}[{author}].
+
+== Copyright
+
+Copyright (C) 2016 Dan Allen and the Asciidoctor Project.
+Free use of this software is granted under the terms of the MIT License.
+
+See the link:LICENSE.adoc[LICENSE] file for details.

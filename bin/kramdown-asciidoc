@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+
+if File.exist?(kramdown_asciidoc = (File.expand_path '../../lib/kramdown-asciidoc', __FILE__))
+  require kramdown_asciidoc
+else
+  require 'kramdown-asciidoc'
+end
+
+infile = ARGV.first
+unless infile
+  warn 'Please specify a Markdown file to convert.'
+  exit 1
+end
+outfile = infile.sub /\.[^.]+$/, '.adoc' 
+input = File.read infile
+
+# FIXME allow input type to be specified (Kramdown, GFM, etc)
+opts = {
+  input: 'GFM'
+}
+
+doc = Kramdown::Document.new input, opts
+# FIXME provide option to write to different file or stdout
+File.write outfile, doc.to_asciidoc
+exit 0
