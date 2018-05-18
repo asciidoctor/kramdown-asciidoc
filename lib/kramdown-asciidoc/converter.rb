@@ -42,10 +42,13 @@ module Kramdown
         elsif (first_child = el.children[0]).type == :text && ((val = first_child.value).start_with? 'Note: ')
           first_child.value = %(NOTE: #{val.slice 6, val.length})
           %(#{inner el, opts}#{LFx2})
-        # TODO detect when colon is outside of formatted text
+        # NOTE detect *Note:* or **Note:** or *Note*: or **Note**: prefix
         elsif (first_child.type == :strong || first_child.type == :em) &&
-            (label_el = first_child.children[0]) && label_el.value == 'Note:'
+            (label_el = first_child.children[0]) && (label_el.value == 'Note:' ||
+            (label_el.value == 'Note' && (second_child = el.children[1]) && second_child.type == :text &&
+            ((text = second_child.value).start_with? ': ')))
           el.children.shift
+          second_child.value = text.slice 1, text.length if second_child
           %(NOTE:#{inner el, opts}#{LFx2})
         else
           %(#{inner el, opts}#{LFx2})

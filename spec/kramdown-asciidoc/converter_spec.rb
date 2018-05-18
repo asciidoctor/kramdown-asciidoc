@@ -166,6 +166,22 @@ describe Kramdown::Converter::Asciidoc do
         (expect subject.convert_p root.children.first, {}).to eq expected_output
       end
     end
+
+    context 'when paragraph starts with emphasized admonition label and colon is outside of formatted text' do
+      let :input do
+        <<~EOS.chomp
+        *Note*: Remember the milk!
+        EOS
+      end
+      let :expected_output do
+        <<~EOS.chomp
+        NOTE: Remember the milk!\n\n
+        EOS
+      end
+      it 'should promote paragraph to admonition paragraph' do
+        (expect subject.convert_p root.children.first, {}).to eq expected_output
+      end
+    end
   end
 
   describe '#convert_ul' do
