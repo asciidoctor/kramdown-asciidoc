@@ -90,11 +90,7 @@ module Kramdown; module Converter
 
     def convert_ul el, opts
       # TODO create do_in_level block
-      level = if opts.key? :level
-        opts[:level] += 1
-      else
-        opts[:level] = 1
-      end
+      level = (opts.key? :level) ? (opts[:level] += 1) : (opts[:level] = 1)
       buf = %(#{(inner el, (opts.merge rstrip: true))}#{LF})
       if level == 1
         buf = %(#{buf}#{LF})
@@ -109,7 +105,9 @@ module Kramdown; module Converter
 
     def convert_li el, opts
       marker = opts[:parent].type == :ol ? '.' : '*'
-      %(#{marker * opts[:level]} #{(inner el, (opts.merge rstrip: true))}#{LF})
+      level = opts[:level]
+      indent = level - 1
+      %(#{indent > 0 ? (' ' * indent) : ''}#{marker * level} #{(inner el, (opts.merge rstrip: true))}#{LF})
     end
 
     def convert_table el, opts

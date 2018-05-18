@@ -224,16 +224,16 @@ describe Kramdown::Converter::AsciiDoc do
       let :expected_output do
         <<~EOS
         * bread
-        ** white
-        ** sourdough
-        ** rye
+         ** white
+         ** sourdough
+         ** rye
         * milk
-        ** 2%
-        ** whole
-        ** soy
+         ** 2%
+         ** whole
+         ** soy
         * eggs
-        ** white
-        ** brown\n
+         ** white
+         ** brown\n
         EOS
       end
       it 'should increase number of asterisks per level' do
