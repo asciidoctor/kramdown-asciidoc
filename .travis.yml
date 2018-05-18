@@ -7,3 +7,11 @@ language: ruby
 rvm:
 - 2.5.1
 script: bundle exec rake spec
+deploy:
+  provider: rubygems
+  api_key: ${RUBYGEMS_API_KEY}
+  gem: kramdown-asciidoc
+  on:
+    tags: true
+    repo: opendevise/kramdown-asciidoc
+    rvm: *release_rvm
