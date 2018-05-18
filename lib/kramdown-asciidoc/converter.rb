@@ -5,31 +5,20 @@ module Kramdown
       LF = %(\n)
       LFx2 = %(\n\n)
 
-      def initialize root, opts
-        super
-      end
+      #def initialize root, opts
+      #  super
+      #end
 
       def convert el, opts = {}
         send %(convert_#{el.type}), el, opts
       end
 
-      def inner el, opts
-        result = []
-        options = opts.merge parent: el
-        prev = nil
-        el.children.each_with_index do |inner_el, idx|
-          options[:index] = idx
-          options[:result] = result
-          options[:prev] = prev if prev
-          result << (send %(convert_#{inner_el.type}), inner_el, options)
-          prev = inner_el
-        end
-        result.join
+      def convert_root el, opts
+        (inner el, (opts.merge rstrip: true))
       end
 
-      def convert_root el, opts
-        # QUESTION can we add rstrip to inner?
-        (inner el, opts).rstrip
+      def convert_blank el, opts
+        nil
       end
 
       def convert_heading el, opts
@@ -46,23 +35,6 @@ module Kramdown
 
       # Kramdown incorrectly uses the term header for headings
       alias convert_header convert_heading
-
-      def convert_blank el, opts
-        #LFx2
-        nil
-      end
-
-      def convert_text el, opts
-        result = el.value
-        #result = result.gsub '++', '{pp}' if result.include? '++'
-        if result.ascii_only?
-          result
-        else
-          # FIXME extract this mapping
-          mapping = { '“' => '"`', '”' => '`"', '‘' => '\'`', '’' => '`\'', '–' => '--', '…' => '...' }
-          result.gsub(/\b’\b/, '\'').gsub(/[“”‘’–…]/, mapping)
-        end
-      end
 
       def convert_p el, opts
         if (parent = opts[:parent]) && parent.type == :li
@@ -84,7 +56,7 @@ module Kramdown
       def convert_blockquote el, opts
         result = []
         result << '____'
-        result << (inner el, opts).rstrip
+        result << (inner el, (opts.merge rstrip: true))
         result << '____'
         %(#{result.join LF}#{LFx2})
       end
@@ -120,7 +92,7 @@ module Kramdown
         else
           opts[:level] = 1
         end
-        buf = %(#{(inner el, opts).rstrip}#{LF})
+        buf = %(#{(inner el, (opts.merge rstrip: true))}#{LF})
         if level == 1
           buf = %(#{buf}#{LF})
           opts.delete :level
@@ -131,13 +103,10 @@ module Kramdown
       end
 
       alias convert_ol convert_ul
-      #def convert_ol el, opts
-      #  %(#{(inner el, opts).chomp LFx2})
-      #end
 
       def convert_li el, opts
         marker = opts[:parent].type == :ol ? '.' : '*'
-        %(#{marker * opts[:level]} #{(inner el, opts).rstrip}#{LF})
+        %(#{marker * opts[:level]} #{(inner el, (opts.merge rstrip: true))}#{LF})
       end
 
       def convert_table el, opts
@@ -160,6 +129,23 @@ module Kramdown
 
       def convert_hr el, opts
         %('''#{LFx2})
+      end
+
+      def convert_text el, opts
+        result = el.value
+        #result = result.gsub '++', '{pp}' if result.include? '++'
+        if result.ascii_only?
+          result
+        else
+          # FIXME extract this mapping
+          mapping = { '“' => '"`', '”' => '`"', '‘' => '\'`', '’' => '`\'', '–' => '--', '…' => '...' }
+          result.gsub(/\b’\b/, '\'').gsub(/[“”‘’–…]/, mapping)
+        end
+      end
+
+      def convert_codespan el, opts
+        # FIXME constantify regex
+        (val = el.value) =~ /(?:[-=]>|<[-=]|\.\.\.)/ ? %(`+#{val}+`) : %(`#{val}`)
       end
 
       def convert_em el, opts
@@ -196,16 +182,6 @@ module Kramdown
         symbol_map[el.value]
       end
 
-      def convert_html_element el, opts
-        # QUESTION isn't this unnecessary now that we set html_to_native option?
-        if (tagname = el.value) == 'pre'
-          # TODO create helper to strip surrounding endlines
-          %(....#{LF}#{(inner el, opts).gsub(/\A\n*(.*?)\n*\Z/m, '\1')}#{LF}....#{LFx2})
-        else
-          %(+++<#{tagname}>#{inner el, opts}</#{tagname}>+++)
-        end
-      end
-
       def convert_a el, opts
         if (url = el.attr['href']).start_with? '#'
           %(<<_#{url[1..-1]},#{inner el, opts}>>)
@@ -215,11 +191,6 @@ module Kramdown
           %(link:#{url}[#{inner el, opts}])
         end
       end 
-
-      def convert_codespan el, opts
-        # FIXME constantify regex
-        (val = el.value) =~ /(?:[-=]>|<[-=]|\.\.\.)/ ? %(`+#{val}+`) : %(`#{val}`)
-      end
 
       def convert_img el, opts
         prefix = !(parent = opts[:parent]) || parent.children.size == 1 ? 'image::' : 'image:'
@@ -239,6 +210,31 @@ module Kramdown
           raquo_space: ' >>'
         }
         symbol_map[el.value]
+      end
+
+      def convert_html_element el, opts
+        # QUESTION isn't this unnecessary now that we set html_to_native option?
+        if (tagname = el.value) == 'pre'
+          # TODO create helper to strip surrounding endlines
+          %(....#{LF}#{(inner el, opts).gsub(/\A\n*(.*?)\n*\Z/m, '\1')}#{LF}....#{LFx2})
+        else
+          %(+++<#{tagname}>#{inner el, opts}</#{tagname}>+++)
+        end
+      end
+
+      def inner el, opts
+        rstrip = opts.delete :rstrip
+        result = []
+        child_opts = opts.merge parent: el
+        prev = nil
+        el.children.each_with_index do |child, idx|
+          options[:index] = idx
+          options[:result] = result
+          options[:prev] = prev if prev
+          result << (send %(convert_#{child.type}), child, child_opts)
+          prev = child
+        end
+        rstrip ? result.join.rstrip : result.join
       end
     end
   end
