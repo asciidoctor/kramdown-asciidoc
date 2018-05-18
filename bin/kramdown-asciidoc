@@ -15,8 +15,11 @@ outfile = infile.sub /\.[^.]+$/, '.adoc'
 input = File.read infile
 
 # FIXME allow input type to be specified (Kramdown, GFM, etc)
+# FIXME move to default options
 opts = {
-  input: 'GFM'
+  auto_ids: false,
+  html_to_native: true,
+  input: 'GFM',
 }
 
 doc = Kramdown::Document.new input, opts

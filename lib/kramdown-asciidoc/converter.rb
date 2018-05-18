@@ -2,6 +2,9 @@ module Kramdown
   module Converter
     # IMPORTANT This class is named Asciidoc instead of AsciiDoc so the converter name is "asciidoc"
     class Asciidoc < Base
+      LF = %(\n)
+      LFx2 = %(\n\n)
+
       def initialize root, opts
         super
       end
@@ -17,7 +20,7 @@ module Kramdown
         el.children.each_with_index do |inner_el, idx|
           options[:index] = idx
           options[:result] = result
-          options[:prev] = prev
+          options[:prev] = prev if prev
           result << (send %(convert_#{inner_el.type}), inner_el, options)
           prev = inner_el
         end
@@ -29,50 +32,85 @@ module Kramdown
         (inner el, opts).rstrip
       end
 
+      def convert_heading el, opts
+        result = []
+        if (first_child = el.children[0]) && first_child.type == :html_element &&
+            first_child.value == 'a' && (id = first_child.attr['id'])
+          result << %([##{id}])
+        end
+        # FIXME preserve inline markup
+        result << %(#{'=' * (level = el.options[:level])} #{el.options[:raw_text]})
+        #result << ':pp: {plus}{plus}' if level == 1 && opts[:index] == 0
+        %(#{result.join LF}#{LFx2})
+      end
+
+      # Kramdown incorrectly uses the term header for headings
+      alias convert_header convert_heading
+
       def convert_blank el, opts
-        #"\n\n"
+        #LFx2
         nil
       end
 
-      def convert_header el, opts
-        level = el.options[:level]
-        #endlines = level > 1 ? "\n\n" : nil
-        endlines = "\n\n"
-        %(#{'=' * level} #{el.options[:raw_text]}#{endlines})
-      end
-
       def convert_text el, opts
-        el.value 
-      end
-
-      def convert_em el, opts
-        %(_#{inner el, opts}_)
-      end
-
-      def convert_strong el, opts
-        %(*#{inner el, opts}*)
+        result = el.value
+        #result = result.gsub '++', '{pp}' if result.include? '++'
+        if result.ascii_only?
+          result
+        else
+          # FIXME extract this mapping
+          mapping = { '“' => '"`', '”' => '`"', '‘' => '\'`', '’' => '`\'', '–' => '--', '…' => '...' }
+          result.gsub(/\b’\b/, '\'').gsub(/[“”‘’–…]/, mapping)
+        end
       end
 
       def convert_p el, opts
-        endlines = opts[:parent].type == :li ? nil : "\n\n"
-        %(#{inner el, opts}#{endlines})
+        if (parent = opts[:parent]) && parent.type == :li
+          inner el, opts
+        elsif (first_child = el.children[0]).type == :text && ((val = first_child.value).start_with? 'Note: ')
+          first_child.value = %(NOTE: #{val.slice 6, val.length})
+          %(#{inner el, opts}#{LFx2})
+        # TODO detect when colon is outside of formatted text
+        elsif (first_child.type == :strong || first_child.type == :em) &&
+            (label_el = first_child.children[0]) && label_el.value == 'Note:'
+          el.children.shift
+          %(NOTE:#{inner el, opts}#{LFx2})
+        else
+          %(#{inner el, opts}#{LFx2})
+        end
+      end
+
+      # TODO detect admonition masquerading as blockquote
+      def convert_blockquote el, opts
+        result = []
+        result << '____'
+        result << (inner el, opts).rstrip
+        result << '____'
+        %(#{result.join LF}#{LFx2})
       end
 
       def convert_codeblock el, opts
         result = []
         if (lang = el.attr['class'])
-          lang = lang.sub(/^language-/, '')
+          lang = lang.slice 9, lang.length if lang.start_with? 'language-'
           result << %([source,#{lang}])
         end
+        # QUESTION should we rstrip?
         code = el.value.chomp
-        if lang || !(code.start_with? '$')
+        if !lang && (code.start_with? '$')
+          if code.include? LFx2
+            result << '....'
+            result << code
+            result << '....'
+          else
+            result << (code.gsub %r/^/m, ' ')
+          end
+        else
           result << '----'
           result << code
           result << '----'
-        else
-          result << code.gsub(/^/m, ' ')
         end
-        %(#{result * "\n"}\n\n)
+        %(#{result.join LF}#{LFx2})
       end
 
       def convert_ul el, opts
@@ -82,9 +120,9 @@ module Kramdown
         else
           opts[:level] = 1
         end
-        buf = %(#{(inner el, opts).rstrip}\n)
+        buf = %(#{(inner el, opts).rstrip}#{LF})
         if level == 1
-          buf = %(#{buf}\n)
+          buf = %(#{buf}#{LF})
           opts.delete :level
         else
           opts[:level] -= 1
@@ -92,14 +130,14 @@ module Kramdown
         buf
       end
 
-      alias :convert_ol :convert_ul
+      alias convert_ol convert_ul
       #def convert_ol el, opts
-      #  %(#{(inner el, opts).chomp "\n\n"})
+      #  %(#{(inner el, opts).chomp LFx2})
       #end
 
       def convert_li el, opts
         marker = opts[:parent].type == :ol ? '.' : '*'
-        %(#{marker * opts[:level]} #{(inner el, opts).rstrip}\n)
+        %(#{marker * opts[:level]} #{(inner el, opts).rstrip}#{LF})
       end
 
       def convert_table el, opts
@@ -117,9 +155,22 @@ module Kramdown
         end
         table_buf.pop if table_buf.last == ''
         table_buf << '|==='
-        %(#{table_buf * "\n"}\n\n)
+        %(#{table_buf * LF}#{LFx2})
       end
 
+      def convert_hr el, opts
+        %('''#{LFx2})
+      end
+
+      def convert_em el, opts
+        %(_#{inner el, opts}_)
+      end
+
+      def convert_strong el, opts
+        %(*#{inner el, opts}*)
+      end
+
+      # QUESTION how can we detect a markdown-style hard wrap?
       def convert_br el, opts
         #' +'
         nil
@@ -146,9 +197,10 @@ module Kramdown
       end
 
       def convert_html_element el, opts
+        # QUESTION isn't this unnecessary now that we set html_to_native option?
         if (tagname = el.value) == 'pre'
           # TODO create helper to strip surrounding endlines
-          %(....\n#{(inner el, opts).gsub(/\A\n*(.*?)\n*\Z/m, '\1')}\n....\n\n)
+          %(....#{LF}#{(inner el, opts).gsub(/\A\n*(.*?)\n*\Z/m, '\1')}#{LF}....#{LFx2})
         else
           %(+++<#{tagname}>#{inner el, opts}</#{tagname}>+++)
         end
@@ -170,8 +222,9 @@ module Kramdown
       end
 
       def convert_img el, opts
+        prefix = !(parent = opts[:parent]) || parent.children.size == 1 ? 'image::' : 'image:'
         # TODO detect case when link is wrapped around image
-        %(image:#{el.attr['src']}[#{el.attr['alt']}])
+        %(#{prefix}#{el.attr['src']}[#{el.attr['alt']}])
       end
 
       def convert_typographic_sym el, opts
