@@ -1,6 +1,7 @@
 module Kramdown; module Converter
   class AsciiDoc < Base
     DEFAULT_PARSER_OPTS = { auto_ids: false, html_to_native: true, input: 'GFM' }
+    RESOLVE_ENTITY_TABLE = %w(lt gt).map {|name| Utils::Entities.entity name }.map {|obj| [obj, obj.char] }.to_h
 
     LF = %(\n)
     LFx2 = %(\n\n)
@@ -186,12 +187,7 @@ module Kramdown; module Converter
     end
 
     def convert_entity el, opts
-      # FIXME constantify map
-      symbol_map = {
-        lt: '<',
-        gt: '>'
-      }
-      symbol_map[el.value]
+      RESOLVE_ENTITY_TABLE[el.value] || el.options[:original]
     end
 
     def convert_a el, opts
