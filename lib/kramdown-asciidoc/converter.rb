@@ -1,7 +1,8 @@
 module Kramdown
   module Converter
-    # IMPORTANT This class is named Asciidoc instead of AsciiDoc so the converter name is "asciidoc"
-    class Asciidoc < Base
+    class AsciiDoc < Base
+      DEFAULT_PARSER_OPTS = { auto_ids: false, html_to_native: true, input: 'GFM' }
+
       LF = %(\n)
       LFx2 = %(\n\n)
 
@@ -234,5 +235,8 @@ module Kramdown
         rstrip ? result.join.rstrip : result.join
       end
     end
+
+    # IMPORTANT Must add Asciidoc as alias so converter name becomes "asciidoc"
+    Asciidoc = AsciiDoc
   end
 end

@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'integration' do
   FIXTURES_DIR = File.absolute_path 'fixtures', __dir__
 
-  let(:doc) { Kramdown::Document.new input, auto_ids: false, html_to_native: true, input: 'GFM' }
+  let(:doc) { Kramdown::Document.new input, Kramdown::Converter::AsciiDoc::DEFAULT_PARSER_OPTS }
 
   context 'converts Markdown to AsciiDoc' do
     (Dir.glob ([FIXTURES_DIR, '**', '*.md'].join '/')).each do |input_file|
