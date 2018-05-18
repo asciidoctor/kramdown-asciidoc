@@ -111,18 +111,24 @@ module Kramdown; module Converter
     end
 
     def convert_table el, opts
+      head = cols = nil
       table_buf = ['|===']
       el.children.each do |container|
         container.children.each do |row|
           row_buf = []
           row.children.each do |cell|
-            row_buf << %(|#{inner cell, opts})
+            row_buf << %(| #{inner cell, opts})
           end
-          row_buf = [(row_buf * ' ')] if container.type == :thead
+          cols = row_buf.size unless cols
+          if container.type == :thead
+            head = true
+            row_buf = [row_buf * ' ']
+          end
           row_buf << ''
           table_buf.concat row_buf
         end
       end
+      table_buf.unshift %([cols=#{cols}*]) unless head
       table_buf.pop if table_buf.last == ''
       table_buf << '|==='
       %(#{table_buf * LF}#{LFx2})
