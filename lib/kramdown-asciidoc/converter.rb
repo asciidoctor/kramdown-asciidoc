@@ -213,13 +213,7 @@ module Kramdown
       end
 
       def convert_html_element el, opts
-        # QUESTION isn't this unnecessary now that we set html_to_native option?
-        if (tagname = el.value) == 'pre'
-          # TODO create helper to strip surrounding endlines
-          %(....#{LF}#{(inner el, opts).gsub(/\A\n*(.*?)\n*\Z/m, '\1')}#{LF}....#{LFx2})
-        else
-          %(+++<#{tagname}>#{inner el, opts}</#{tagname}>+++)
-        end
+        %(+++<#{tagname = el.value}>+++#{inner el, (opts.merge rstrip: true)}+++</#{tagname}>+++)
       end
 
       def inner el, opts
