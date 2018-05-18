@@ -39,7 +39,11 @@ module Kramdown; module Converter
 
     def convert_p el, opts
       if (parent = opts[:parent]) && parent.type == :li
-        inner el, opts
+        if (prev = opts[:prev]) && prev.type == :blank
+          %(#{LF}+#{LF}#{inner el, opts})
+        else
+          inner el, opts
+        end
       elsif (first_child = el.children[0]).type == :text && ((val = first_child.value).start_with? 'Note: ')
         first_child.value = %(NOTE: #{val.slice 6, val.length})
         %(#{inner el, opts}#{LFx2})
@@ -67,6 +71,9 @@ module Kramdown; module Converter
 
     def convert_codeblock el, opts
       result = []
+      if (parent = opts[:parent]) && parent.type == :li
+        result << %(#{LF}+)
+      end
       if (lang = el.attr['class'])
         lang = lang.slice 9, lang.length if lang.start_with? 'language-'
         result << %([source,#{lang}])
