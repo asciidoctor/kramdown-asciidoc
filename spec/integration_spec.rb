@@ -1,4 +1,4 @@
-require 'spec_helper'
+require_relative 'spec_helper'
 
 describe 'integration' do
   FIXTURES_DIR = File.absolute_path 'fixtures', __dir__

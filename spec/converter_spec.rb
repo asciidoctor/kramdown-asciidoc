@@ -1,4 +1,4 @@
-require 'spec_helper'
+require_relative 'spec_helper'
 
 describe Kramdown::Converter::AsciiDoc do
   let(:opts) { Kramdown::Converter::AsciiDoc::DEFAULT_PARSER_OPTS }
