@@ -3,7 +3,7 @@ require File.expand_path '../lib/kramdown-asciidoc/version', __FILE__
 
 Gem::Specification.new do |s|
   s.name = 'kramdown-asciidoc'
-  s.version = Kramdown::Asciidoc::VERSION
+  s.version = Kramdown::AsciiDoc::VERSION
   s.authors = ['Dan Allen']
   s.email = ['dan.j.allen@gmail.com']
   s.homepage = 'https://github.com/opendevise/kramdown-asciidoc'
