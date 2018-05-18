@@ -129,7 +129,7 @@ module Kramdown; module Converter
         end
       end
       table_buf.unshift %([cols=#{cols}*]) unless head
-      table_buf.pop if table_buf.last == ''
+      table_buf.pop if table_buf[-1] == ''
       table_buf << '|==='
       %(#{table_buf * LF}#{LFx2})
     end
@@ -163,10 +163,15 @@ module Kramdown; module Converter
       %(*#{inner el, opts}*)
     end
 
-    # QUESTION how can we detect a markdown-style hard wrap?
     def convert_br el, opts
-      #' +'
-      nil
+      # handle <br/>
+      if el.instance_variable_get :@attr
+        spacer = (last_result = opts[:result][-1]) && (last_result.end_with? ' ') ? '' : ' '
+        %(#{spacer}+#{LF})
+      else
+        # TODO detect a markdown-style hard wrap by looking for two spaces at end of previous element
+        nil
+      end
     end
 
     def convert_smart_quote el, opts
@@ -226,12 +231,10 @@ module Kramdown; module Converter
     def inner el, opts
       rstrip = opts.delete :rstrip
       result = []
-      child_opts = opts.merge parent: el
       prev = nil
       el.children.each_with_index do |child, idx|
-        options[:index] = idx
-        options[:result] = result
-        options[:prev] = prev if prev
+        child_opts = opts.merge parent: el, index: idx, result: result
+        child_opts[:prev] = prev if prev
         result << (send %(convert_#{child.type}), child, child_opts)
         prev = child
       end
