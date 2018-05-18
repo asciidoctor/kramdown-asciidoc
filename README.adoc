@@ -31,18 +31,18 @@ Next, switch to the project directory:
 === Prepare RVM (optional)
 
 We recommend using {uri-rvm}[RVM] when developing applications with Ruby.
+We like RVM because it keeps the dependencies required by the project isolated from the rest of your system.
 Follow the {uri-install-rvm}[installation instructions] on the RVM site to setup RVM and install Ruby.
 
-Once you have RVM setup, we recommend creating a new gemset to work with {project-name}:
+Once you have RVM setup, switch to the RVM-managed version of Ruby recommended by the project using this command:
 
-[subs=attributes+]
- $ rvm use default@{project-handle}-dev --create
+ $ rvm use
 
-We like RVM because it keeps the dependencies required by various projects isolated from each other and from your system.
+The recommended version of Ruby is defined in the [.path]_.ruby-version_ file at the root of the project.
 
 === Install the dependencies
 
-The dependencies needed to use {project-name} are defined in the [path]_Gemfile_ at the root of the project.
+The dependencies needed to use {project-name} are defined in the [.path]_Gemfile_ at the root of the project.
 You'll use Bundler to install these dependencies.
 
 To check if you have Bundler available, use the `bundle` command to query the version installed:
@@ -53,19 +53,19 @@ If it's not installed, use the `gem` command to install it.
 
  $ gem install bundler
 
-Then, use the `bundle` command to install the project dependencies:
+Then, use the `bundle` command to install the project dependencies under the project directory:
 
- $ bundle
+ $ bundle --path=.bundle/gems
 
-NOTE: You must invoke `bundle` from the project's root directory so it can locate the [path]_Gemfile_.
+NOTE: You must invoke `bundle` from the project's root directory so it can locate the [.path]_Gemfile_.
 
 == Usage
 
 Convert a Markdown file to AsciiDoc:
 
- $ bin/kramdown-asciidoc sample.md
+ $ bundle exec kramdown-asciidoc sample.md
 
-The script will automatically create the output file [path]_sample.adoc_, replacing the Markdown file extension, `.md` with the AsciiDoc file extension, `.adoc`.
+The script will automatically create the output file [.path]_sample.adoc_, replacing the Markdown file extension, `.md` with the AsciiDoc file extension, `.adoc`.
 
 At the moment, the script assumes the input uses the GitHub-flavor Markdown (GFM) syntax.
 
@@ -80,7 +80,7 @@ At the moment, the script assumes the input uses the GitHub-flavor Markdown (GFM
 
 == Copyright
 
-Copyright (C) 2016 Dan Allen and the Asciidoctor Project.
+Copyright (C) 2016-2018 OpenDevise Inc.
 Free use of this software is granted under the terms of the MIT License.
 
 See the link:LICENSE.adoc[LICENSE] file for details.
