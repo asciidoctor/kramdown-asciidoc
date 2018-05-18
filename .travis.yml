@@ -1,4 +1,9 @@
+dist: trusty
+sudo: false
+git:
+  # use depth 2 just in case two refs get pushed at once (like a tag)
+  depth: 2
 language: ruby
 rvm:
-  - 2.3.0
+- 2.5.1
 script: bundle exec rake spec
