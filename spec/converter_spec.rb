@@ -169,16 +169,6 @@ describe Kramdown::Converter::AsciiDoc do
     end
   end
 
-  describe '#convert_hr' do
-    context 'when horizontal rule is found' do
-      let(:input) { '---' }
-      let(:expected) { %('''\n\n) }
-      it 'should convert to thematic break' do
-        (expect subject.convert_hr root.children.first, {}).to eq expected
-      end
-    end
-  end
-
   describe '#convert_native' do
     let(:input) { '<p><b>bold</b> <em>italic</em> <code>mono</code></p>' }
     let(:expected) { '*bold* _italic_ `mono`' }
