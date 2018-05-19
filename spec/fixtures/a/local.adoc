@@ -1,0 +1,1 @@
+Take a look at the link:release-notes.html[release notes] to find a list of what changed.

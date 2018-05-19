@@ -221,10 +221,12 @@ module Kramdown; module Converter
 
     def convert_a el, opts
       if (url = el.attr['href']).start_with? '#'
-        %(<<_#{url[1..-1]},#{inner el, opts}>>)
+        %(<<#{url.slice 1, url.length},#{inner el, opts}>>)
+      # FIXME promote regex to const
       elsif url =~ /^https?:\/\//
         (label = inner el, opts) == url ? (url.chomp '/') : %(#{url.chomp '/'}[#{label}])
       else
+        # QUESTION should we replace .md suffix with .adoc?
         %(link:#{url}[#{inner el, opts}])
       end
     end 

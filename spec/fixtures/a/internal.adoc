@@ -1,0 +1,5 @@
+Use <<comparison-operators,Comparison Operators>> to compare the result of two expressions.
+
+== Comparison Operators
+
+Comparison operators are used to compare values.
