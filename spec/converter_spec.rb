@@ -71,12 +71,4 @@ describe Kramdown::Converter::AsciiDoc do
       end
     end
   end
-
-  describe '#convert_native' do
-    let(:input) { '<p><b>bold</b> <em>italic</em> <code>mono</code></p>' }
-    let(:expected) { '*bold* _italic_ `mono`' }
-    it 'should convert HTML to formatted AsciiDoc' do
-      (expect doc.to_asciidoc).to eq expected
-    end
-  end
 end
