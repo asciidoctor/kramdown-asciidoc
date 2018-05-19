@@ -1,6 +1,11 @@
-* Available
- ** true - all members are up and all buckets are available
- ** false - one or more members are down and some buckets are unavailable
-* Balanced
- ** true - the buckets are evenly distributed across the cluster
- ** false - the buckets are not evenly distributed across the cluster
+* bread
+ ** french country
+ ** sourdough
+ ** multigrain
+* milk
+ ** 2%
+ ** whole
+ ** skim
+* eggs
+ ** brown
+ ** white

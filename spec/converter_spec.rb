@@ -88,64 +88,6 @@ describe Kramdown::Converter::AsciiDoc do
     end
   end
 
-  describe '#convert_ul' do
-    context 'when not nested' do
-      let :input do
-        <<~EOS.chomp
-        * bread
-        * milk
-        * eggs
-        EOS
-      end
-      let :expected do
-        <<~EOS
-        * bread
-        * milk
-        * eggs\n
-        EOS
-      end
-      it 'should convert to lines with leading asterisks' do
-        (expect subject.convert_ul root.children.first, {}).to eq expected
-      end
-    end
-
-    context 'when nested' do
-      let :input do
-        <<~EOS.chomp
-        * bread
-          * white
-          * sourdough
-          * rye
-        * milk
-          * 2%
-          * whole
-          * soy
-        * eggs
-          * white
-          * brown
-        EOS
-      end
-      let :expected do
-        <<~EOS
-        * bread
-         ** white
-         ** sourdough
-         ** rye
-        * milk
-         ** 2%
-         ** whole
-         ** soy
-        * eggs
-         ** white
-         ** brown\n
-        EOS
-      end
-      it 'should increase number of asterisks per level' do
-        (expect subject.convert_ul root.children.first, {}).to eq expected
-      end
-    end
-  end
-
   describe '#convert_img' do
     context 'when image is inline' do
       let(:input) { 'See the ![Rate of Growth](rate-of-growth.png)' }
@@ -227,7 +169,7 @@ describe Kramdown::Converter::AsciiDoc do
     end
   end
 
-  describe '#convert_codeblock' do
+  describe '#convert_hr' do
     context 'when horizontal rule is found' do
       let(:input) { '---' }
       let(:expected) { %('''\n\n) }
