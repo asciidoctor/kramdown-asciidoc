@@ -246,9 +246,7 @@ module Kramdown; module Converter
       result = []
       prev = nil
       el.children.each_with_index do |child, idx|
-        child_opts = opts.merge parent: el, index: idx, result: result
-        child_opts[:prev] = prev if prev
-        result << (send %(convert_#{child.type}), child, child_opts)
+        result << (send %(convert_#{child.type}), child, (opts.merge parent: el, index: idx, result: result, prev: prev))
         prev = child
       end
       rstrip ? result.join.rstrip : result.join
