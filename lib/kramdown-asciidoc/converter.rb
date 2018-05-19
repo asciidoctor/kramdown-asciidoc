@@ -4,7 +4,7 @@ module Kramdown; module Converter
     RESOLVE_ENTITY_TABLE = %w(lt gt).map {|name| Utils::Entities.entity name }.map {|obj| [obj, obj.char] }.to_h
 
     XmlCommentRx = /\A<!--(.*)-->\Z/m
-    CommentPrefixRx = /^ *!(?: |\Z)/m
+    CommentPrefixRx = /^ *! ?/m
 
     LF = %(\n)
     LFx2 = %(\n\n)
