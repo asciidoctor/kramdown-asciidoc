@@ -3,6 +3,9 @@ module Kramdown; module Converter
     DEFAULT_PARSER_OPTS = { auto_ids: false, html_to_native: true, input: 'GFM' }
     RESOLVE_ENTITY_TABLE = %w(lt gt).map {|name| Utils::Entities.entity name }.map {|obj| [obj, obj.char] }.to_h
 
+    XmlCommentRx = /\A<!--(.*)-->\Z/m
+    CommentPrefixRx = /^ *!(?: |\Z)/m
+
     LF = %(\n)
     LFx2 = %(\n\n)
 
@@ -239,6 +242,35 @@ module Kramdown; module Converter
 
     def convert_html_element el, opts
       %(+++<#{tagname = el.value}>+++#{inner el, (opts.merge rstrip: true)}+++</#{tagname}>+++)
+    end
+
+    def convert_xml_comment el, opts
+      XmlCommentRx =~ el.value
+      comment_text = ($1.include? ' !') ? ($1.gsub CommentPrefixRx, '').strip : $1.strip
+      if el.options[:category] == :block
+        if comment_text.empty?
+          %(//-#{LFx2})
+        elsif comment_text.include? LF
+          #%(#{$1.split(LF).map {|l| %[// #{l}] }.join LF}#{LFx2})
+          %(////#{LF}#{comment_text}#{LF}////#{LFx2})
+        else
+          %(// #{comment_text}#{LFx2})
+        end
+      else
+        if (current_line = opts[:result][-1])
+          if current_line == LF
+            prefix = ''
+          else
+            prefix = LF
+            opts[:result][-1] = (current_line = current_line.rstrip) if current_line.end_with? ' '
+          end
+        else
+          prefix = ''
+        end
+        siblings = opts[:parent].children
+        suffix = siblings[(siblings.index el) + 1] ? LF : ''
+        %(#{prefix}// #{comment_text}#{suffix})
+      end
     end
 
     def inner el, opts
