@@ -8,9 +8,14 @@
 1. Initialize a new repository
 
    ```js
+   const git = require('isomorphic-git')
    const repo = { fs, dir: 'project' }
    await git.init(repo)
    ```
+
+   This is equivalent to the following commmand:
+
+       $ git init project
 
 1. Create source files
 

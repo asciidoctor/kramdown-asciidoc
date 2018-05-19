@@ -42,7 +42,9 @@ module Kramdown; module Converter
 
     def convert_p el, opts
       if (parent = opts[:parent]) && parent.type == :li
-        if (prev = opts[:prev]) && prev.type == :blank
+        if opts[:prev]
+          parent.options[:compound] = true
+          opts[:result].pop
           %(#{LF}+#{LF}#{inner el, opts})
         else
           inner el, opts
@@ -84,7 +86,12 @@ module Kramdown; module Converter
     def convert_codeblock el, opts
       result = []
       if (parent = opts[:parent]) && parent.type == :li
-        result << %(#{LF}+)
+        parent.options[:compound] = true
+        opts[:result].pop
+        list_continuation = %(#{LF}+)
+        suffix = ''
+      else
+        suffix = LFx2
       end
       if (lang = el.attr['class'])
         lang = lang.slice 9, lang.length if lang.start_with? 'language-'
@@ -98,6 +105,8 @@ module Kramdown; module Converter
           result << code
           result << '....'
         else
+          list_continuation = LF if list_continuation
+          # FIXME promote regex to const
           result << (code.gsub %r/^/m, ' ')
         end
       else
@@ -105,7 +114,8 @@ module Kramdown; module Converter
         result << code
         result << '----'
       end
-      %(#{result.join LF}#{LFx2})
+      result.unshift list_continuation if list_continuation
+      %(#{result.join LF}#{suffix})
     end
 
     def convert_ul el, opts
@@ -124,10 +134,10 @@ module Kramdown; module Converter
     alias convert_ol convert_ul
 
     def convert_li el, opts
+      prefix = (prev = opts[:prev]) && prev.options[:compound] ? LF : ''
       marker = opts[:parent].type == :ol ? '.' : '*'
-      level = opts[:level]
-      indent = level - 1
-      %(#{indent > 0 ? (' ' * indent) : ''}#{marker * level} #{(inner el, (opts.merge rstrip: true))}#{LF})
+      indent = (level = opts[:level]) - 1
+      %(#{prefix}#{indent > 0 ? (' ' * indent) : ''}#{marker * level} #{(inner el, (opts.merge rstrip: true))}#{LF})
     end
 
     def convert_table el, opts
