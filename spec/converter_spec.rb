@@ -6,26 +6,6 @@ describe Kramdown::Converter::AsciiDoc do
   let(:root) { doc.root }
   subject { described_class.send :new, root, {} }
 
-  describe '#convert' do
-    let :input do
-      <<~EOS.chomp
-      # Document Title
-
-      content
-      EOS
-    end
-    let :expected do
-      <<~EOS.chomp
-      = Document Title
-
-      content
-      EOS
-    end
-    it 'should convert Markdown input to AsciiDoc' do
-      (expect doc.to_asciidoc).to eq expected
-    end
-  end
-
   describe '#convert_root' do
     let :input do
       <<~EOS.chomp
