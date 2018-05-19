@@ -63,9 +63,18 @@ module Kramdown; module Converter
     # TODO detect admonition masquerading as blockquote
     def convert_blockquote el, opts
       result = []
-      result << '____'
-      result << (inner el, (opts.merge rstrip: true))
-      result << '____'
+      # TODO support more than one level of nesting
+      boundary = (parent = opts[:parent]) && parent.type == :blockquote ? '______' : '____'
+      contents = inner el, (opts.merge rstrip: true)
+      if (contents.include? LF) && ((attribution_line = (lines = contents.split LF).pop).start_with? '&#8211; ')
+        attribution = attribution_line.slice 8, attribution_line.length
+        result << %([,#{attribution}])
+        lines.pop while lines.size > 0 && lines[-1].empty?
+        contents = lines.join LF
+      end
+      result << boundary
+      result << contents
+      result << boundary
       %(#{result.join LF}#{LFx2})
     end
 
@@ -216,8 +225,9 @@ module Kramdown; module Converter
     def convert_typographic_sym el, opts
       # FIXME constantify map
       symbol_map = {
+        # FIXME in the future, mdash will be three dashes and ndash two
         mdash: '--',
-        ndash: '-',
+        ndash: '&#8211;',
         hellip: '...',
         laquo: '<<',
         raquo: '>>',

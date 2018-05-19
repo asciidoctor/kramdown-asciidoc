@@ -1,0 +1,3 @@
+> - Liberté
+> - Égalité
+> - Fraternité
