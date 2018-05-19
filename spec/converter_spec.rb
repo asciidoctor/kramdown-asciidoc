@@ -72,32 +72,6 @@ describe Kramdown::Converter::AsciiDoc do
     end
   end
 
-  describe '#convert_img' do
-    context 'when image is inline' do
-      let(:input) { 'See the ![Rate of Growth](rate-of-growth.png)' }
-
-      it 'should convert to inline image' do
-        expected = 'image:rate-of-growth.png[Rate of Growth]'
-        p = root.children.first
-        (expect subject.convert_img p.children.last, { parent: p }).to eq expected
-      end
-
-      it 'should put inline image adjacent to text' do
-        expected = %(See the image:rate-of-growth.png[Rate of Growth]\n\n)
-        (expect subject.convert_p root.children.first, {}).to eq expected
-      end
-    end
-
-    context 'when image is only element in paragraph' do
-      let(:input) { '![Rate of Growth](rate-of-growth.png)' }
-
-      it 'should convert to block image' do
-        expected = %(image::rate-of-growth.png[Rate of Growth]\n\n)
-        (expect subject.convert_p root.children.first, {}).to eq expected
-      end
-    end
-  end
-
   describe '#convert_codeblock' do
     context 'when code block is fenced' do
       let :input do
