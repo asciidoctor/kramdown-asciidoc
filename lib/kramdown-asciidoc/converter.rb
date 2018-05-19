@@ -253,7 +253,15 @@ module Kramdown; module Converter
     end
 
     def convert_html_element el, opts
-      %(+++<#{tagname = el.value}>+++#{inner el, (opts.merge rstrip: true)}+++</#{tagname}>+++)
+      contents = inner el, (opts.merge rstrip: true)
+      case (tagname = el.value)
+      when 'sup'
+        %(^#{contents}^)
+      when 'sub'
+        %(~#{contents}~)
+      else
+        %(+++<#{tagname}>+++#{contents}+++</#{tagname}>+++)
+      end
     end
 
     def convert_xml_comment el, opts
