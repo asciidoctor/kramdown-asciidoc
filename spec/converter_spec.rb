@@ -7,22 +7,6 @@ describe Kramdown::Converter::AsciiDoc do
   subject { described_class.send :new, root, {} }
 
   describe '#convert_p' do
-    context 'when paragraph is normal' do
-      let :input do
-        <<~EOS.chomp
-        A normal paragraph.
-        EOS
-      end
-      let :expected do
-        <<~EOS.chomp
-        A normal paragraph.\n\n
-        EOS
-      end
-      it 'should leave paragraph as is' do
-        (expect subject.convert_p root.children.first, {}).to eq expected
-      end
-    end
-
     context 'when paragraph starts with admonition label' do
       let :input do
         <<~EOS.chomp
