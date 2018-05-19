@@ -1,0 +1,3 @@
+    $ cd project
+
+    $ docker build

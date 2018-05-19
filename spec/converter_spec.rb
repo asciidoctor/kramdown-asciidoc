@@ -72,61 +72,6 @@ describe Kramdown::Converter::AsciiDoc do
     end
   end
 
-  describe '#convert_codeblock' do
-    context 'when code block is fenced' do
-      let :input do
-        <<~EOS.chomp
-        ```
-        All your code.
-        
-        Belong to us.
-        ```
-        EOS
-      end
-      let :expected do
-        <<~EOS.chomp
-        ----
-        All your code.
-        
-        Belong to us.
-        ----\n\n
-        EOS
-      end
-      it 'should convert to listing block' do
-        (expect subject.convert_codeblock root.children.first, {}).to eq expected
-      end
-    end
-
-    context 'when code block is fenced with language' do
-      let :input do
-        <<~EOS.chomp
-        ```java
-        public class AllYourCode {
-          public String getBelongsTo() {
-            return "Us.";
-          }
-        }
-        ```
-        EOS
-      end
-      let :expected do
-        <<~EOS.chomp
-        [source,java]
-        ----
-        public class AllYourCode {
-          public String getBelongsTo() {
-            return "Us.";
-          }
-        }
-        ----\n\n
-        EOS
-      end
-      it 'should convert to source block with language' do
-        (expect subject.convert_codeblock root.children.first, {}).to eq expected
-      end
-    end
-  end
-
   describe '#convert_native' do
     let(:input) { '<p><b>bold</b> <em>italic</em> <code>mono</code></p>' }
     let(:expected) { '*bold* _italic_ `mono`' }
