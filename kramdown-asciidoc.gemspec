@@ -1,14 +1,14 @@
 # -*- encoding: utf-8 -*-
-require File.expand_path '../lib/kramdown-asciidoc/version', __FILE__
+require File.absolute_path 'lib/kramdown-asciidoc/version', __dir__
 
 Gem::Specification.new do |s|
   s.name = 'kramdown-asciidoc'
   s.version = Kramdown::AsciiDoc::VERSION
   s.authors = ['Dan Allen']
   s.email = ['dan.j.allen@gmail.com']
-  s.homepage = 'https://github.com/opendevise/kramdown-asciidoc'
+  s.homepage = 'https://github.com/asciidoctor/kramdown-asciidoc'
   s.summary = 'A Markdown to AsciiDoc converter using Kramdown'
-  s.description = 'A Kramdown extension for converting Markdown content to AsciiDoc.'
+  s.description = 'A Kramdown extension for converting Markdown documents to AsciiDoc.'
   s.license = 'MIT'
 
   s.files = Dir['lib/*', 'lib/*/**']

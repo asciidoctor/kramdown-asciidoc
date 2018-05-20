@@ -4,12 +4,12 @@ Dan Allen <https://github.com/mojavelinux>
 :project-name: Kramdown AsciiDoc
 :project-handle: kramdown-asciidoc
 // URIs:
-:uri-repo: https://github.com/opendevise/kramdown-asciidoc
+:uri-repo: https://github.com/asciidoctor/kramdown-asciidoc
 :uri-asciidoc: http://asciidoc.org
 :uri-rvm: http://rvm.io
 :uri-install-rvm: https://rvm.io/rvm/install
 
-A Kramdown converter for converting Markdown content to {uri-asciidoc}[AsciiDoc].
+A Kramdown extension for converting Markdown documents to {uri-asciidoc}[AsciiDoc].
 
 == Installation
 
@@ -80,7 +80,7 @@ At the moment, the script assumes the input uses the GitHub-flavor Markdown (GFM
 
 == Copyright
 
-Copyright (C) 2016-2018 OpenDevise Inc.
+Copyright (C) 2016-2018 OpenDevise Inc. (on behalf of the Asciidoctor Project)
 Free use of this software is granted under the terms of the MIT License.
 
 See the link:LICENSE.adoc[LICENSE] file for details.
