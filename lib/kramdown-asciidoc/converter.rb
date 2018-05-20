@@ -31,8 +31,8 @@ module Kramdown; module Converter
 
     def convert_heading el, opts
       result = []
-      if (first_child = el.children[0]) && first_child.type == :html_element &&
-          first_child.value == 'a' && (id = first_child.attr['id'])
+      if (id = el.attr['id']) || ((child_i = el.children[0]) && child_i.type == :html_element &&
+          child_i.value == 'a' && (id = child_i.attr['id']))
         result << %([##{id}])
       end
       # FIXME preserve inline markup
