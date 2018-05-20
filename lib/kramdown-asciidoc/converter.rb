@@ -258,8 +258,7 @@ module Kramdown; module Converter
     def convert_a el, opts
       if (url = el.attr['href']).start_with? '#'
         %(<<#{url.slice 1, url.length},#{inner el, opts}>>)
-      # FIXME promote regex to const
-      elsif url =~ /^https?:\/\//
+      elsif url.start_with? 'https://', 'http://'
         if (child_i = el.children[0] || VoidElement).type == :img
           convert_img child_i, parent: opts[:parent], index: 0, url: url
         else
