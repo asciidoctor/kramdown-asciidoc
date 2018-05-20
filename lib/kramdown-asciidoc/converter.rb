@@ -2,6 +2,10 @@ module Kramdown; module Converter
   class AsciiDoc < Base
     DEFAULT_PARSER_OPTS = { auto_ids: false, html_to_native: true, input: 'GFM' }
     RESOLVE_ENTITY_TABLE = %w(lt gt).map {|name| Utils::Entities.entity name }.map {|obj| [obj, obj.char] }.to_h
+    ADMON_LABELS = %w(Note Tip Caution Warning Important Attention).map {|l| [l, l] }.to_h
+    ADMON_MARKERS = ADMON_LABELS.map {|l, _| %(#{l}: ) }
+    ADMON_FORMATTED_MARKERS = ADMON_LABELS.map {|l, _| [%(#{l}:), l] }.to_h
+    ADMON_TYPE_MAP = ADMON_LABELS.map {|l, _| [l, l.upcase] }.to_h.merge 'Attention' => 'IMPORTANT'
 
     XmlCommentRx = /\A<!--(.*)-->\Z/m
     CommentPrefixRx = /^ *! ?/m
@@ -49,17 +53,19 @@ module Kramdown; module Converter
         else
           inner el, opts
         end
-      elsif (first_child = el.children[0]).type == :text && ((val = first_child.value).start_with? 'Note: ')
-        first_child.value = %(NOTE: #{val.slice 6, val.length})
+      # NOTE detect plain admonition marker (e.g, Note: ...)
+      elsif (i_child = el.children[0]).type == :text && (i_text = i_child.value).start_with?(*ADMON_MARKERS)
+        marker, i_text = i_text.split ': ', 2
+        i_child.value = %(#{ADMON_TYPE_MAP[marker]}: #{i_text})
         %(#{inner el, opts}#{LFx2})
-      # NOTE detect *Note:* or **Note:** or *Note*: or **Note**: prefix
-      elsif (first_child.type == :strong || first_child.type == :em) &&
-          (label_el = first_child.children[0]) && (label_el.value == 'Note:' ||
-          (label_el.value == 'Note' && (second_child = el.children[1]) && second_child.type == :text &&
-          ((text = second_child.value).start_with? ': ')))
+      # NOTE detect formatted admonition marker (e.g., *Note:* ...)
+      elsif (i_child.type == :strong || i_child.type == :em) &&
+          (marker_el = i_child.children[0]) && ((marker = ADMON_FORMATTED_MARKERS[marker_el.value]) ||
+          ((marker = ADMON_LABELS[marker_el.value]) && (ii_child = el.children[1]) && ii_child.type == :text &&
+          ((ii_text = ii_child.value).start_with? ': ')))
         el.children.shift
-        second_child.value = text.slice 1, text.length if second_child
-        %(NOTE:#{inner el, opts}#{LFx2})
+        ii_child.value = ii_text.slice 1, ii_text.length if ii_child
+        %(#{ADMON_TYPE_MAP[marker]}:#{inner el, opts}#{LFx2})
       else
         %(#{inner el, opts}#{LFx2})
       end
