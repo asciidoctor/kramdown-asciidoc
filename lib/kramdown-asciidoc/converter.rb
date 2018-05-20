@@ -54,17 +54,17 @@ module Kramdown; module Converter
           inner el, opts
         end
       # NOTE detect plain admonition marker (e.g, Note: ...)
-      elsif (i_child = el.children[0]).type == :text && (i_text = i_child.value).start_with?(*ADMON_MARKERS)
-        marker, i_text = i_text.split ': ', 2
-        i_child.value = %(#{ADMON_TYPE_MAP[marker]}: #{i_text})
+      elsif (child_i = el.children[0]).type == :text && (child_i_text = child_i.value).start_with?(*ADMON_MARKERS)
+        marker, child_i_text = child_i_text.split ': ', 2
+        child_i.value = %(#{ADMON_TYPE_MAP[marker]}: #{child_i_text})
         %(#{inner el, opts}#{LFx2})
       # NOTE detect formatted admonition marker (e.g., *Note:* ...)
-      elsif (i_child.type == :strong || i_child.type == :em) &&
-          (marker_el = i_child.children[0]) && ((marker = ADMON_FORMATTED_MARKERS[marker_el.value]) ||
-          ((marker = ADMON_LABELS[marker_el.value]) && (ii_child = el.children[1]) && ii_child.type == :text &&
-          ((ii_text = ii_child.value).start_with? ': ')))
+      elsif (child_i.type == :strong || child_i.type == :em) &&
+          (marker_el = child_i.children[0]) && ((marker = ADMON_FORMATTED_MARKERS[marker_el.value]) ||
+          ((marker = ADMON_LABELS[marker_el.value]) && (child_ii = el.children[1]) && child_ii.type == :text &&
+          ((child_ii_text = child_ii.value).start_with? ': ')))
         el.children.shift
-        ii_child.value = ii_text.slice 1, ii_text.length if ii_child
+        child_ii.value = child_ii_text.slice 1, child_ii_text.length if child_ii
         %(#{ADMON_TYPE_MAP[marker]}:#{inner el, opts}#{LFx2})
       else
         %(#{inner el, opts}#{LFx2})
@@ -230,8 +230,8 @@ module Kramdown; module Converter
         %(<<#{url.slice 1, url.length},#{inner el, opts}>>)
       # FIXME promote regex to const
       elsif url =~ /^https?:\/\//
-        if (i_child = el.children[0]) && i_child.type == :img
-          convert_img i_child, parent: opts[:parent], index: 0, url: url
+        if (child_i = el.children[0]) && child_i.type == :img
+          convert_img child_i, parent: opts[:parent], index: 0, url: url
         else
           (contents = inner el, opts) == url ? (url.chomp '/') : %(#{url.chomp '/'}[#{contents}])
         end
