@@ -32,12 +32,15 @@ module Kramdown; module Converter
 
     def convert_heading el, opts
       result = []
+      role = (role = el.attr['class']) ? %(.#{role.tr ' ', '.'}) : nil
       if (id = el.attr['id'])
-        result << %([##{id}])
+        result << %([##{id}#{role || ''}])
       elsif (child_i = el.children[0] || VoidElement).type == :html_element && child_i.value == 'a' && (id = child_i.attr['id'])
         el.children.shift
         el.children.unshift(*child_i.children) unless child_i.children.empty?
-        result << %([##{id}])
+        result << %([##{id}#{role || ''}])
+      elsif role
+        result << %([#{role}])
       end
       # FIXME preserve inline markup
       result << %(#{'=' * (level = el.options[:level])} #{el.options[:raw_text]})
