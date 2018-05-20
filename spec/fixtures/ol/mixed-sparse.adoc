@@ -1,0 +1,6 @@
+. wash
+ ** dip in soapy water
+ ** scrub-a-dub-dub
+. rinse
+ ** hose it down
+. repeat

@@ -126,15 +126,18 @@ module Kramdown; module Converter
 
     def convert_ul el, opts
       # TODO create do_in_level block
-      level = (opts.key? :level) ? (opts[:level] += 1) : (opts[:level] = 1)
-      buf = %(#{(inner el, (opts.merge rstrip: true))}#{LF})
+      level = opts[:level] ? (opts[:level] += 1) : (opts[:level] = 1)
+      # REVIEW this is whack
+      prefix = (parent = opts[:parent]) && parent.type == :li && !opts[:result][-1] ? LF : ''
+      contents = inner el, (opts.merge rstrip: true)
       if level == 1
-        buf = %(#{buf}#{LF})
+        suffix = LFx2
         opts.delete :level
       else
+        suffix = LF
         opts[:level] -= 1
       end
-      buf
+      %(#{prefix}#{contents}#{suffix})
     end
 
     alias convert_ol convert_ul
