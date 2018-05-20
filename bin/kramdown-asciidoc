@@ -12,7 +12,7 @@ unless infile
   exit 1
 end
 outfile = infile.sub /\.[^.]+$/, '.adoc' 
-input = File.read infile
+input = (IO.read infile, open_args: ['rb:UTF-8']).strip
 
 # FIXME allow input type to be specified (Kramdown, GFM, etc)
 doc = Kramdown::Document.new input, Kramdown::Converter::AsciiDoc::DEFAULT_PARSER_OPTS
