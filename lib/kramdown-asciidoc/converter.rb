@@ -66,7 +66,7 @@ module Kramdown; module Converter
       if (parent = opts[:parent]) && parent.type == :li
         if opts[:prev]
           parent.options[:compound] = true
-          opts[:result].pop
+          opts[:result].pop unless opts[:result][-1]
           %(#{LF}+#{LF}#{inner el, opts})
         else
           inner el, opts
@@ -111,7 +111,9 @@ module Kramdown; module Converter
       result = []
       if (parent = opts[:parent]) && parent.type == :li
         parent.options[:compound] = true
-        opts[:result].pop
+        if (current_line = opts[:result].pop)
+          opts[:result] << current_line.chomp
+        end unless opts[:result].empty?
         list_continuation = %(#{LF}+)
         suffix = ''
       else

@@ -1,0 +1,21 @@
+- bread
+
+  - french country
+
+  - sourdough
+
+  - multigrain
+
+- milk
+
+  - 2%
+
+  - whole
+
+  - skim
+
+- eggs
+
+  - brown
+
+  - white
