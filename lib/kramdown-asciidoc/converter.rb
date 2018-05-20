@@ -32,8 +32,9 @@ module Kramdown; module Converter
 
     def convert_heading el, opts
       result = []
-      if (id = el.attr['id']) || ((child_i = el.children[0] || VoidElement).type == :html_element &&
-          child_i.value == 'a' && (id = child_i.attr['id']))
+      if (id = el.attr['id'])
+        result << %([##{id}])
+      elsif (child_i = el.children[0] || VoidElement).type == :html_element && child_i.value == 'a' && (id = child_i.attr['id'])
         el.children.shift
         el.children.unshift(*child_i.children) unless child_i.children.empty?
         result << %([##{id}])
@@ -57,14 +58,14 @@ module Kramdown; module Converter
           inner el, opts
         end
       # NOTE detect plain admonition marker (e.g, Note: ...)
-      elsif (child_i = el.children[0]).type == :text && (child_i_text = child_i.value).start_with?(*ADMON_MARKERS)
+      elsif (child_i = el.children[0] || VoidElement).type == :text && (child_i_text = child_i.value).start_with?(*ADMON_MARKERS)
         marker, child_i_text = child_i_text.split ': ', 2
         child_i.value = %(#{ADMON_TYPE_MAP[marker]}: #{child_i_text})
         %(#{inner el, opts}#{LFx2})
       # NOTE detect formatted admonition marker (e.g., *Note:* ...)
       elsif (child_i.type == :strong || child_i.type == :em) &&
           (marker_el = child_i.children[0]) && ((marker = ADMON_FORMATTED_MARKERS[marker_el.value]) ||
-          ((marker = ADMON_LABELS[marker_el.value]) && (child_ii = el.children[1]) && child_ii.type == :text &&
+          ((marker = ADMON_LABELS[marker_el.value]) && (child_ii = el.children[1] || VoidElement).type == :text &&
           ((child_ii_text = child_ii.value).start_with? ': ')))
         el.children.shift
         child_ii.value = child_ii_text.slice 1, child_ii_text.length if child_ii
@@ -236,7 +237,7 @@ module Kramdown; module Converter
         %(<<#{url.slice 1, url.length},#{inner el, opts}>>)
       # FIXME promote regex to const
       elsif url =~ /^https?:\/\//
-        if (child_i = el.children[0]) && child_i.type == :img
+        if (child_i = el.children[0] || VoidElement).type == :img
           convert_img child_i, parent: opts[:parent], index: 0, url: url
         else
           ((contents = inner el, opts).chomp '/') == (url.chomp '/') ? url : %(#{url}[#{contents}])
