@@ -1,1 +1,1 @@
-image::screenshot.png[Screenshot]
+image::screenshot.png[]

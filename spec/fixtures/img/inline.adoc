@@ -1,1 +1,1 @@
-This site is hosted on the image:acme-cloud.png[ACME Cloud].
+image:ok.png[] latency

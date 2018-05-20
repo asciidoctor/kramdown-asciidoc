@@ -230,7 +230,11 @@ module Kramdown; module Converter
         %(<<#{url.slice 1, url.length},#{inner el, opts}>>)
       # FIXME promote regex to const
       elsif url =~ /^https?:\/\//
-        (label = inner el, opts) == url ? (url.chomp '/') : %(#{url.chomp '/'}[#{label}])
+        if (i_child = el.children[0]) && i_child.type == :img
+          convert_img i_child, parent: opts[:parent], index: 0, url: url
+        else
+          (contents = inner el, opts) == url ? (url.chomp '/') : %(#{url.chomp '/'}[#{contents}])
+        end
       else
         # QUESTION should we replace .md suffix with .adoc?
         %(link:#{url}[#{inner el, opts}])
@@ -238,9 +242,11 @@ module Kramdown; module Converter
     end 
 
     def convert_img el, opts
-      prefix = !(parent = opts[:parent]) || parent.children.size == 1 ? 'image::' : 'image:'
+      prefix = !(parent = opts[:parent]) || parent.type == :p && parent.children.size == 1 ? 'image::' : 'image:'
+      alt_text = el.attr['alt']
+      link_attr = (url = opts[:url]) ? %(#{alt_text.empty? ? '' : ','}link=#{url}) : ''
       # TODO detect case when link is wrapped around image
-      %(#{prefix}#{el.attr['src']}[#{el.attr['alt']}])
+      %(#{prefix}#{el.attr['src']}[#{alt_text}#{link_attr}])
     end
 
     def convert_typographic_sym el, opts

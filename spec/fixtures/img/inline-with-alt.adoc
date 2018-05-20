@@ -1,0 +1,1 @@
+image:ok.png[A-OK!] latency

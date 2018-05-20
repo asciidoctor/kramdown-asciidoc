@@ -1,0 +1,1 @@
+image::https://api.travis-ci.org/asciidoctor/kramdown-asciidoc.svg[link=https://travis-ci.org/asciidoctor/kramdown-asciidoc]
