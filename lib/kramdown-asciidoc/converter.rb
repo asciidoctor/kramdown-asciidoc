@@ -14,16 +14,20 @@ module Kramdown; module Converter
     LF = %(\n)
     LFx2 = %(\n\n)
 
-    #def initialize root, opts
-    #  super
-    #end
+    def initialize root, opts
+      super
+      @header = []
+      @attributes = opts[:attributes] || {}
+    end
 
     def convert el, opts = {}
       send %(convert_#{el.type}), el, opts
     end
 
     def convert_root el, opts
-      (inner el, (opts.merge rstrip: true))
+      body = inner el, (opts.merge rstrip: true)
+      @attributes.each {|k, v| @header << %(:#{k}: #{v}) } unless @attributes.empty?
+      @header.empty? ? body : (body.empty? ? (@header.join LF) : %(#{@header.join LF}#{LFx2}#{body}))
     end
 
     def convert_blank el, opts
@@ -43,8 +47,13 @@ module Kramdown; module Converter
         result << %([#{role}])
       end
       result << %(#{'=' * (level = el.options[:level])} #{inner el, opts})
-      #result << ':pp: {plus}{plus}' if level == 1 && opts[:index] == 0
-      %(#{result.join LF}#{LFx2})
+      if level == 1 && opts[:result].empty?
+        @header = result
+        nil
+      else
+        @attributes['doctype'] = 'book' if level == 1
+        %(#{result.join LF}#{LFx2})
+      end
     end
 
     # Kramdown incorrectly uses the term header for headings
@@ -184,8 +193,10 @@ module Kramdown; module Converter
     end
 
     def convert_text el, opts
-      result = el.value
-      #result = result.gsub '++', '{pp}' if result.include? '++'
+      if (result = el.value).include? '++'
+        @attributes['pp'] = '{plus}{plus}'
+        result = result.gsub '++', '{pp}'
+      end
       if result.ascii_only?
         result
       else

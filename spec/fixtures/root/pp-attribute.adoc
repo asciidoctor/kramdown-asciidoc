@@ -1,0 +1,6 @@
+= SQL{pp} Guide
+:pp: {plus}{plus}
+
+== What's SQL{pp}
+
+SQL{pp} is a SQL-inspired language for working with semi-structured data.
