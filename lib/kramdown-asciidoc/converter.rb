@@ -42,8 +42,7 @@ module Kramdown; module Converter
       elsif role
         result << %([#{role}])
       end
-      # FIXME preserve inline markup
-      result << %(#{'=' * (level = el.options[:level])} #{el.options[:raw_text]})
+      result << %(#{'=' * (level = el.options[:level])} #{inner el, opts})
       #result << ':pp: {plus}{plus}' if level == 1 && opts[:index] == 0
       %(#{result.join LF}#{LFx2})
     end
