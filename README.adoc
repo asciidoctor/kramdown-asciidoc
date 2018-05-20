@@ -61,9 +61,9 @@ NOTE: You must invoke `bundle` from the project's root directory so it can locat
 
 == Usage
 
-Convert a Markdown file to AsciiDoc:
+Convert a Markdown file to AsciiDoc using the `kramdoc` command:
 
- $ bundle exec kramdown-asciidoc sample.md
+ $ bundle exec kramdoc sample.md
 
 The script will automatically create the output file [.path]_sample.adoc_, replacing the Markdown file extension, `.md` with the AsciiDoc file extension, `.adoc`.
 

@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.license = 'MIT'
 
   s.files = Dir['lib/*', 'lib/*/**']
-  s.executables = ['kramdown-asciidoc']
+  s.executables = ['kramdoc']
   s.extra_rdoc_files = Dir['README.doc', 'LICENSE.adoc']
   s.require_paths = ['lib']
 
