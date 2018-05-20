@@ -13,9 +13,15 @@ unless infile
 end
 outfile = infile.sub /\.[^.]+$/, '.adoc' 
 input = (IO.read infile, open_args: ['rb:UTF-8']).strip
+attributes = {}
+
+if (replaced = Kramdown::Converter::AsciiDoc.replace_toc input)
+  input = replaced
+  attributes['toc'] = 'macro'
+end
 
 # FIXME allow input type to be specified (Kramdown, GFM, etc)
-doc = Kramdown::Document.new input, Kramdown::Converter::AsciiDoc::DEFAULT_PARSER_OPTS
+doc = Kramdown::Document.new input, (Kramdown::Converter::AsciiDoc::DEFAULT_PARSER_OPTS.merge attributes: attributes)
 # FIXME provide option to write to different file or stdout
 File.write outfile, doc.to_asciidoc
 exit 0

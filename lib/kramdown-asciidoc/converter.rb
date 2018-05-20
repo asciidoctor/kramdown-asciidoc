@@ -9,6 +9,9 @@ module Kramdown; module Converter
 
     XmlCommentRx = /\A<!--(.*)-->\Z/m
     CommentPrefixRx = /^ *! ?/m
+    TocDirectiveHead = '<!-- TOC '
+    TocDirectiveRx = /^<!-- TOC .*<!-- \/TOC -->/m
+
     VoidElement = Element.new nil
 
     LF = %(\n)
@@ -335,6 +338,10 @@ module Kramdown; module Converter
         prev = child
       end
       rstrip ? result.join.rstrip : result.join
+    end
+
+    def self.replace_toc input
+      input.gsub TocDirectiveRx, 'toc::[]' if input.include? TocDirectiveHead
     end
   end
 
