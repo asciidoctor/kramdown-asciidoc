@@ -233,7 +233,7 @@ module Kramdown; module Converter
         if (child_i = el.children[0]) && child_i.type == :img
           convert_img child_i, parent: opts[:parent], index: 0, url: url
         else
-          (contents = inner el, opts) == url ? (url.chomp '/') : %(#{url.chomp '/'}[#{contents}])
+          ((contents = inner el, opts).chomp '/') == (url.chomp '/') ? url : %(#{url}[#{contents}])
         end
       else
         # QUESTION should we replace .md suffix with .adoc?
