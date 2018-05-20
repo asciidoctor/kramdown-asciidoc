@@ -1,1 +1,1 @@
-image:ok.png[] latency
+Using ACME? Add a badge to show your support: image:https://img.shields.io/badge/powered%20by-ACME-aa0000.svg[]
