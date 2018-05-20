@@ -253,14 +253,15 @@ module Kramdown; module Converter
     end
 
     def convert_html_element el, opts
-      contents = inner el, (opts.merge rstrip: true)
+      contents = inner el, (opts.merge rstrip: el.options[:category] == :block)
+      attrs = (attrs = el.attr).empty? ? '' : attrs.map {|k, v| %( #{k}="#{v}") }.join
       case (tagname = el.value)
       when 'sup'
         %(^#{contents}^)
       when 'sub'
         %(~#{contents}~)
       else
-        %(+++<#{tagname}>+++#{contents}+++</#{tagname}>+++)
+        %(+++<#{tagname}#{attrs}>+++#{contents}+++</#{tagname}>+++)
       end
     end
 

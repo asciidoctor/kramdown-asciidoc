@@ -1,0 +1,1 @@
+Markdown supports inline <abbr title="Hypertext Markup Language">HTML</abbr> anywhere except inside code blocks.
