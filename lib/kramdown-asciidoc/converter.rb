@@ -265,8 +265,9 @@ module Kramdown; module Converter
         else
           ((contents = inner el, opts).chomp '/') == (url.chomp '/') ? url : %(#{url}[#{contents}])
         end
+      elsif url.end_with? '.md'
+        %(xref:#{url.slice 0, url.length - 3}.adoc[#{inner el, opts}])
       else
-        # QUESTION should we replace .md suffix with .adoc?
         %(link:#{url}[#{inner el, opts}])
       end
     end 
