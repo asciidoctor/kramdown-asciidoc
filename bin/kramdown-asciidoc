@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-if File.exist?(kramdown_asciidoc = (File.expand_path '../../lib/kramdown-asciidoc', __FILE__))
+if File.exist? (kramdown_asciidoc = File.absolute_path '../lib/kramdown-asciidoc', __dir__)
   require kramdown_asciidoc
 else
   require 'kramdown-asciidoc'
