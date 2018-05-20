@@ -9,6 +9,7 @@ module Kramdown; module Converter
 
     XmlCommentRx = /\A<!--(.*)-->\Z/m
     CommentPrefixRx = /^ *! ?/m
+    VoidElement = Element.new nil
 
     LF = %(\n)
     LFx2 = %(\n\n)
@@ -31,8 +32,10 @@ module Kramdown; module Converter
 
     def convert_heading el, opts
       result = []
-      if (id = el.attr['id']) || ((child_i = el.children[0]) && child_i.type == :html_element &&
+      if (id = el.attr['id']) || ((child_i = el.children[0] || VoidElement).type == :html_element &&
           child_i.value == 'a' && (id = child_i.attr['id']))
+        el.children.shift
+        el.children.unshift(*child_i.children) unless child_i.children.empty?
         result << %([##{id}])
       end
       # FIXME preserve inline markup
