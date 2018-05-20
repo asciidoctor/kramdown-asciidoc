@@ -21,6 +21,7 @@ module Kramdown; module Converter
       super
       @header = []
       @attributes = opts[:attributes] || {}
+      @last_heading_level = nil
     end
 
     def convert el, opts = {}
@@ -39,17 +40,21 @@ module Kramdown; module Converter
 
     def convert_heading el, opts
       result = []
-      role = (role = el.attr['class']) ? %(.#{role.tr ' ', '.'}) : nil
+      style = []
+      level = el.options[:level]
+      style << 'discrete' if (discrete = @last_heading_level && level > @last_heading_level + 1)
       if (id = el.attr['id'])
-        result << %([##{id}#{role || ''}])
+        style << %(##{id})
       elsif (child_i = el.children[0] || VoidElement).type == :html_element && child_i.value == 'a' && (id = child_i.attr['id'])
         el.children.shift
         el.children.unshift(*child_i.children) unless child_i.children.empty?
-        result << %([##{id}#{role || ''}])
-      elsif role
-        result << %([#{role}])
+        style << %(##{id})
+      elsif (role = el.attr['class'])
+        style << %(.#{role.tr ' ', '.'})
       end
-      result << %(#{'=' * (level = el.options[:level])} #{inner el, opts})
+      result << %([#{style.join}]) unless style.empty?
+      result << %(#{'=' * level} #{inner el, opts})
+      @last_heading_level = level unless discrete
       if level == 1 && opts[:result].empty?
         @header = result
         nil
