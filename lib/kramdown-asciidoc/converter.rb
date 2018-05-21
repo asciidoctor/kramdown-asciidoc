@@ -1,6 +1,6 @@
 module Kramdown; module Converter
   class AsciiDoc < Base
-    DEFAULT_PARSER_OPTS = { auto_ids: false, html_to_native: true, input: 'GFM' }
+    DEFAULT_PARSER_OPTS = { auto_ids: false, hard_wrap: false, html_to_native: true, input: 'GFM' }
     RESOLVE_ENTITY_TABLE = %w(lt gt).map {|name| Utils::Entities.entity name }.map {|obj| [obj, obj.char] }.to_h
     ADMON_LABELS = %w(Note Tip Caution Warning Important Attention).map {|l| [l, l] }.to_h
     ADMON_MARKERS = ADMON_LABELS.map {|l, _| %(#{l}: ) }
@@ -229,15 +229,17 @@ module Kramdown; module Converter
       %(*#{inner el, opts}*)
     end
 
+    # NOTE this logic assumes the :hard_wrap option is disabled in the parser
     def convert_br el, opts
-      # handle <br/>
+      prefix = ((opts[:result][-1] || '').end_with? ' ') ? '' : ' '
+      # if @attr is set, this is a <br> HTML tag
       if el.instance_variable_get :@attr
-        spacer = (last_result = opts[:result][-1]) && (last_result.end_with? ' ') ? '' : ' '
-        %(#{spacer}+#{LF})
+        siblings = opts[:parent].children
+        suffix = (next_el = siblings[(siblings.index el) + 1] || VoidElement).type == :text && (next_el.value.start_with? LF) ? '' : LF
       else
-        # TODO detect a markdown-style hard wrap by looking for two spaces at end of previous element
-        nil
+        suffix = ''
       end
+      %(#{prefix}+#{suffix})
     end
 
     def convert_smart_quote el, opts
@@ -321,7 +323,7 @@ module Kramdown; module Converter
         end
       else
         if (current_line = opts[:result][-1])
-          if current_line == LF
+          if current_line.end_with? LF
             prefix = ''
           else
             prefix = LF
