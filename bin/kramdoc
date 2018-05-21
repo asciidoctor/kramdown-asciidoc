@@ -23,5 +23,5 @@ end
 # FIXME allow input type to be specified (Kramdown, GFM, etc)
 doc = Kramdown::Document.new input, (Kramdown::Converter::AsciiDoc::DEFAULT_PARSER_OPTS.merge attributes: attributes)
 # FIXME provide option to write to different file or stdout
-File.write outfile, doc.to_asciidoc
+IO.write outfile, doc.to_asciidoc
 exit 0
