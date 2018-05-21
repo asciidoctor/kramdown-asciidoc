@@ -6,6 +6,16 @@ module Kramdown; module Converter
     ADMON_MARKERS = ADMON_LABELS.map {|l, _| %(#{l}: ) }
     ADMON_FORMATTED_MARKERS = ADMON_LABELS.map {|l, _| [%(#{l}:), l] }.to_h
     ADMON_TYPE_MAP = ADMON_LABELS.map {|l, _| [l, l.upcase] }.to_h.merge 'Attention' => 'IMPORTANT'
+    TYPOGRAPHIC_MARKUP_TABLE = {
+      # FIXME in the future, mdash will be three dashes in AsciiDoc; for now, down-convert
+      mdash: '--',
+      ndash: '--',
+      hellip: '...',
+      laquo: '<<',
+      raquo: '>>',
+      laquo_scape: '<< ',
+      raquo_space: ' >>',
+    }
 
     XmlCommentRx = /\A<!--(.*)-->\Z/m
     CommentPrefixRx = /^ *! ?/m
@@ -100,8 +110,8 @@ module Kramdown; module Converter
       # TODO support more than one level of nesting
       boundary = (parent = opts[:parent]) && parent.type == :blockquote ? '______' : '____'
       contents = inner el, (opts.merge rstrip: true)
-      if (contents.include? LF) && ((attribution_line = (lines = contents.split LF).pop).start_with? '&#8211; ')
-        attribution = attribution_line.slice 8, attribution_line.length
+      if (contents.include? LF) && ((attribution_line = (lines = contents.split LF).pop).start_with? '-- ')
+        attribution = attribution_line.slice 3, attribution_line.length
         result << %([,#{attribution}])
         lines.pop while lines.size > 0 && lines[-1].empty?
         contents = lines.join LF
@@ -281,19 +291,9 @@ module Kramdown; module Converter
       %(#{prefix}#{el.attr['src']}[#{alt_text}#{link_attr}])
     end
 
+    # NOTE leave enabled so we can down-convert mdash to --
     def convert_typographic_sym el, opts
-      # FIXME constantify map
-      symbol_map = {
-        # FIXME in the future, mdash will be three dashes and ndash two
-        mdash: '--',
-        ndash: '&#8211;',
-        hellip: '...',
-        laquo: '<<',
-        raquo: '>>',
-        laquo_scape: '<< ',
-        raquo_space: ' >>'
-      }
-      symbol_map[el.value]
+      TYPOGRAPHIC_MARKUP_TABLE[el.value]
     end
 
     def convert_html_element el, opts
