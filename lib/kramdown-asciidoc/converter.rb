@@ -34,6 +34,7 @@ module Kramdown; module Converter
       super
       @header = []
       @attributes = opts[:attributes] || {}
+      @imagesdir = (@attributes.delete 'implicit-imagesdir') || @attributes['imagesdir']
       @last_heading_level = nil
     end
 
@@ -282,8 +283,11 @@ module Kramdown; module Converter
       prefix = !(parent = opts[:parent]) || parent.type == :p && parent.children.size == 1 ? 'image::' : 'image:'
       alt_text = el.attr['alt']
       link_attr = (url = opts[:url]) ? %(#{alt_text.empty? ? '' : ','}link=#{url}) : ''
-      # TODO detect case when link is wrapped around image
-      %(#{prefix}#{el.attr['src']}[#{alt_text}#{link_attr}])
+      src = el.attr['src']
+      if (imagesdir = @imagesdir) && (src.start_with? %(#{imagesdir}/))
+        src = src.slice imagesdir.length + 1, src.length
+      end
+      %(#{prefix}#{src}[#{alt_text}#{link_attr}])
     end
 
     # NOTE leave enabled so we can down-convert mdash to --

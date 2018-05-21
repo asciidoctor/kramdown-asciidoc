@@ -1,0 +1,3 @@
+= Screenshots
+
+image::screenshot.png[Screenshot]

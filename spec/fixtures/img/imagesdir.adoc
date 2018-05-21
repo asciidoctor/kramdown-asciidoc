@@ -1,0 +1,4 @@
+= Screenshots
+:imagesdir: images
+
+image::screenshot.png[Screenshot]
