@@ -154,24 +154,25 @@ module Kramdown; module Converter
       else
         suffix = LFx2
       end
+      contents = el.value.rstrip
       if (lang = el.attr['class'])
         lang = lang.slice 9, lang.length if lang.start_with? 'language-'
+        #lang = 'console' if lang == 'bash' && (contents.start_with? '$ ')
+        lang = 'console' if lang == 'bash'
         result << %([source,#{lang}])
       end
-      # QUESTION should we rstrip?
-      code = el.value.chomp
-      if !lang && (code.start_with? '$')
-        if code.include? LFx2
+      if !lang && (contents.start_with? '$ ')
+        if contents.include? LFx2
           result << '....'
-          result << code
+          result << contents
           result << '....'
         else
           list_continuation = LF if list_continuation
-          result << (code.gsub StartOfLinesRx, ' ')
+          result << (contents.gsub StartOfLinesRx, ' ')
         end
       else
         result << '----'
-        result << code
+        result << contents
         result << '----'
       end
       result.unshift list_continuation if list_continuation
