@@ -35,7 +35,9 @@ describe Kramdown::Converter::AsciiDoc do
 
       ...
       EOS
-      (expect described_class.replace_toc input).to eql expected
+      attributes = {}
+      (expect described_class.replace_toc input, attributes).to eql expected
+      (expect attributes['toc']).to eql 'macro'
     end
   end
 end

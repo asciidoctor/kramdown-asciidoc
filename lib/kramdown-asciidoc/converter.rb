@@ -361,8 +361,13 @@ module Kramdown; module Converter
       rstrip ? result.join.rstrip : result.join
     end
 
-    def self.replace_toc input
-      input.gsub TocDirectiveRx, 'toc::[]' if input.include? TocDirectiveHead
+    def self.replace_toc input, attributes
+      if input.include? TocDirectiveTip
+        attributes['toc'] = 'macro'
+        input.gsub TocDirectiveRx, 'toc::[]'
+      else
+        input
+      end
     end
   end
 
