@@ -5,7 +5,7 @@ describe Kramdown::Converter::AsciiDoc do
   let(:doc) { Kramdown::Document.new input, opts }
   let(:root) { doc.root }
 
-  context 'TOC' do
+  context '.replace_toc' do
     it 'replaces TOC directive with a toc block macro' do
       input = <<~EOS
       # Database Guide
@@ -26,6 +26,7 @@ describe Kramdown::Converter::AsciiDoc do
 
       ...
       EOS
+
       expected = <<~EOS
       # Database Guide
 
@@ -35,9 +36,42 @@ describe Kramdown::Converter::AsciiDoc do
 
       ...
       EOS
+
       attributes = {}
       (expect described_class.replace_toc input, attributes).to eql expected
       (expect attributes['toc']).to eql 'macro'
+    end
+  end
+
+  context '.extract_front_matter' do
+    it 'extracts front matter and assigns entries to attributes' do
+      input = <<~EOS
+      ---
+      title: Introduction
+      description: An introduction to this amazing technology.
+      keywords: buzz, transformative
+      layout: default
+      ---
+
+      # Introduction
+
+      When using this technology, anything is possible.
+      EOS
+
+      expected = <<~EOS
+      # Introduction
+
+      When using this technology, anything is possible.
+      EOS
+
+      expected_attributes = {
+        'description' => 'An introduction to this amazing technology.',
+        'keywords' => 'buzz, transformative',
+      }
+
+      attributes = {}
+      (expect described_class.extract_front_matter input, attributes).to eql expected
+      (expect attributes).to eql expected_attributes
     end
   end
 end

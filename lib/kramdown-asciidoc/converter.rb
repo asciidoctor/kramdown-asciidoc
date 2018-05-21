@@ -362,12 +362,37 @@ module Kramdown; module Converter
       rstrip ? result.join.rstrip : result.join
     end
 
-    def self.replace_toc input, attributes
-      if input.include? TocDirectiveTip
+    def self.replace_toc source, attributes
+      if source.include? TocDirectiveTip
         attributes['toc'] = 'macro'
-        input.gsub TocDirectiveRx, 'toc::[]'
+        source.gsub TocDirectiveRx, 'toc::[]'
       else
-        input
+        source
+      end
+    end
+
+    def self.extract_front_matter source, attributes
+      if (line_i = (lines = source.each_line).next) && line_i.chomp == '---'
+        require 'yaml' unless defined? ::YAML
+        lines = lines.drop 1
+        front_matter = []
+        while (line = lines.shift) && line.chomp != '---'
+          front_matter << line
+        end
+        lines.shift while (line = lines[0]) && line.chomp.empty?
+        (YAML.load front_matter.join).each do |key, val|
+          case key
+          when 'title'
+            # skip
+          when 'layout'
+            attributes['page-layout'] = val unless val == 'default'
+          else
+            attributes[key] = val.to_s
+          end
+        end
+        lines.join
+      else
+        source
       end
     end
   end

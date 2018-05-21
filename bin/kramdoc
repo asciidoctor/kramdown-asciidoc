@@ -14,6 +14,7 @@ end
 outfile = infile.sub /\.[^.]+$/, '.adoc' 
 input = (IO.read infile, open_args: ['rb:UTF-8']).strip
 attributes = {}
+input = Kramdown::Converter::AsciiDoc.extract_front_matter input, attributes
 input = Kramdown::Converter::AsciiDoc.replace_toc input, attributes
 # FIXME allow input type to be specified (Kramdown, GFM, etc)
 doc = Kramdown::Document.new input, (Kramdown::Converter::AsciiDoc::DEFAULT_PARSER_OPTS.merge attributes: attributes)
