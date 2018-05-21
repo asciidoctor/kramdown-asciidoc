@@ -83,18 +83,19 @@ module Kramdown; module Converter
 
     def convert_p el, opts
       if (parent = opts[:parent]) && parent.type == :li
-        if opts[:prev]
-          parent.options[:compound] = true
-          opts[:result].pop unless opts[:result][-1]
-          %(#{LF}+#{LF}#{inner el, opts})
-        else
-          inner el, opts
-        end
+        # NOTE :prev option not set indicates primary text; convert_li appends LF
+        return inner el, opts unless opts[:prev]
+        parent.options[:compound] = true
+        opts[:result].pop unless opts[:result][-1]
+        prefix, suffix = %(#{LF}+#{LF}), ''
+      else
+        prefix, suffix = '', LFx2
+      end
       # NOTE detect plain admonition marker (e.g, Note: ...)
-      elsif (child_i = el.children[0] || VoidElement).type == :text && (child_i_text = child_i.value).start_with?(*ADMON_MARKERS)
+      if (child_i = el.children[0] || VoidElement).type == :text && (child_i_text = child_i.value).start_with?(*ADMON_MARKERS)
         marker, child_i_text = child_i_text.split ': ', 2
         child_i.value = %(#{ADMON_TYPE_MAP[marker]}: #{child_i_text})
-        %(#{inner el, opts}#{LFx2})
+        contents = inner el, opts
       # NOTE detect formatted admonition marker (e.g., *Note:* ...)
       elsif (child_i.type == :strong || child_i.type == :em) &&
           (marker_el = child_i.children[0]) && ((marker = ADMON_FORMATTED_MARKERS[marker_el.value]) ||
@@ -102,10 +103,11 @@ module Kramdown; module Converter
           ((child_ii_text = child_ii.value).start_with? ': ')))
         el.children.shift
         child_ii.value = child_ii_text.slice 1, child_ii_text.length if child_ii
-        %(#{ADMON_TYPE_MAP[marker]}:#{inner el, opts}#{LFx2})
+        contents = %(#{ADMON_TYPE_MAP[marker]}:#{inner el, opts})
       else
-        %(#{inner el, opts}#{LFx2})
+        contents = inner el, opts
       end
+      %(#{prefix}#{contents}#{suffix})
     end
 
     # TODO detect admonition masquerading as blockquote
