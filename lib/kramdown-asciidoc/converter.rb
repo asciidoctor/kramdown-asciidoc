@@ -6,6 +6,8 @@ module Kramdown; module Converter
     ADMON_MARKERS = ADMON_LABELS.map {|l, _| %(#{l}: ) }
     ADMON_FORMATTED_MARKERS = ADMON_LABELS.map {|l, _| [%(#{l}:), l] }.to_h
     ADMON_TYPE_MAP = ADMON_LABELS.map {|l, _| [l, l.upcase] }.to_h.merge 'Attention' => 'IMPORTANT'
+    # FIXME here we reverse the smart quotes; add option to allow them (needs to be handled carefully)
+    SMART_QUOTE_MARKUP_TABLE = { ldquo: '"', rdquo: '"', lsquo: '\'', rsquo: '\'' }
     TYPOGRAPHIC_MARKUP_TABLE = {
       # FIXME in the future, mdash will be three dashes in AsciiDoc; for now, down-convert
       mdash: '--',
@@ -17,10 +19,11 @@ module Kramdown; module Converter
       raquo_space: ' >>',
     }
 
-    XmlCommentRx = /\A<!--(.*)-->\Z/m
     CommentPrefixRx = /^ *! ?/m
     TocDirectiveHead = '<!-- TOC '
     TocDirectiveRx = /^<!-- TOC .*<!-- \/TOC -->/m
+    StartOfLinesRx = /^/m
+    XmlCommentRx = /\A<!--(.*)-->\Z/m
 
     VoidElement = Element.new nil
 
@@ -147,8 +150,7 @@ module Kramdown; module Converter
           result << '....'
         else
           list_continuation = LF if list_continuation
-          # FIXME promote regex to const
-          result << (code.gsub %r/^/m, ' ')
+          result << (code.gsub StartOfLinesRx, ' ')
         end
       else
         result << '----'
@@ -253,14 +255,7 @@ module Kramdown; module Converter
     end
 
     def convert_smart_quote el, opts
-      # FIXME constantify map
-      symbol_map = {
-        ldquo: '"',
-        rdquo: '"',
-        lsquo: '\'',
-        rsquo: '\''
-      }
-      symbol_map[el.value]
+      SMART_QUOTE_MARKUP_TABLE[el.value]
     end
 
     def convert_entity el, opts
