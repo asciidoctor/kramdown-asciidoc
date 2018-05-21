@@ -1,3 +1,4 @@
+# encoding: UTF-8
 module Kramdown; module Converter
   class AsciiDoc < Base
     DEFAULT_PARSER_OPTS = { auto_ids: false, hard_wrap: false, html_to_native: true, input: 'GFM' }
@@ -7,8 +8,18 @@ module Kramdown; module Converter
     ADMON_FORMATTED_MARKERS = ADMON_LABELS.map {|l, _| [%(#{l}:), l] }.to_h
     ADMON_TYPE_MAP = ADMON_LABELS.map {|l, _| [l, l.upcase] }.to_h.merge 'Attention' => 'IMPORTANT'
     # FIXME here we reverse the smart quotes; add option to allow them (needs to be handled carefully)
-    SMART_QUOTE_MARKUP_TABLE = { ldquo: '"', rdquo: '"', lsquo: '\'', rsquo: '\'' }
-    TYPOGRAPHIC_MARKUP_TABLE = {
+    SMART_QUOTE_ENTITY_TO_MARKUP = { ldquo: '"', rdquo: '"', lsquo: '\'', rsquo: '\'' }
+    TYPOGRAPHIC_SYMBOL_TO_MARKUP = {
+      '“' => '"`',
+      '”' => '`"',
+      '‘' => '\'`',
+      '’' => '`\'',
+      # FIXME in the future, mdash will be three dashes in AsciiDoc; for now, down-convert
+      '—' => '--',
+      '–' => '&#8211;',
+      '…' => '...',
+    }
+    TYPOGRAPHIC_ENTITY_TO_MARKUP = {
       # FIXME in the future, mdash will be three dashes in AsciiDoc; for now, down-convert
       mdash: '--',
       ndash: '--',
@@ -19,10 +30,13 @@ module Kramdown; module Converter
       raquo_space: ' >>',
     }
 
+    ApostropheRx = /\b’\b/
     CommentPrefixRx = /^ *! ?/m
-    TocDirectiveHead = '<!-- TOC '
+    TocDirectiveTip = '<!-- TOC '
     TocDirectiveRx = /^<!-- TOC .*<!-- \/TOC -->/m
+    ReplaceableTextRx = /[-=]>|<[-=]|\.\.\./
     StartOfLinesRx = /^/m
+    TypographicSymbolRx = /[“”‘’—–…]/
     XmlCommentRx = /\A<!--(.*)-->\Z/m
 
     VoidElement = Element.new nil
@@ -225,15 +239,12 @@ module Kramdown; module Converter
       if result.ascii_only?
         result
       else
-        # FIXME extract this mapping
-        mapping = { '“' => '"`', '”' => '`"', '‘' => '\'`', '’' => '`\'', '–' => '--', '…' => '...' }
-        result.gsub(/\b’\b/, '\'').gsub(/[“”‘’–…]/, mapping)
+        (result.gsub ApostropheRx, '\'').gsub TypographicSymbolRx, TYPOGRAPHIC_SYMBOL_TO_MARKUP
       end
     end
 
     def convert_codespan el, opts
-      # FIXME constantify regex
-      (val = el.value) =~ /(?:[-=]>|<[-=]|\.\.\.)/ ? %(`+#{val}+`) : %(`#{val}`)
+      (val = el.value) =~ ReplaceableTextRx ? %(`+#{val}+`) : %(`#{val}`)
     end
 
     def convert_em el, opts
@@ -258,7 +269,7 @@ module Kramdown; module Converter
     end
 
     def convert_smart_quote el, opts
-      SMART_QUOTE_MARKUP_TABLE[el.value]
+      SMART_QUOTE_ENTITY_TO_MARKUP[el.value]
     end
 
     def convert_entity el, opts
@@ -294,7 +305,7 @@ module Kramdown; module Converter
 
     # NOTE leave enabled so we can down-convert mdash to --
     def convert_typographic_sym el, opts
-      TYPOGRAPHIC_MARKUP_TABLE[el.value]
+      TYPOGRAPHIC_ENTITY_TO_MARKUP[el.value]
     end
 
     def convert_html_element el, opts
