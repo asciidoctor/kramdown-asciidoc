@@ -325,11 +325,11 @@ module Kramdown; module Converter
     def convert_xml_comment el, opts
       XmlCommentRx =~ el.value
       comment_text = ($1.include? ' !') ? ($1.gsub CommentPrefixRx, '').strip : $1.strip
-      if el.options[:category] == :block
+      #siblings = (parent = opts[:parent]) ? parent.children : []
+      if (el.options[:category] == :block)# || (!opts[:result][-1] && siblings[-1] == el)
         if comment_text.empty?
           %(//-#{LFx2})
         elsif comment_text.include? LF
-          #%(#{$1.split(LF).map {|l| %[// #{l}] }.join LF}#{LFx2})
           %(////#{LF}#{comment_text}#{LF}////#{LFx2})
         else
           %(// #{comment_text}#{LFx2})
@@ -345,9 +345,13 @@ module Kramdown; module Converter
         else
           prefix = ''
         end
-        siblings = opts[:parent].children
-        suffix = siblings[(siblings.index el) + 1] ? LF : ''
-        %(#{prefix}// #{comment_text}#{suffix})
+        siblings = (parent = opts[:parent]) && parent.children
+        suffix = siblings && siblings[(siblings.index el) + 1] ? LF : ''
+        if comment_text.include? LF
+          %(#{prefix}#{comment_text.gsub StartOfLinesRx, '// '}#{suffix})
+        else
+          %(#{prefix}// #{comment_text}#{suffix})
+        end
       end
     end
 
