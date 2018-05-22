@@ -17,7 +17,7 @@ describe 'integration scenario' do
       context %(for #{scenario_name}) do
         let(:input) { ::IO.read input_filename, open_args: ['rb:UTF-8'] }
         let(:extra_options) { options }
-        let(:expected) { (::IO.read output_filename, open_args: ['rb:UTF-8']).chomp }
+        let(:expected) { ::IO.read output_filename, open_args: ['rb:UTF-8'] }
         it 'converts Markdown to AsciiDoc' do
           (expect doc.to_asciidoc).to eql expected
         end

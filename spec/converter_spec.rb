@@ -5,6 +5,15 @@ describe Kramdown::Converter::AsciiDoc do
   let(:doc) { Kramdown::Document.new input, opts }
   let(:root) { doc.root }
 
+  context '#convert' do
+    let (:input) { %(# Document Title\n\nBody text.) }
+    it 'adds line feed (EOL) to end of output document' do
+      converter = described_class.send :new, root, {}
+      (expect converter.convert root).to end_with %(\n)
+      (expect doc.to_asciidoc).to end_with %(\n)
+    end
+  end
+
   context '.replace_toc' do
     it 'replaces TOC directive with a toc block macro' do
       input = <<~EOS

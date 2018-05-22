@@ -57,9 +57,9 @@ module Kramdown; module Converter
     end
 
     def convert_root el, opts
-      body = inner el, (opts.merge rstrip: true)
+      body = %(#{inner el, (opts.merge rstrip: true)}#{LF})
       @attributes.each {|k, v| @header << %(:#{k}: #{v}) } unless @attributes.empty?
-      @header.empty? ? body : (body.empty? ? (@header.join LF) : %(#{@header.join LF}#{LFx2}#{body}))
+      @header.empty? ? body : %(#{@header.join LF}#{body == LF ? '' : LFx2}#{body})
     end
 
     def convert_blank el, opts
