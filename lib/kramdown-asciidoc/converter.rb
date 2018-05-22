@@ -237,6 +237,7 @@ module Kramdown; module Converter
         @attributes['pp'] = '{plus}{plus}'
         result = result.gsub '++', '{pp}'
       end
+      result = result.gsub '<=', '\\<=' if result.include? '<='
       if result.ascii_only?
         result
       else
