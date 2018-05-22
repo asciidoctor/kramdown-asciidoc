@@ -11,8 +11,9 @@ unless infile
   warn 'Please specify a Markdown file to convert.'
   exit 1
 end
-outfile = infile.sub /\.[^.]+$/, '.adoc' 
-input = (IO.read infile, open_args: ['rb:UTF-8']).strip
+outfile = %(#{infile.slice 0, infile.length - (File.extname infile).length}.adoc)
+input = (IO.read infile, open_args: ['rb:UTF-8']).rstrip
+input = input.slice 1, input.length while input.start_with? ?\n
 attributes = {}
 input = Kramdown::Converter::AsciiDoc.extract_front_matter input, attributes
 input = Kramdown::Converter::AsciiDoc.replace_toc input, attributes
