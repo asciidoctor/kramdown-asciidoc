@@ -1,15 +1,38 @@
-= {project-name}
+= {project-name} (Markdown to AsciiDoc)
 Dan Allen <https://github.com/mojavelinux>
 // Aliases:
 :project-name: Kramdown AsciiDoc
 :project-handle: kramdown-asciidoc
+// Settings:
+:idprefix:
+:idseparator: -
+ifndef::env-github[:icons: font]
+ifdef::env-github,env-browser[]
+:toc: preamble
+:toclevels: 1
+endif::[]
+ifdef::env-github[]
+:status:
+:!toc-title:
+:note-caption: :paperclip:
+endif::[]
 // URIs:
 :uri-repo: https://github.com/asciidoctor/kramdown-asciidoc
-:uri-asciidoc: http://asciidoc.org
-:uri-rvm: http://rvm.io
+:uri-asciidoc: https://asciidoctor.org/docs/what-is-asciidoc/#what-is-asciidoc
+:uri-asciidoctor: https://asciidoctor.org
+:uri-rvm: https://rvm.io
 :uri-install-rvm: https://rvm.io/rvm/install
+//:img-gem: https://img.shields.io/gem/v/kramdown-asciidoc.svg?label=gem
+:uri-ci-travis: https://travis-ci.org/asciidoctor/kramdown-asciidoc
+:img-ci-travis: https://img.shields.io/travis/asciidoctor/kramdown-asciidoc/master.svg
+
+ifdef::status[]
+//image:{img-gem}[Gem Version,link={uri-gem}]
+image:{img-ci-travis}[Build Status (Travis CI),link={uri-ci-travis}]
+endif::[]
 
 A Kramdown extension for converting Markdown documents to {uri-asciidoc}[AsciiDoc].
+In particular, it generates the modern AsciiDoc syntax suitable for use with {uri-asciidoctor}[Asciidoctor].
 
 == Installation
 
@@ -71,8 +94,8 @@ At the moment, the script assumes the input uses the GitHub-flavor Markdown (GFM
 
 == Alternatives
 
-* https://github.com/bodiam/markdown-to-asciidoc[markdown-to-asciidoc] (Java-based)
-* http://pandoc.org[pandoc] (cli, Haskell-based)
+* https://github.com/bodiam/markdown-to-asciidoc[markdown-to-asciidoc] (Java library)
+* http://pandoc.org[pandoc] (Haskell-based CLI tool)
 
 == Authors
 
@@ -80,7 +103,7 @@ At the moment, the script assumes the input uses the GitHub-flavor Markdown (GFM
 
 == Copyright
 
-Copyright (C) 2016-2018 OpenDevise Inc. (on behalf of the Asciidoctor Project)
+Copyright (C) 2016-2018 OpenDevise Inc. (on behalf of the Asciidoctor Project).
 Free use of this software is granted under the terms of the MIT License.
 
 See the link:LICENSE.adoc[LICENSE] file for details.
