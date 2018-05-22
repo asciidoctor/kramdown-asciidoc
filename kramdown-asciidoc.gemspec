@@ -1,20 +1,38 @@
-# -*- encoding: utf-8 -*-
 require File.absolute_path 'lib/kramdown-asciidoc/version', __dir__
+require 'open3' unless defined? Open3
 
 Gem::Specification.new do |s|
   s.name = 'kramdown-asciidoc'
   s.version = Kramdown::AsciiDoc::VERSION
+  s.summary = 'A Markdown to AsciiDoc converter based on Kramdown'
+  s.description = 'A Kramdown extension for converting Markdown documents to AsciiDoc.'
+
   s.authors = ['Dan Allen']
   s.email = ['dan.j.allen@gmail.com']
   s.homepage = 'https://github.com/asciidoctor/kramdown-asciidoc'
-  s.summary = 'A Markdown to AsciiDoc converter using Kramdown'
-  s.description = 'A Kramdown extension for converting Markdown documents to AsciiDoc.'
   s.license = 'MIT'
+  s.metadata = {
+    'bug_tracker_uri' => 'https://github.com/asciidoctor/kramdown-asciidoc/issues',
+    'changelog_uri' => 'https://github.com/asciidoctor/kramdown-asciidoc/blob/master/CHANGELOG.adoc',
+    'mailing_list_uri' => 'http://discuss.asciidoctor.org',
+    'source_code_uri' => 'https://github.com/asciidoctor/kramdown-asciidoc'
+  }
+  #s.required_ruby_version = '>= 2.4.0'
 
-  s.files = Dir['lib/*', 'lib/*/**']
+  files = begin
+    (result = Open3.popen3('git ls-files -z') {|_, out| out.read }.split ?\0).empty? ? Dir['**/*'] : result
+  rescue
+    Dir['**/*']
+  end
+  s.files = files.grep %r/^(?:lib\/.+|Gemfile|Rakefile|(?:CHANGELOG|CONTRIBUTING|LICENSE|README)\.adoc|#{s.name}\.gemspec)$/
+  s.test_files = files.grep %r/^(?:spec\/.+)$/
   s.executables = ['kramdoc']
-  s.extra_rdoc_files = Dir['README.doc', 'LICENSE.adoc']
+
   s.require_paths = ['lib']
+
+  #s.has_rdoc = true
+  #s.rdoc_options = ['--charset=UTF-8']
+  #s.extra_rdoc_files = ['CHANGELOG.adoc', 'LICENSE.adoc']
 
   s.add_runtime_dependency 'kramdown', '~> 1.16.2'
   s.add_development_dependency 'rake', '~> 12.3.1'
