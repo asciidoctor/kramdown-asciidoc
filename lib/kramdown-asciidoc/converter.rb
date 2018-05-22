@@ -8,7 +8,7 @@ module Kramdown; module Converter
     ADMON_FORMATTED_MARKERS = ADMON_LABELS.map {|l, _| [%(#{l}:), l] }.to_h
     ADMON_TYPE_MAP = ADMON_LABELS.map {|l, _| [l, l.upcase] }.to_h.merge 'Attention' => 'IMPORTANT'
     # FIXME here we reverse the smart quotes; add option to allow them (needs to be handled carefully)
-    SMART_QUOTE_ENTITY_TO_MARKUP = { ldquo: '"', rdquo: '"', lsquo: '\'', rsquo: '\'' }
+    SMART_QUOTE_ENTITY_TO_MARKUP = { ldquo: ?", rdquo: ?", lsquo: ?', rsquo: ?' }
     TYPOGRAPHIC_SYMBOL_TO_MARKUP = {
       '“' => '"`',
       '”' => '`"',
@@ -41,8 +41,8 @@ module Kramdown; module Converter
 
     VoidElement = Element.new nil
 
-    LF = %(\n)
-    LFx2 = %(\n\n)
+    LF = ?\n
+    LFx2 = LF * 2
 
     def initialize root, opts
       super
@@ -241,7 +241,7 @@ module Kramdown; module Converter
       if result.ascii_only?
         result
       else
-        (result.gsub ApostropheRx, '\'').gsub TypographicSymbolRx, TYPOGRAPHIC_SYMBOL_TO_MARKUP
+        (result.gsub ApostropheRx, ?').gsub TypographicSymbolRx, TYPOGRAPHIC_SYMBOL_TO_MARKUP
       end
     end
 
