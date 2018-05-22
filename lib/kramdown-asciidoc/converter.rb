@@ -340,7 +340,18 @@ module Kramdown; module AsciiDoc
     end 
 
     def convert_img el, opts
-      prefix = !(parent = opts[:parent]) || parent.type == :p && parent.children.size == 1 ? 'image::' : 'image:'
+      if !(parent = opts[:parent]) || parent.type == :p && parent.children.size == 1
+        style = []
+        if (id = el.attr['id'])
+          style << %(##{id})
+        end
+        if (role = el.attr['class'])
+          style << %(.#{role.tr ' ', '.'})
+        end
+        prefix = style.empty? ? 'image::' : ([%([#{style.join}]), 'image::'].join LF)
+      else
+        prefix = 'image:'
+      end
       alt_text = el.attr['alt']
       link_attr = (url = opts[:url]) ? %(#{alt_text.empty? ? '' : ','}link=#{url}) : ''
       src = el.attr['src']
@@ -356,13 +367,16 @@ module Kramdown; module AsciiDoc
     end
 
     def convert_html_element el, opts
-      # NOTE convert an HTML-based admonition block
-      if (tagname = el.value) == 'div' && (role = el.attr['class']) && (role.start_with? 'note') &&
-          (child_i = el.children[0]) && child_i.options[:transparent] && (marker_el = child_i.children[0]) &&
-          marker_el.value == 'span' && (marker_el.attr['class'] == 'notetitle')
+      if (tagname = el.value) == 'div' && (child_i = el.children[0]) && child_i.options[:transparent] &&
+          (child_i_i = child_i.children[0])
+        if child_i_i.type == :img
+          return convert_img child_i_i, (opts.merge parent: child_i, index: 0) if child_i.children.size == 1
+        elsif child_i_i.value == 'span' && ((role = el.attr['class'] || '').start_with? 'note') &&
+            child_i_i.attr['class'] == 'notetitle'
+          marker = ADMON_FORMATTED_MARKERS[(child_i_i.children[0] || VoidElement).value] || 'Note'
           (el = child_i.dup).children = el.children.drop 1
-        marker = ADMON_FORMATTED_MARKERS[inner marker_el] || 'Note'
-        return %(#{ADMON_TYPE_MAP[marker]}:#{inner el, opts}#{LFx2})
+          return %(#{ADMON_TYPE_MAP[marker]}:#{inner el, opts}#{LFx2})
+        end
       end
       contents = inner el, (opts.merge rstrip: el.options[:category] == :block)
       attrs = (attrs = el.attr).empty? ? '' : attrs.map {|k, v| %( #{k}="#{v}") }.join

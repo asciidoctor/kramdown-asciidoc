@@ -1,0 +1,2 @@
+[#img-add-new-user.image]
+image::add-new-user.png[Add New User]
