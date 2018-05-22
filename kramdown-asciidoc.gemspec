@@ -19,4 +19,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'kramdown', '~> 1.16.2'
   s.add_development_dependency 'rake', '~> 12.3.1'
   s.add_development_dependency 'rspec', '~> 3.7.0'
+  s.add_development_dependency 'simplecov', '~> 0.16.1'
 end
