@@ -27,7 +27,7 @@ module Kramdown; module AsciiDoc
       while (line = lines.shift) && line.chomp != '---'
         front_matter << line
       end
-      lines.shift while (line = lines[0]) && line.chomp.empty?
+      lines.shift while (line = lines[0]) && line == ?\n
       (::YAML.load front_matter.join).each do |key, val|
         case key
         when 'title'
@@ -98,6 +98,7 @@ module Kramdown; module AsciiDoc
     end
 
     def convert_root el, opts
+      el = extract_prologue el, opts
       body = %(#{inner el, (opts.merge rstrip: true)}#{LF})
       @attributes.each {|k, v| @header << %(:#{k}: #{v}) } unless @attributes.empty?
       @header.empty? ? body : %(#{@header.join LF}#{body == LF ? '' : LFx2}#{body})
@@ -125,7 +126,7 @@ module Kramdown; module AsciiDoc
       result << %(#{'=' * level} #{inner el, opts})
       @last_heading_level = level unless discrete
       if level == 1 && opts[:result].empty?
-        @header = result
+        @header += result
         nil
       else
         @attributes['doctype'] = 'book' if level == 1
@@ -395,6 +396,15 @@ module Kramdown; module AsciiDoc
           %(#{prefix}// #{comment_text}#{suffix})
         end
       end
+    end
+
+    def extract_prologue el, opts
+      if (child_i = (children = el.children)[0] || VoidElement).type == :xml_comment
+        (prologue_el = el.dup).children = children.take_while {|c| c.type == :xml_comment || c.type == :blank }
+        (el = el.dup).children = children.drop prologue_el.children.size
+        @header += [%(#{inner prologue_el, (opts.merge rstrip: true)})]
+      end
+      el
     end
 
     def inner el, opts
