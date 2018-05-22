@@ -15,6 +15,7 @@ ifdef::env-github[]
 :status:
 :!toc-title:
 :note-caption: :paperclip:
+:tip-caption: :bulb:
 endif::[]
 // URIs:
 :uri-repo: https://github.com/asciidoctor/kramdown-asciidoc
@@ -31,13 +32,51 @@ ifdef::status[]
 image:{img-ci-travis}[Build Status (Travis CI),link={uri-ci-travis}]
 endif::[]
 
-A Kramdown extension for converting Markdown documents to {uri-asciidoc}[AsciiDoc].
-In particular, it generates the modern AsciiDoc syntax suitable for use with {uri-asciidoctor}[Asciidoctor].
+{uri-repo}[{project-name}] (gem: *{project-handle}*) is a Kramdown extension for converting Markdown documents to {uri-asciidoc}[AsciiDoc].
+Notably, the converter generates modern AsciiDoc syntax suitable for use with {uri-asciidoctor}[Asciidoctor].
+
+== Prerequisites
+
+To install and run {project-name}, you need Ruby 2.4 or better installed and a few RubyGems (aka gems).
+We'll explain how to install the gems in the next section.
+
+To check whether you have Ruby installed, and which version you have, run the following command:
+
+ $ ruby -v
+
+If Ruby is not installed, you can install it using {uri-rvm}[RVM] (or, if you prefer, the package manager for your system).
+We generally recommend using RVM because it allows you to install gems without requiring elevated privileges or messing with system libraries.
 
 == Installation
 
-Currently, {project-name} is only available in source form.
-You'll need to retrieve the source and run the application out the source directory.
+{project-name} is published as a pre-release gem named {project-handle} to RubyGems.org.
+
+You can install the pre-release version using the following command:
+
+ $ gem install kramdown-asciidoc --pre
+
+Installing this gem makes the `kramdoc` command available on your $PATH.
+
+TIP: To test a feature that's not yet released, you can <<Development,run the application from source>>.
+
+== Usage
+
+To convert a Markdown file to AsciiDoc using {project-name}, run the `kramdoc` command as follows:
+
+ $ kramdoc sample.md
+
+The `kramdoc` command automatically creates the output file [.path]_sample.adoc_ in the same folder as the input file.
+This path is calculated by removing the Markdown file extension, `.md`, and adding the AsciiDoc file extension, `.adoc`.
+
+NOTE: The converter assumes the input uses the GitHub-flavor Markdown (GFM) syntax.
+
+The `kramdoc` command does not currently support any options other than the input file.
+Support for additional options is planned.
+
+== Development
+
+To help develop {project-name}, or to simply test-drive the development version, you need to retrieve the source from GitHub.
+Follow the instructions below to learn how to clone the source and run the application from source (i.e., your clone).
 
 === Retrieve the source code
 
@@ -72,7 +111,7 @@ To check if you have Bundler available, use the `bundle` command to query the ve
 
  $ bundle --version
 
-If it's not installed, use the `gem` command to install it.
+If Bundler is not installed, use the `gem` command to install it.
 
  $ gem install bundler
 
@@ -82,15 +121,13 @@ Then, use the `bundle` command to install the project dependencies under the pro
 
 NOTE: You must invoke `bundle` from the project's root directory so it can locate the [.path]_Gemfile_.
 
-== Usage
+=== Usage
 
-Convert a Markdown file to AsciiDoc using the `kramdoc` command:
+When running the `kramdoc` command from source, you must prefix the command with `bundle exec`:
 
  $ bundle exec kramdoc sample.md
 
-The script will automatically create the output file [.path]_sample.adoc_, replacing the Markdown file extension, `.md` with the AsciiDoc file extension, `.adoc`.
-
-At the moment, the script assumes the input uses the GitHub-flavor Markdown (GFM) syntax.
+To avoid having to do this, or make the `kramdoc` command available from anywhere, you need to build the development gem and install it.
 
 == Alternatives
 
