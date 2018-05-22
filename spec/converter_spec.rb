@@ -15,6 +15,18 @@ describe Kramdown::Converter::AsciiDoc do
   end
 
   context '.replace_toc' do
+    it 'does not modify source if TOC directive not detected' do
+      input = <<~EOS
+      # Database Guide
+
+      ...
+      EOS
+
+      attributes = {}
+      (expect described_class.replace_toc input, attributes).to be input
+      (expect attributes).to be_empty
+    end
+
     it 'replaces TOC directive with a toc block macro' do
       input = <<~EOS
       # Database Guide
@@ -53,6 +65,22 @@ describe Kramdown::Converter::AsciiDoc do
   end
 
   context '.extract_front_matter' do
+    it 'does not modify source if front matter not detected' do
+      input = <<~EOS
+      # Introduction
+
+      content
+
+      ---
+
+      more content
+      EOS
+
+      attributes = {}
+      (expect described_class.extract_front_matter input, attributes).to be input
+      (expect attributes).to be_empty
+    end
+
     it 'extracts front matter and assigns entries to attributes' do
       input = <<~EOS
       ---
