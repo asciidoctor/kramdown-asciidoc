@@ -116,6 +116,7 @@ module Kramdown; module AsciiDoc
       if (id = el.attr['id'])
         style << %(##{id})
       elsif (child_i = el.children[0] || VoidElement).type == :html_element && child_i.value == 'a' && (id = child_i.attr['id'])
+        # FIXME dup instead of modify
         el.children.shift
         el.children.unshift(*child_i.children) unless child_i.children.empty?
         style << %(##{id})
@@ -150,6 +151,7 @@ module Kramdown; module AsciiDoc
       # NOTE detect plain admonition marker (e.g, Note: ...)
       if (child_i = el.children[0] || VoidElement).type == :text && (child_i_text = child_i.value).start_with?(*ADMON_MARKERS)
         marker, child_i_text = child_i_text.split ': ', 2
+        # FIXME dup instead of modify
         child_i.value = %(#{ADMON_TYPE_MAP[marker]}: #{child_i_text})
         contents = inner el, opts
       # NOTE detect formatted admonition marker (e.g., *Note:* ...)
@@ -157,6 +159,7 @@ module Kramdown; module AsciiDoc
           (marker_el = child_i.children[0]) && ((marker = ADMON_FORMATTED_MARKERS[marker_el.value]) ||
           ((marker = ADMON_LABELS[marker_el.value]) && (child_ii = el.children[1] || VoidElement).type == :text &&
           ((child_ii_text = child_ii.value).start_with? ': ')))
+        # FIXME dup instead of modify
         el.children.shift
         child_ii.value = child_ii_text.slice 1, child_ii_text.length if child_ii
         contents = %(#{ADMON_TYPE_MAP[marker]}:#{inner el, opts})
@@ -353,9 +356,17 @@ module Kramdown; module AsciiDoc
     end
 
     def convert_html_element el, opts
+      # NOTE convert an HTML-based admonition block
+      if (tagname = el.value) == 'div' && (role = el.attr['class']) && (role.start_with? 'note') &&
+          (child_i = el.children[0]) && child_i.options[:transparent] && (marker_el = child_i.children[0]) &&
+          marker_el.value == 'span' && (marker_el.attr['class'] == 'notetitle')
+          (el = child_i.dup).children = el.children.drop 1
+        marker = ADMON_FORMATTED_MARKERS[inner marker_el] || 'Note'
+        return %(#{ADMON_TYPE_MAP[marker]}:#{inner el, opts}#{LFx2})
+      end
       contents = inner el, (opts.merge rstrip: el.options[:category] == :block)
       attrs = (attrs = el.attr).empty? ? '' : attrs.map {|k, v| %( #{k}="#{v}") }.join
-      case (tagname = el.value)
+      case tagname
       when 'sup'
         %(^#{contents}^)
       when 'sub'
@@ -407,7 +418,7 @@ module Kramdown; module AsciiDoc
       el
     end
 
-    def inner el, opts
+    def inner el, opts = {}
       rstrip = opts.delete :rstrip
       result = []
       prev = nil

@@ -1,0 +1,5 @@
+Main instructions.
+
+IMPORTANT: For the configuration changes to take effect, the server must be restarted using the link:restart-api.html[Restart API].
+
+Now back to our regularly scheduled program.
