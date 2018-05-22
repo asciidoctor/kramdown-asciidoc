@@ -4,7 +4,7 @@ require 'yaml'
 describe 'integration scenario' do
   FIXTURES_DIR = File.absolute_path 'fixtures', __dir__
 
-  let(:doc) { Kramdown::Document.new input, (Kramdown::Converter::AsciiDoc::DEFAULT_PARSER_OPTS.merge extra_options) }
+  let(:doc) { Kramdown::Document.new input, (Kramdown::AsciiDoc::DEFAULT_PARSER_OPTS.merge extra_options) }
 
   Dir.chdir FIXTURES_DIR do
     (Dir.glob '**/*.md').each do |input_filename|

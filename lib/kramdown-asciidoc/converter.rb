@@ -1,7 +1,50 @@
 # encoding: UTF-8
-module Kramdown; module Converter
-  class AsciiDoc < Base
-    DEFAULT_PARSER_OPTS = { auto_ids: false, hard_wrap: false, html_to_native: true, input: 'GFM' }
+module Kramdown; module AsciiDoc
+  DEFAULT_PARSER_OPTS = {
+    auto_ids: false,
+    hard_wrap: false,
+    html_to_native: true,
+    input: 'GFM',
+  }
+
+  TocDirectiveTip = '<!-- TOC '
+  TocDirectiveRx = /^<!-- TOC .*<!-- \/TOC -->/m
+
+  def self.replace_toc source, attributes
+    if source.include? TocDirectiveTip
+      attributes['toc'] = 'macro'
+      source.gsub TocDirectiveRx, 'toc::[]'
+    else
+      source
+    end
+  end
+
+  def self.extract_front_matter source, attributes
+    if (line_i = (lines = source.each_line).next) && line_i.chomp == '---'
+      require 'yaml' unless defined? ::YAML
+      lines = lines.drop 1
+      front_matter = []
+      while (line = lines.shift) && line.chomp != '---'
+        front_matter << line
+      end
+      lines.shift while (line = lines[0]) && line.chomp.empty?
+      (::YAML.load front_matter.join).each do |key, val|
+        case key
+        when 'title'
+          # skip
+        when 'layout'
+          attributes['page-layout'] = val unless val == 'default'
+        else
+          attributes[key] = val.to_s
+        end
+      end
+      lines.join
+    else
+      source
+    end
+  end
+
+  class Converter < ::Kramdown::Converter::Base
     RESOLVE_ENTITY_TABLE = %w(lt gt).map {|name| Utils::Entities.entity name }.map {|obj| [obj, obj.char] }.to_h
     ADMON_LABELS = %w(Note Tip Caution Warning Important Attention).map {|l| [l, l] }.to_h
     ADMON_MARKERS = ADMON_LABELS.map {|l, _| %(#{l}: ) }
@@ -32,8 +75,6 @@ module Kramdown; module Converter
 
     ApostropheRx = /\b’\b/
     CommentPrefixRx = /^ *! ?/m
-    TocDirectiveTip = '<!-- TOC '
-    TocDirectiveRx = /^<!-- TOC .*<!-- \/TOC -->/m
     ReplaceableTextRx = /[-=]>|<[-=]|\.\.\./
     StartOfLinesRx = /^/m
     TypographicSymbolRx = /[“”‘’—–…]/
@@ -366,42 +407,7 @@ module Kramdown; module Converter
       end
       rstrip ? result.join.rstrip : result.join
     end
-
-    def self.replace_toc source, attributes
-      if source.include? TocDirectiveTip
-        attributes['toc'] = 'macro'
-        source.gsub TocDirectiveRx, 'toc::[]'
-      else
-        source
-      end
-    end
-
-    def self.extract_front_matter source, attributes
-      if (line_i = (lines = source.each_line).next) && line_i.chomp == '---'
-        require 'yaml' unless defined? ::YAML
-        lines = lines.drop 1
-        front_matter = []
-        while (line = lines.shift) && line.chomp != '---'
-          front_matter << line
-        end
-        lines.shift while (line = lines[0]) && line.chomp.empty?
-        (YAML.load front_matter.join).each do |key, val|
-          case key
-          when 'title'
-            # skip
-          when 'layout'
-            attributes['page-layout'] = val unless val == 'default'
-          else
-            attributes[key] = val.to_s
-          end
-        end
-        lines.join
-      else
-        source
-      end
-    end
   end
-
-  # IMPORTANT Must add Asciidoc as alias so converter name becomes "asciidoc"
-  Asciidoc = AsciiDoc
 end; end
+
+Kramdown::Converter::Asciidoc = Kramdown::AsciiDoc::Converter

@@ -1,7 +1,7 @@
 require_relative 'spec_helper'
 
-describe Kramdown::Converter::AsciiDoc do
-  let(:opts) { Kramdown::Converter::AsciiDoc::DEFAULT_PARSER_OPTS }
+describe Kramdown::AsciiDoc::Converter do
+  let(:opts) { Kramdown::AsciiDoc::DEFAULT_PARSER_OPTS }
   let(:doc) { Kramdown::Document.new input, opts }
   let(:root) { doc.root }
 
@@ -23,7 +23,7 @@ describe Kramdown::Converter::AsciiDoc do
       EOS
 
       attributes = {}
-      (expect described_class.replace_toc input, attributes).to be input
+      (expect Kramdown::AsciiDoc.replace_toc input, attributes).to be input
       (expect attributes).to be_empty
     end
 
@@ -59,7 +59,7 @@ describe Kramdown::Converter::AsciiDoc do
       EOS
 
       attributes = {}
-      (expect described_class.replace_toc input, attributes).to eql expected
+      (expect Kramdown::AsciiDoc.replace_toc input, attributes).to eql expected
       (expect attributes['toc']).to eql 'macro'
     end
   end
@@ -77,7 +77,7 @@ describe Kramdown::Converter::AsciiDoc do
       EOS
 
       attributes = {}
-      (expect described_class.extract_front_matter input, attributes).to be input
+      (expect Kramdown::AsciiDoc.extract_front_matter input, attributes).to be input
       (expect attributes).to be_empty
     end
 
@@ -107,7 +107,7 @@ describe Kramdown::Converter::AsciiDoc do
       }
 
       attributes = {}
-      (expect described_class.extract_front_matter input, attributes).to eql expected
+      (expect Kramdown::AsciiDoc.extract_front_matter input, attributes).to eql expected
       (expect attributes).to eql expected_attributes
     end
   end
