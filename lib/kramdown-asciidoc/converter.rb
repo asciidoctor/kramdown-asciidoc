@@ -45,7 +45,7 @@ module Kramdown; module AsciiDoc
   end
 
   class Converter < ::Kramdown::Converter::Base
-    RESOLVE_ENTITY_TABLE = %w(lt gt).map {|name| Utils::Entities.entity name }.map {|obj| [obj, obj.char] }.to_h
+    RESOLVE_ENTITY_TABLE = { 60 => '<', 62 => '>', 124 => '|' }
     ADMON_LABELS = %w(Note Tip Caution Warning Important Attention).map {|l| [l, l] }.to_h
     ADMON_MARKERS = ADMON_LABELS.map {|l, _| %(#{l}: ) }
     ADMON_FORMATTED_MARKERS = ADMON_LABELS.map {|l, _| [%(#{l}:), l] }.to_h
@@ -331,7 +331,7 @@ module Kramdown; module AsciiDoc
     end
 
     def convert_entity el, opts
-      RESOLVE_ENTITY_TABLE[el.value] || el.options[:original]
+      RESOLVE_ENTITY_TABLE[el.value.code_point] || el.options[:original]
     end
 
     def convert_a el, opts
