@@ -1,0 +1,8 @@
+= Document Title
+
+Paragraph
+
+[discrete]
+===== Discrete Heading
+
+Paragraph

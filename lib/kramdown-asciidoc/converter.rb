@@ -112,7 +112,15 @@ module Kramdown; module AsciiDoc
       result = []
       style = []
       level = el.options[:level]
-      style << 'discrete' if (discrete = @last_heading_level && level > @last_heading_level + 1)
+      if (discrete = @last_heading_level && level > @last_heading_level + 1)
+        # TODO make block title promotion an option (allow certain levels and titles)
+        #if ((raw_text = el.options[:raw_text]) == 'Example' || raw_text == 'Examples') &&
+        if level == 5 && (next_2_siblings = (siblings = opts[:parent].children).slice (siblings.index el) + 1, 2) &&
+            next_2_siblings.any? {|sibling| sibling.type == :codeblock }
+          return %(.#{inner el, opts}#{LF})
+        end
+        style << 'discrete'
+      end
       if (id = el.attr['id'])
         style << %(##{id})
       elsif (child_i = el.children[0] || VoidElement).type == :html_element && child_i.value == 'a' && (id = child_i.attr['id'])
@@ -425,7 +433,7 @@ module Kramdown; module AsciiDoc
 
     def extract_prologue el, opts
       if (child_i = (children = el.children)[0] || VoidElement).type == :xml_comment
-        (prologue_el = el.dup).children = children.take_while {|c| c.type == :xml_comment || c.type == :blank }
+        (prologue_el = el.dup).children = children.take_while {|child| child.type == :xml_comment || child.type == :blank }
         (el = el.dup).children = children.drop prologue_el.children.size
         @header += [%(#{inner prologue_el, (opts.merge rstrip: true)})]
       end
