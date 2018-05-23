@@ -358,17 +358,26 @@ module Kramdown; module AsciiDoc
         if (role = el.attr['class'])
           style << %(.#{role.tr ' ', '.'})
         end
-        prefix = style.empty? ? 'image::' : ([%([#{style.join}]), 'image::'].join LF)
+        macro_prefix = style.empty? ? 'image::' : ([%([#{style.join}]), 'image::'].join LF)
       else
-        prefix = 'image:'
+        macro_prefix = 'image:'
       end
-      alt_text = el.attr['alt']
-      link_attr = (url = opts[:url]) ? %(#{alt_text.empty? ? '' : ','}link=#{url}) : ''
+      macro_attrs = []
+      if (alt_text = el.attr['alt'])
+        macro_attrs << alt_text unless alt_text.empty?
+      end
+      if (width = el.attr['width'])
+        macro_attrs << '' if macro_attrs.empty?
+        macro_attrs << width
+      end
+      if (url = opts[:url])
+        macro_attrs << %(link=#{url})
+      end
       src = el.attr['src']
       if (imagesdir = @imagesdir) && (src.start_with? %(#{imagesdir}/))
         src = src.slice imagesdir.length + 1, src.length
       end
-      %(#{prefix}#{src}[#{alt_text}#{link_attr}])
+      %(#{macro_prefix}#{src}[#{macro_attrs.join ','}])
     end
 
     # NOTE leave enabled so we can down-convert mdash to --
