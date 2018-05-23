@@ -264,7 +264,9 @@ module Kramdown; module AsciiDoc
         container.children.each do |row|
           row_buf = []
           row.children.each do |cell|
-            row_buf << %(| #{inner cell, opts})
+            cell_contents = inner cell, opts
+            cell_contents = cell_contents.gsub '|', '\\|' if cell_contents.include? '|'
+            row_buf << %(| #{cell_contents})
           end
           cols = row_buf.size unless cols
           if container.type == :thead
