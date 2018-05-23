@@ -4,13 +4,36 @@ describe Kramdown::AsciiDoc::Converter do
   let(:opts) { Kramdown::AsciiDoc::DEFAULT_PARSER_OPTS }
   let(:doc) { Kramdown::Document.new input, opts }
   let(:root) { doc.root }
+  let(:converter) { described_class.send :new, root, {} }
 
   context '#convert' do
     let (:input) { %(# Document Title\n\nBody text.) }
     it 'adds line feed (EOL) to end of output document' do
-      converter = described_class.send :new, root, {}
       (expect converter.convert root).to end_with %(\n)
       (expect doc.to_asciidoc).to end_with %(\n)
+    end
+  end
+
+  context '#clone' do
+    let :input do
+      <<~EOS
+      ## <a id="anchor-name">Heading Title</a>
+
+      Note: Be mindful.
+
+      *Important*: Turn off the lights.
+      EOS
+    end
+
+    it 'does not modify the AST when converting' do
+      doc.to_asciidoc
+      heading = root.children[0]
+      (expect heading.children[0].type).to be :html_element
+      (expect heading.children[0].value).to eql 'a'
+      para_i = root.children[2]
+      (expect para_i.children[0].value).to start_with 'Note: '
+      para_ii = root.children[4]
+      (expect para_ii.children[0].type).to be :em
     end
   end
 

@@ -124,9 +124,7 @@ module Kramdown; module AsciiDoc
       if (id = el.attr['id'])
         style << %(##{id})
       elsif (child_i = el.children[0] || VoidElement).type == :html_element && child_i.value == 'a' && (id = child_i.attr['id'])
-        # FIXME dup instead of modify
-        el.children.shift
-        el.children.unshift(*child_i.children) unless child_i.children.empty?
+        el = clone el, children: child_i.children + (el.children.drop 1)
         style << %(##{id})
       elsif (role = el.attr['class'])
         style << %(.#{role.tr ' ', '.'})
@@ -159,17 +157,16 @@ module Kramdown; module AsciiDoc
       # NOTE detect plain admonition marker (e.g, Note: ...)
       if (child_i = el.children[0] || VoidElement).type == :text && (child_i_text = child_i.value).start_with?(*ADMON_MARKERS)
         marker, child_i_text = child_i_text.split ': ', 2
-        # FIXME dup instead of modify
-        child_i.value = %(#{ADMON_TYPE_MAP[marker]}: #{child_i_text})
+        child_i = clone child_i, value: %(#{ADMON_TYPE_MAP[marker]}: #{child_i_text})
+        el = clone el, children: [child_i] + (el.children.drop 1)
         contents = inner el, opts
       # NOTE detect formatted admonition marker (e.g., *Note:* ...)
       elsif (child_i.type == :strong || child_i.type == :em) &&
           (marker_el = child_i.children[0]) && ((marker = ADMON_FORMATTED_MARKERS[marker_el.value]) ||
           ((marker = ADMON_LABELS[marker_el.value]) && (child_ii = el.children[1] || VoidElement).type == :text &&
           ((child_ii_text = child_ii.value).start_with? ': ')))
-        # FIXME dup instead of modify
-        el.children.shift
-        child_ii.value = child_ii_text.slice 1, child_ii_text.length if child_ii
+        el = clone el, children: (el.children.drop 1)
+        el.children[0] = clone child_ii, value: (child_ii_text.slice 1, child_ii_text.length) if child_ii
         contents = %(#{ADMON_TYPE_MAP[marker]}:#{inner el, opts})
       else
         contents = inner el, opts
@@ -452,6 +449,14 @@ module Kramdown; module AsciiDoc
         prev = child
       end
       rstrip ? result.join.rstrip : result.join
+    end
+
+    def clone el, properties = {}
+      el = el.dup
+      properties.each do |name, value|
+        el.send %(#{name}=).to_sym, value
+      end
+      el
     end
   end
 end; end
