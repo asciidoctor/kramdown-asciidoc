@@ -286,15 +286,16 @@ module Kramdown; module AsciiDoc
     end
 
     def convert_text el, opts
-      if (result = el.value).include? '++'
+      if (text = el.value).include? '++'
         @attributes['pp'] = '{plus}{plus}'
-        result = result.gsub '++', '{pp}'
+        text = text.gsub '++', '{pp}'
       end
-      result = result.gsub '<=', '\\<=' if result.include? '<='
-      if result.ascii_only?
-        result
+      text = text.gsub '^', '{caret}' if (text.include? '^') && text != '^'
+      text = text.gsub '<=', '\\<=' if text.include? '<='
+      if text.ascii_only?
+        text
       else
-        (result.gsub ApostropheRx, ?').gsub TypographicSymbolRx, TYPOGRAPHIC_SYMBOL_TO_MARKUP
+        (text.gsub ApostropheRx, ?').gsub TypographicSymbolRx, TYPOGRAPHIC_SYMBOL_TO_MARKUP
       end
     end
 

@@ -1,0 +1,1 @@
+Current mood: {caret}_{caret}
