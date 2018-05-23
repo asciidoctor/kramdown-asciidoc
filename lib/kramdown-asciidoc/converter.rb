@@ -338,7 +338,9 @@ module Kramdown; module AsciiDoc
         if (child_i = el.children[0] || VoidElement).type == :img
           convert_img child_i, parent: opts[:parent], index: 0, url: url
         else
-          ((contents = inner el, opts).chomp '/') == (url.chomp '/') ? url : %(#{url}[#{contents}])
+          bare = ((contents = inner el, opts).chomp '/') == (url.chomp '/')
+          url = url.gsub '__', '%5F%5F' if (url.include? '__')
+          bare ? url : %(#{url}[#{contents}])
         end
       elsif url.end_with? '.md'
         %(xref:#{url.slice 0, url.length - 3}.adoc[#{inner el, opts}])

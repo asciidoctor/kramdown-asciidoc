@@ -1,0 +1,1 @@
+See the https://example.com/compatibility.html#feature-matrix%5F%5Fproduct_a[compatibility feature matrix for product A].
