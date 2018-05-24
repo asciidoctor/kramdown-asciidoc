@@ -265,16 +265,18 @@ module Kramdown; module AsciiDoc
             cell_contents = cell_contents.gsub '|', '\\|' if cell_contents.include? '|'
             row_buf << %(| #{cell_contents})
           end
-          cols = row_buf.size unless cols
+          cols ||= row_buf.size
           if container.type == :thead
             head = true
             row_buf = [row_buf * ' ']
+            row_buf << ''
+          elsif cols > 1
+            row_buf << ''
           end
-          row_buf << ''
           table_buf.concat row_buf
         end
       end
-      table_buf.unshift %([cols=#{cols}*]) unless head
+      table_buf.unshift %([cols=#{cols}*]) unless head || cols < 2
       table_buf.pop if table_buf[-1] == ''
       table_buf << '|==='
       %(#{table_buf * LF}#{LFx2})
