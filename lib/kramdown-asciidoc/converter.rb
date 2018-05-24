@@ -262,7 +262,7 @@ module Kramdown; module AsciiDoc
           row_buf = []
           row.children.each do |cell|
             cell_contents = inner cell, opts
-            cell_contents = cell_contents.gsub '|', '\\|' if cell_contents.include? '|'
+            cell_contents = cell_contents.gsub '|', '\|' if cell_contents.include? '|'
             row_buf << %(| #{cell_contents})
           end
           cols ||= row_buf.size
@@ -292,7 +292,7 @@ module Kramdown; module AsciiDoc
         text = text.gsub '++', '{pp}'
       end
       text = text.gsub '^', '{caret}' if (text.include? '^') && text != '^'
-      text = text.gsub '<=', '\\<=' if text.include? '<='
+      text = text.gsub '<=', '\<=' if text.include? '<='
       if text.ascii_only?
         text
       else
