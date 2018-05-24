@@ -207,11 +207,11 @@ module Kramdown; module AsciiDoc
       contents = el.value.rstrip
       if (lang = el.attr['class'])
         lang = lang.slice 9, lang.length if lang.start_with? 'language-'
-        #lang = 'console' if lang == 'bash' && (contents.start_with? '$ ')
-        lang = 'console' if lang == 'bash'
+        # TODO remap lang if requested
         result << %([source,#{lang}])
       end
       if !lang && (contents.start_with? '$ ')
+        # QUESTION should we make these a source,console block?
         if contents.include? LFx2
           result << '....'
           result << contents
