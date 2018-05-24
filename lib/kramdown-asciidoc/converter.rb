@@ -337,17 +337,17 @@ module Kramdown; module AsciiDoc
       if (url = el.attr['href']).start_with? '#'
         %(<<#{url.slice 1, url.length},#{inner el, opts}>>)
       elsif url.start_with? 'https://', 'http://'
-        if (child_i = el.children[0] || VoidElement).type == :img
+        if (children = el.children).size == 1 && (child_i = el.children[0]).type == :img
           convert_img child_i, parent: opts[:parent], index: 0, url: url
         else
           bare = ((contents = inner el, opts).chomp '/') == (url.chomp '/')
           url = url.gsub '__', '%5F%5F' if (url.include? '__')
-          bare ? url : %(#{url}[#{contents}])
+          bare ? url : %(#{url}[#{contents.gsub ']', '\]'}])
         end
       elsif url.end_with? '.md'
-        %(xref:#{url.slice 0, url.length - 3}.adoc[#{inner el, opts}])
+        %(xref:#{url.slice 0, url.length - 3}.adoc[#{(inner el, opts).gsub ']', '\]'}])
       else
-        %(link:#{url}[#{inner el, opts}])
+        %(link:#{url}[#{(inner el, opts).gsub ']', '\]'}])
       end
     end 
 

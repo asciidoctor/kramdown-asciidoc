@@ -1,0 +1,5 @@
+https://rubygems.org/gems/kramdown-asciidoc[image:download.svg[\] Download]
+
+xref:download.adoc[image:download.svg[\] Download]
+
+link:download.html[image:download.svg[\] Download]

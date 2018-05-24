@@ -18,7 +18,9 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 === Changed
 
 * don't modify AST when converting
-* transfer comments above document title to header
+* transfer comments above document title to document header
+* only process link as image with link if only child
+* escape closing square bracket in contents of link
 * don't add cols attribute to table if table only has a single column
 * don't add blank line between rows if table only has a single column
 * expand \&#124; to |
