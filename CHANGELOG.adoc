@@ -11,7 +11,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 * automatically coerce level 5 heading above codeblock to block title
 * convert HTML-based admonition blocks
-* drop HTML div element around an image
+* drop HTML div element if enclosing an image
 * transfer id and class/role attributes to block image
 * pass through width attribute to image if specified on HTML img element
 
@@ -29,6 +29,15 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * replace double underscore in URL with %5F%5F
 * don't rewrite bash source language as console
 
+=== Details
+
+{uri-repo}/releases/tag/v1.0.0.alpha.2[git tag] |
+{uri-repo}/compare/v1.0.0.alpha.1...v1.0.0.alpha.2[full diff]
+
 == 1.0.0.alpha.1 (2018-05-22) - @mojavelinux
 
 Initial release.
+
+=== Details
+
+{uri-repo}/releases/tag/v1.0.0.alpha.1[git tag]
