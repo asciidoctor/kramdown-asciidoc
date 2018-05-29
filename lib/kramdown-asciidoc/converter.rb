@@ -80,6 +80,7 @@ module Kramdown; module AsciiDoc
 
     ApostropheRx = /\b’\b/
     CommentPrefixRx = /^ *! ?/m
+    CssPropDelimRx = /\s*;\s*/
     ReplaceableTextRx = /[-=]>|<[-=]|\.\.\./
     StartOfLinesRx = /^/m
     TypographicSymbolRx = /[“”‘’—–…]/
@@ -382,6 +383,14 @@ module Kramdown; module AsciiDoc
       end
       if (width = el.attr['width'])
         macro_attrs << '' if macro_attrs.empty?
+        macro_attrs << width
+      elsif (css = el.attr['style']) && (width_css = (css.split CssPropDelimRx).find {|p| p.start_with? 'width:' })
+        macro_attrs << '' if macro_attrs.empty?
+        width = (width_css.slice (width_css.index ':') + 1, width_css.length).strip
+        unless width.end_with? '%'
+          width = width.to_f
+          width = width.to_i if width == width.to_i
+        end
         macro_attrs << width
       end
       if (url = opts[:url])
