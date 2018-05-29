@@ -72,6 +72,11 @@ module Kramdown; module AsciiDoc
       laquo_scape: '<< ',
       raquo_space: ' >>',
     }
+    TABLE_ALIGNMENTS = {
+      left: '<',
+      center: '^',
+      right: '>',
+    }
 
     ApostropheRx = /\b’\b/
     CommentPrefixRx = /^ *! ?/m
@@ -256,7 +261,11 @@ module Kramdown; module AsciiDoc
 
     def convert_table el, opts
       head = nil
-      cols = el.options[:alignment].size
+      cols = (alignments = el.options[:alignment]).size
+      if alignments.any? {|align| align == :center || align == :right }
+        colspecs = alignments.map {|align| TABLE_ALIGNMENTS[align] }.join ','
+        colspecs = %("#{colspecs}") if cols > 1
+      end
       table_buf = ['|===']
       el.children.each do |container|
         container.children.each do |row|
@@ -275,7 +284,11 @@ module Kramdown; module AsciiDoc
           table_buf.concat row_buf
         end
       end
-      table_buf.unshift %([cols=#{cols}*]) unless head || cols < 2
+      if colspecs
+        table_buf.unshift %([cols=#{colspecs}])
+      elsif !head && cols > 1
+        table_buf.unshift %([cols=#{cols}*])
+      end
       table_buf.pop if table_buf[-1] == ''
       table_buf << '|==='
       %(#{table_buf * LF}#{LFx2})
