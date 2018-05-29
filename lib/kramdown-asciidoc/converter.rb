@@ -255,7 +255,8 @@ module Kramdown; module AsciiDoc
     end
 
     def convert_table el, opts
-      head = cols = nil
+      head = nil
+      cols = el.options[:alignment].size
       table_buf = ['|===']
       el.children.each do |container|
         container.children.each do |row|
@@ -265,11 +266,9 @@ module Kramdown; module AsciiDoc
             cell_contents = cell_contents.gsub '|', '\|' if cell_contents.include? '|'
             row_buf << %(| #{cell_contents})
           end
-          cols ||= row_buf.size
           if container.type == :thead
             head = true
-            row_buf = [row_buf * ' ']
-            row_buf << ''
+            row_buf = [row_buf * ' ', '']
           elsif cols > 1
             row_buf << ''
           end
