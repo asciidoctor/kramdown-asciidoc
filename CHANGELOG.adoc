@@ -24,6 +24,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * escape closing square bracket in contents of link
 * don't add cols attribute to table if table only has a single column
 * don't add blank line between rows if table only has a single column
+* replace ndash symbol with \-- instead of \&#8211;
 * expand \&#124; to |
 * escape pipe in table cell
 * replace ^ with \{caret} in normal text

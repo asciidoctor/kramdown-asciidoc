@@ -59,7 +59,7 @@ module Kramdown; module AsciiDoc
       '’' => '`\'',
       # FIXME in the future, mdash will be three dashes in AsciiDoc; for now, down-convert
       '—' => '--',
-      '–' => '&#8211;',
+      '–' => '--',
       '…' => '...',
     }
     TYPOGRAPHIC_ENTITY_TO_MARKUP = {
