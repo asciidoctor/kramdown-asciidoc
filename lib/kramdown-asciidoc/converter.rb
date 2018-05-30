@@ -21,7 +21,6 @@ module Kramdown; module AsciiDoc
 
   def self.extract_front_matter source, attributes
     if (line_i = (lines = source.each_line).next) && line_i.chomp == '---'
-      require 'yaml' unless defined? ::YAML
       lines = lines.drop 1
       front_matter = []
       while (line = lines.shift) && line.chomp != '---'
