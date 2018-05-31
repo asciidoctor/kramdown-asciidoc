@@ -1,4 +1,5 @@
 if ENV['COVERAGE'] == 'true'
+  require 'deep_cover/builtin_takeover'
   require 'simplecov'
   SimpleCov.start do
     add_filter %w(/.bundle/ /spec/)
