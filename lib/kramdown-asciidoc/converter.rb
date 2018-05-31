@@ -159,19 +159,22 @@ module Kramdown; module AsciiDoc
       else
         prefix, suffix = '', LFx2
       end
+      if (children = el.children).empty?
+        contents = '{blank}'
       # NOTE detect plain admonition marker (e.g, Note: ...)
-      if (child_i = el.children[0] || VoidElement).type == :text && (child_i_text = child_i.value).start_with?(*ADMON_MARKERS)
+      elsif (child_i = children[0]).type == :text && (child_i_text = child_i.value).start_with?(*ADMON_MARKERS)
         marker, child_i_text = child_i_text.split ': ', 2
         child_i = clone child_i, value: %(#{ADMON_TYPE_MAP[marker]}: #{child_i_text})
-        el = clone el, children: [child_i] + (el.children.drop 1)
+        el = clone el, children: [child_i] + (children.drop 1)
         contents = inner el, opts
       # NOTE detect formatted admonition marker (e.g., *Note:* ...)
       elsif (child_i.type == :strong || child_i.type == :em) &&
           (marker_el = child_i.children[0]) && ((marker = ADMON_FORMATTED_MARKERS[marker_el.value]) ||
-          ((marker = ADMON_LABELS[marker_el.value]) && (child_ii = el.children[1] || VoidElement).type == :text &&
+          ((marker = ADMON_LABELS[marker_el.value]) && (child_ii = children[1] || VoidElement).type == :text &&
           ((child_ii_text = child_ii.value).start_with? ': ')))
-        el = clone el, children: (el.children.drop 1)
-        el.children[0] = clone child_ii, value: (child_ii_text.slice 1, child_ii_text.length) if child_ii
+        children = children.drop 1
+        children[0] = clone child_ii, value: (child_ii_text.slice 1, child_ii_text.length) if child_ii
+        el = clone el, children: children
         contents = %(#{ADMON_TYPE_MAP[marker]}:#{inner el, opts})
       else
         contents = inner el, opts

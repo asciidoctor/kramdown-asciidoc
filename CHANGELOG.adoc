@@ -12,6 +12,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * patch conversion from HTML br element to native until the fix for gettalong/kramdown#514 is released
 * preserve non-default table column alignment
 * honor image width specified in style attribute of HTML img element
+* replace empty HTML p element with paragraph containing \{blank}
 
 === Changed
 
