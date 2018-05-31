@@ -22,14 +22,15 @@ endif::[]
 :uri-asciidoc: https://asciidoctor.org/docs/what-is-asciidoc/#what-is-asciidoc
 :uri-asciidoctor: https://asciidoctor.org
 :uri-rvm: https://rvm.io
-:uri-install-rvm: https://rvm.io/rvm/install
-//:img-gem: https://img.shields.io/gem/v/kramdown-asciidoc.svg?label=gem
+:uri-rvm-install: https://rvm.io/rvm/install
 :uri-ci-travis: https://travis-ci.org/asciidoctor/kramdown-asciidoc
-:img-ci-travis: https://img.shields.io/travis/asciidoctor/kramdown-asciidoc/master.svg
+:uri-ci-travis-img: https://img.shields.io/travis/asciidoctor/kramdown-asciidoc/master.svg
+:uri-gem: https://rubygems.org/gems/kramdown-asciidoc
+:uri-gem-img: https://img.shields.io/gem/v/kramdown-asciidoc.svg?label=gem
 
 ifdef::status[]
-//image:{img-gem}[Gem Version,link={uri-gem}]
-image:{img-ci-travis}[Build Status (Travis CI),link={uri-ci-travis}]
+image:{uri-gem-img}[Gem Version,link={uri-gem}]
+image:{uri-ci-travis-img}[Build Status (Travis CI),link={uri-ci-travis}]
 endif::[]
 
 {uri-repo}[{project-name}] (gem: *{project-handle}*) is a Kramdown extension for converting Markdown documents to {uri-asciidoc}[AsciiDoc].
@@ -40,7 +41,7 @@ Notably, the converter generates modern AsciiDoc syntax suitable for use with {u
 To install and run {project-name}, you need Ruby 2.4 or better installed and a few RubyGems (aka gems).
 We'll explain how to install the gems in the next section.
 
-To check whether you have Ruby installed, and which version you have, run the following command:
+To check whether you have Ruby installed, and which version, run the following command:
 
  $ ruby -v
 
@@ -49,7 +50,7 @@ We generally recommend using RVM because it allows you to install gems without r
 
 == Installation
 
-{project-name} is published as a pre-release gem named {project-handle} to RubyGems.org.
+{project-name} is published to RubyGems.org as a pre-release gem named *{project-handle}*.
 
 You can install the pre-release version using the following command:
 
@@ -94,7 +95,7 @@ Next, switch to the project directory:
 
 We recommend using {uri-rvm}[RVM] when developing applications with Ruby.
 We like RVM because it keeps the dependencies required by the project isolated from the rest of your system.
-Follow the {uri-install-rvm}[installation instructions] on the RVM site to setup RVM and install Ruby.
+Follow the {uri-rvm-install}[installation instructions] on the RVM site to setup RVM and install Ruby.
 
 Once you have RVM setup, switch to the RVM-managed version of Ruby recommended by the project using this command:
 
