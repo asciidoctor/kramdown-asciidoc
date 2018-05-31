@@ -256,7 +256,7 @@ module Kramdown; module AsciiDoc
       prefix = (prev = opts[:prev]) && prev.options[:compound] ? LF : ''
       marker = opts[:parent].type == :ol ? '.' : '*'
       indent = (level = opts[:level]) - 1
-      %(#{prefix}#{indent > 0 ? (' ' * indent) : ''}#{marker * level} #{(inner el, (opts.merge rstrip: true))}#{LF})
+      %(#{prefix}#{indent > 0 ? ' ' * indent : ''}#{marker * level} #{(inner el, (opts.merge rstrip: true))}#{LF})
     end
 
     def convert_table el, opts
