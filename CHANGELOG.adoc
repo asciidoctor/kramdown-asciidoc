@@ -5,6 +5,18 @@
 This document provides a high-level view of the changes to {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
+== Unreleased
+
+=== Added
+
+* patch conversion from HTML br element to native until the fix for gettalong/kramdown#514 is released
+* preserve non-default table column alignment
+* honor image width specified in style attribute of HTML img element
+
+=== Changed
+
+* replace ndash symbol with \-- instead of \&#8211;
+
 == 1.0.0.alpha.2 (2018-05-24) - @mojavelinux
 
 === Added
@@ -13,8 +25,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * convert HTML-based admonition blocks
 * drop HTML div element if enclosing an image
 * transfer id and class/role attributes to block image
-* pass through width specified on HTML img element (attribute or CSS style) to image
-* preserve non-default table column alignment
+* honor image width specified on width attribute of HTML img element
 
 === Changed
 
@@ -24,7 +35,6 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * escape closing square bracket in contents of link
 * don't add cols attribute to table if table only has a single column
 * don't add blank line between rows if table only has a single column
-* replace ndash symbol with \-- instead of \&#8211;
 * expand \&#124; to |
 * escape pipe in table cell
 * replace ^ with \{caret} in normal text
