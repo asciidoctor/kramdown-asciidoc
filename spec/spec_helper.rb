@@ -1,10 +1,10 @@
-if ENV['COVERAGE'] == 'true'
+case ENV['COVERAGE']
+when 'deep'
+  ENV['DEEP_COVER'] = 'true'
+  require 'deep_cover'
+when 'true'
   require 'deep_cover/builtin_takeover'
   require 'simplecov'
-  SimpleCov.start do
-    add_filter %w(/.bundle/ /spec/)
-    coverage_dir 'build/coverage-report'
-  end
 end
 
 require 'kramdown-asciidoc'
