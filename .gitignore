@@ -1,4 +1,6 @@
 /.bundle/
+/.sass-cache/
 /Gemfile.lock
-/build/
+/coverage/
+/deep_cover/
 /pkg/
