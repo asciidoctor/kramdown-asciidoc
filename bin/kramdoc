@@ -12,7 +12,7 @@ unless infile
   exit 1
 end
 outfile = %(#{infile.slice 0, infile.length - (File.extname infile).length}.adoc)
-input = (IO.read infile, open_args: ['rb:UTF-8']).rstrip
+input = (IO.read infile, mode: 'r:UTF-8', newline: :universal).rstrip
 input = input.slice 1, input.length while input.start_with? ?\n
 attributes = {}
 input = Kramdown::AsciiDoc.extract_front_matter input, attributes
