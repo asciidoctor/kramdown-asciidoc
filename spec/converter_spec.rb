@@ -104,6 +104,14 @@ describe Kramdown::AsciiDoc::Converter do
       (expect attributes).to be_empty
     end
 
+    it 'does not modify source if source is empty' do
+      input = ''
+
+      attributes = {}
+      (expect Kramdown::AsciiDoc.extract_front_matter input, attributes).to be input
+      (expect attributes).to be_empty
+    end
+
     it 'extracts front matter and assigns entries to attributes' do
       input = <<~EOS
       ---
@@ -112,7 +120,6 @@ describe Kramdown::AsciiDoc::Converter do
       keywords: buzz, transformative
       layout: default
       ---
-
       # Introduction
 
       When using this technology, anything is possible.
@@ -127,6 +134,65 @@ describe Kramdown::AsciiDoc::Converter do
       expected_attributes = {
         'description' => 'An introduction to this amazing technology.',
         'keywords' => 'buzz, transformative',
+      }
+
+      attributes = {}
+      (expect Kramdown::AsciiDoc.extract_front_matter input, attributes).to eql expected
+      (expect attributes).to eql expected_attributes
+    end
+
+    it 'assigns non-default layout in front matter to page-layout attribute' do
+      input = <<~EOS
+      ---
+      layout: home
+      ---
+      Welcome home!
+      EOS
+
+      expected = <<~EOS
+      Welcome home!
+      EOS
+
+      expected_attributes = {
+        'page-layout' => 'home'
+      }
+
+      attributes = {}
+      (expect Kramdown::AsciiDoc.extract_front_matter input, attributes).to eql expected
+      (expect attributes).to eql expected_attributes
+    end
+
+    it 'removes empty front matter' do
+      input = <<~EOS
+      ---
+      ---
+      Move along. There's no front matter to see here.
+      EOS
+
+      expected = <<~EOS
+      Move along. There's no front matter to see here.
+      EOS
+
+      attributes = {}
+      (expect Kramdown::AsciiDoc.extract_front_matter input, attributes).to eql expected
+      (expect attributes).to be_empty
+    end
+
+    it 'removes blank lines between front matter and body' do
+      input = <<~EOS
+      ---
+      description: Just another page.
+      ---
+
+      Another page.
+      EOS
+
+      expected = <<~EOS
+      Another page.
+      EOS
+
+      expected_attributes = {
+        'description' => 'Just another page.'
       }
 
       attributes = {}

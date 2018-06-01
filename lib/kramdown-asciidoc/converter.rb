@@ -19,13 +19,15 @@ module Kramdown; module AsciiDoc
     end
   end
 
+  # TODO return original source if YAML can't be parsed
   def self.extract_front_matter source, attributes
-    if (line_i = (lines = source.each_line).next) && line_i.chomp == '---'
+    if (line_i = (lines = source.each_line).first) && line_i.chomp == '---'
       lines = lines.drop 1
       front_matter = []
       while (line = lines.shift) && line.chomp != '---'
         front_matter << line
       end
+      return source if line.chomp != '---' || (front_matter.include? ?\n)
       lines.shift while (line = lines[0]) && line == ?\n
       (::YAML.load front_matter.join).each do |key, val|
         case key
@@ -36,7 +38,7 @@ module Kramdown; module AsciiDoc
         else
           attributes[key] = val.to_s
         end
-      end
+      end unless front_matter.empty?
       lines.join
     else
       source
