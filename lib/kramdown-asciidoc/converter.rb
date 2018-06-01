@@ -216,7 +216,7 @@ module Kramdown; module AsciiDoc
       end
       contents = el.value.rstrip
       if (lang = el.attr['class'])
-        lang = lang.slice 9, lang.length if lang.start_with? 'language-'
+        lang = lang.delete_prefix 'language-'
         # TODO remap lang if requested
         result << %([source,#{lang}])
       end
