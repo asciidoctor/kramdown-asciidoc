@@ -27,7 +27,7 @@ module Kramdown; module AsciiDoc
       while (line = lines.shift) && line.chomp != '---'
         front_matter << line
       end
-      return source if line.chomp != '---' || (front_matter.include? ?\n)
+      return source unless line && line.chomp == '---' && !(front_matter.include? ?\n)
       lines.shift while (line = lines[0]) && line == ?\n
       (::YAML.load front_matter.join).each do |key, val|
         case key

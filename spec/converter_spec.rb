@@ -162,6 +162,22 @@ describe Kramdown::AsciiDoc::Converter do
       (expect attributes).to eql expected_attributes
     end
 
+    it 'returns empty document when it only contains front matter' do
+      input = <<~EOS
+      ---
+      description: This page is intentionally left blank.
+      ---
+      EOS
+
+      expected_attributes = {
+        'description' => 'This page is intentionally left blank.'
+      }
+
+      attributes = {}
+      (expect Kramdown::AsciiDoc.extract_front_matter input, attributes).to be_empty
+      (expect attributes).to eql expected_attributes
+    end
+
     it 'removes empty front matter' do
       input = <<~EOS
       ---
@@ -175,6 +191,14 @@ describe Kramdown::AsciiDoc::Converter do
 
       attributes = {}
       (expect Kramdown::AsciiDoc.extract_front_matter input, attributes).to eql expected
+      (expect attributes).to be_empty
+    end
+
+    it 'does not remove leading hr' do
+      input = '---'
+
+      attributes = {}
+      (expect Kramdown::AsciiDoc.extract_front_matter input, attributes).to eql input
       (expect attributes).to be_empty
     end
 
