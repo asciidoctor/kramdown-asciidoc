@@ -9,7 +9,7 @@
    const repo = { fs, dir: 'project' }
    await git.init(repo)
    ```
-   This is equivalent to the following commmand:
+   This is equivalent to the following command:
 
        $ git init project
 1. Create source files
