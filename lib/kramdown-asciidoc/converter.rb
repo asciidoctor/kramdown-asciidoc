@@ -333,8 +333,7 @@ module Kramdown; module AsciiDoc
     # NOTE this logic assumes the :hard_wrap option is disabled in the parser
     def convert_br el, opts
       prefix = ((opts[:result][-1] || '').end_with? ' ') ? '' : ' '
-      # if @attr is set, this is a <br> HTML tag
-      if el.instance_variable_get :@attr
+      if el.options[:html_tag]
         siblings = opts[:parent].children
         suffix = (next_el = siblings[(siblings.index el) + 1] || VoidElement).type == :text && (next_el.value.start_with? LF) ? '' : LF
       else
