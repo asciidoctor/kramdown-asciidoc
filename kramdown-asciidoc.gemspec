@@ -34,7 +34,7 @@ Gem::Specification.new do |s|
   #s.rdoc_options = ['--charset=UTF-8']
   #s.extra_rdoc_files = ['CHANGELOG.adoc', 'LICENSE.adoc']
 
-  s.add_runtime_dependency 'kramdown', '~> 1.16.2'
+  s.add_runtime_dependency 'kramdown', '~> 1.17.0'
   s.add_development_dependency 'rake', '~> 12.3.1'
   s.add_development_dependency 'rspec', '~> 3.7.0'
   s.add_development_dependency 'simplecov', '~> 0.16.1'

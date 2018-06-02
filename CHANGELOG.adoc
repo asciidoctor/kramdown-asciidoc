@@ -10,6 +10,8 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 === Changed
 
 * automatically convert newlines to LF when reading file
+* mark br converted from HTML br element
+* upgrade Kramdown to 1.17.0
 
 == 1.0.0.alpha.3 (2018-05-31) - @mojavelinux
 
