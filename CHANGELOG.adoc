@@ -7,9 +7,14 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == Unreleased
 
+=== Added
+
+* convert codeblock with non-contiguous lines that begins with command prompt to source,console listing block
+
 === Changed
 
 * automatically convert newlines to LF when reading file
+* convert indented codeblock to literal (indented) paragraph
 * mark br converted from HTML br element
 * upgrade Kramdown to 1.17.0
 

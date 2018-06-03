@@ -3,6 +3,7 @@
 What follows is a listing with a block title.
 
 .Example
+[source,sql]
 ----
 SELECT * from users u where u.id = 1;
 ----

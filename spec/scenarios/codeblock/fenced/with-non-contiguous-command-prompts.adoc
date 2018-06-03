@@ -1,5 +1,6 @@
-....
+[source,console]
+----
 $ cd project
 
 $ docker build
-....
+----

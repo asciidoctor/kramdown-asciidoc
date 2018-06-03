@@ -4,6 +4,8 @@ What follows is a listing with a block title.
 
 ##### Example
 
-    SELECT * from users u where u.id = 1;
+```sql
+SELECT * from users u where u.id = 1;
+```
 
 This query should return exactly one result.

@@ -217,24 +217,22 @@ module Kramdown; module AsciiDoc
       contents = el.value.rstrip
       if (lang = el.attr['class'])
         # NOTE Kramdown always prefixes class with language-
-        lang = lang.slice 9, lang.length
         # TODO remap lang if requested
-        result << %([source,#{lang}])
+        result << %([source,#{lang = lang.slice 9, lang.length}])
+      elsif (prompt = contents.start_with? '$ ')
+        result << %([source,#{lang = 'console'}]) if contents.include? LFx2
       end
-      if !lang && (contents.start_with? '$ ')
-        # QUESTION should we make these a source,console block?
-        if contents.include? LFx2
-          result << '....'
-          result << contents
-          result << '....'
-        else
-          list_continuation = LF if list_continuation
-          result << (contents.gsub StartOfLinesRx, ' ')
-        end
-      else
+      if lang || (el.options[:fenced] && !prompt)
         result << '----'
         result << contents
         result << '----'
+      elsif !prompt && (contents.include? LFx2)
+        result << '....'
+        result << contents
+        result << '....'
+      else
+        list_continuation = LF if list_continuation
+        result << (contents.gsub StartOfLinesRx, ' ')
       end
       result.unshift list_continuation if list_continuation
       %(#{result.join LF}#{suffix})
