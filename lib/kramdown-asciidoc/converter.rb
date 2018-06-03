@@ -187,6 +187,16 @@ module Kramdown; module AsciiDoc
     # TODO detect admonition masquerading as blockquote
     def convert_blockquote el, opts
       result = []
+      if (parent = opts[:parent]) && parent.type == :li
+        parent.options[:compound] = true
+        if (current_line = opts[:result].pop)
+          opts[:result] << current_line.chomp
+        end unless opts[:result].empty?
+        list_continuation = %(#{LF}+)
+        suffix = ''
+      else
+        suffix = LFx2
+      end
       # TODO support more than one level of nesting
       boundary = (parent = opts[:parent]) && parent.type == :blockquote ? '______' : '____'
       contents = inner el, (opts.merge rstrip: true)
@@ -199,7 +209,8 @@ module Kramdown; module AsciiDoc
       result << boundary
       result << contents
       result << boundary
-      %(#{result.join LF}#{LFx2})
+      result.unshift list_continuation if list_continuation
+      %(#{result.join LF}#{suffix})
     end
 
     def convert_codeblock el, opts
