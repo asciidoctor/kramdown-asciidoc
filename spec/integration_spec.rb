@@ -2,11 +2,9 @@ require_relative 'spec_helper'
 require 'yaml'
 
 describe 'integration scenario' do
-  FIXTURES_DIR = File.absolute_path 'fixtures', __dir__
-
   let(:doc) { Kramdown::Document.new input, (Kramdown::AsciiDoc::DEFAULT_PARSER_OPTS.merge extra_options) }
 
-  Dir.chdir FIXTURES_DIR do
+  Dir.chdir File.absolute_path 'scenarios', __dir__ do
     (Dir.glob '**/*.md').each do |input_filename|
       input_stem = input_filename.slice 0, input_filename.length - 3
       scenario_name = input_stem.gsub '/', '::'
