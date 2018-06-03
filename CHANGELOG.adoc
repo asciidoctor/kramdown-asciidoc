@@ -15,6 +15,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 * automatically convert newlines to LF when reading file
 * convert indented codeblock to literal (indented) paragraph
+* change separator comment from //- to //
 * mark br converted from HTML br element
 * upgrade Kramdown to 1.17.0
 

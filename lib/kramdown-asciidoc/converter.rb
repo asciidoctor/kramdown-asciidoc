@@ -440,7 +440,7 @@ module Kramdown; module AsciiDoc
       #siblings = (parent = opts[:parent]) ? parent.children : []
       if (el.options[:category] == :block)# || (!opts[:result][-1] && siblings[-1] == el)
         if comment_text.empty?
-          %(//-#{LFx2})
+          %(//#{LFx2})
         elsif comment_text.include? LF
           %(////#{LF}#{comment_text}#{LF}////#{LFx2})
         else
