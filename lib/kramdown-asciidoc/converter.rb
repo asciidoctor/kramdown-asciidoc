@@ -394,21 +394,19 @@ module Kramdown; module AsciiDoc
       else
         macro_prefix = 'image:'
       end
-      macro_attrs = []
+      macro_attrs = [nil]
       if (alt_text = el.attr['alt'])
-        macro_attrs << alt_text unless alt_text.empty?
+        macro_attrs[0] = alt_text unless alt_text.empty?
       end
       if (width = el.attr['width'])
-        macro_attrs << '' if macro_attrs.empty?
         macro_attrs << width
       elsif (css = el.attr['style']) && (width_css = (css.split CssPropDelimRx).find {|p| p.start_with? 'width:' })
-        macro_attrs << '' if macro_attrs.empty?
         width = (width_css.slice (width_css.index ':') + 1, width_css.length).strip
-        unless width.end_with? '%'
-          width = width.to_f
-          width = width.to_i if width == width.to_i
-        end
+        width = width.to_f.round unless width.end_with? '%'
         macro_attrs << width
+      end
+      if macro_attrs.size == 1 && (alt_text = macro_attrs.pop)
+        macro_attrs << alt_text
       end
       if (url = opts[:url])
         macro_attrs << %(link=#{url})
