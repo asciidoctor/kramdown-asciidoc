@@ -1,0 +1,21 @@
+* list item
++
+attached paragraph
+
+ ** nested list item
+
+* another list item
++
+____
+attached blockquote
+____
+
+ ** nested list item
+
+* yet another list item
++
+----
+code block
+----
+
+ ** nested list item

@@ -9,7 +9,8 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 === Added
 
-* convert codeblock with non-contiguous lines that begins with command prompt to source,console listing block
+* add blank line above nested list that follows compound list item
+* convert codeblock with non-contiguous lines beginning with a command prompt to a source,console listing block
 * use list continuation to attach blockquote to list item
 
 === Changed

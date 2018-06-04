@@ -253,7 +253,11 @@ module Kramdown; module AsciiDoc
       # TODO create do_in_level block
       level = opts[:level] ? (opts[:level] += 1) : (opts[:level] = 1)
       # REVIEW this is whack
-      prefix = (parent = opts[:parent]) && parent.type == :li && !opts[:result][-1] ? LF : ''
+      if (parent = opts[:parent]) && parent.type == :li
+        prefix = parent.options[:compound] ? LFx2 : (opts[:result][-1] ? '' : LF)
+      else
+        prefix = ''
+      end
       contents = inner el, (opts.merge rstrip: true)
       if level == 1
         suffix = LFx2
