@@ -491,7 +491,7 @@ module Kramdown; module AsciiDoc
       el
     end
 
-    def inner el, opts = {}
+    def inner el, opts
       rstrip = opts.delete :rstrip
       result = []
       prev = nil
@@ -502,7 +502,7 @@ module Kramdown; module AsciiDoc
       rstrip ? result.join.rstrip : result.join
     end
 
-    def clone el, properties = {}
+    def clone el, properties
       el = el.dup
       properties.each do |name, value|
         el.send %(#{name}=).to_sym, value
