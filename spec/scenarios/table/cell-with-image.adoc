@@ -1,0 +1,9 @@
+|===
+| Symbol | Description
+
+| image:bug.png[]
+| Bug
+
+| image:feature.png[]
+| Feature
+|===
