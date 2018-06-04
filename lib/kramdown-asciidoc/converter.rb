@@ -345,7 +345,11 @@ module Kramdown; module AsciiDoc
 
     # NOTE this logic assumes the :hard_wrap option is disabled in the parser
     def convert_br el, opts
-      prefix = ((opts[:result][-1] || '').end_with? ' ') ? '' : ' '
+      if (current_line = opts[:result][-1])
+        prefix = (current_line.end_with? ' ') ? '' : ' '
+      else
+        prefix = '{blank} '
+      end
       if el.options[:html_tag]
         siblings = opts[:parent].children
         suffix = (next_el = siblings[(siblings.index el) + 1] || VoidElement).type == :text && (next_el.value.start_with? LF) ? '' : LF
