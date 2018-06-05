@@ -82,6 +82,7 @@ module Kramdown; module AsciiDoc
     ApostropheRx = /\b’\b/
     CommentPrefixRx = /^ *! ?/m
     CssPropDelimRx = /\s*;\s*/
+    MenuRefRx = /^([\p{Word}&].*?)\s>\s([\p{Word}&].*(?:\s>\s|$))+/
     ReplaceableTextRx = /[-=]>|<[-=]|\.\.\./
     StartOfLinesRx = /^/m
     TypographicSymbolRx = /[“”‘’—–…]/
@@ -339,7 +340,13 @@ module Kramdown; module AsciiDoc
     end
 
     def convert_strong el, opts
-      %(*#{inner el, opts}*)
+      content = inner el, opts
+      if (content.include? ' > ') && MenuRefRx =~ content
+        @attributes['experimental'] = ''
+        %(menu:#{$1}[#{$2}])
+      else
+        %(*#{content}*)
+      end
     end
 
     # NOTE this logic assumes the :hard_wrap option is disabled in the parser
