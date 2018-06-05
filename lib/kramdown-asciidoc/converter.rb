@@ -189,17 +189,16 @@ module Kramdown; module AsciiDoc
       result = []
       if (parent = opts[:parent]) && parent.type == :li
         parent.options[:compound] = true
-        if (current_line = opts[:result].pop)
-          opts[:result] << current_line.chomp
-        end unless opts[:result].empty?
         list_continuation = %(#{LF}+)
         suffix = ''
       else
         suffix = LFx2
       end
-      # TODO support more than one level of nesting
-      boundary = (parent = opts[:parent]) && parent.type == :blockquote ? '______' : '____'
-      contents = inner el, (opts.merge rstrip: true)
+      if (current_line = opts[:result].pop)
+        opts[:result] << current_line.chomp
+      end
+      boundary = '____' + ((depth = opts[:blockquote_depth] || 0) > 0 ? '__' * depth : '')
+      contents = inner el, (opts.merge rstrip: true, blockquote_depth: depth + 1)
       if (contents.include? LF) && ((attribution_line = (lines = contents.split LF).pop).start_with? '-- ')
         attribution = attribution_line.slice 3, attribution_line.length
         result << %([,#{attribution}])

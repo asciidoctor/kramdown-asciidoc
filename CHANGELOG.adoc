@@ -13,6 +13,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * convert codeblock with non-contiguous lines beginning with a command prompt to a source,console listing block
 * use list continuation to attach blockquote to list item
 * handle case when HTML br element appears at start of paragraph
+* allow blockquotes to be nested to an arbitrary depth
 
 === Changed
 
