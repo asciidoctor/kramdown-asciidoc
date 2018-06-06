@@ -1,0 +1,7 @@
+Someone's been leaving behind trailing spaces.
+
+To them I say:
+
+____
+Clean your lines!
+____

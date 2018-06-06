@@ -85,6 +85,7 @@ module Kramdown; module AsciiDoc
     MenuRefRx = /^([\p{Word}&].*?)\s>\s([\p{Word}&].*(?:\s>\s|$))+/
     ReplaceableTextRx = /[-=]>|<[-=]|\.\.\./
     StartOfLinesRx = /^/m
+    TrailingSpaceRx = / +$/
     TypographicSymbolRx = /[“”‘’—–…]/
     XmlCommentRx = /\A<!--(.*)-->\Z/m
 
@@ -107,7 +108,7 @@ module Kramdown; module AsciiDoc
 
     def convert_root el, opts
       el = extract_prologue el, opts
-      body = %(#{inner el, (opts.merge rstrip: true)}#{LF})
+      body = %(#{(inner el, (opts.merge rstrip: true)).gsub TrailingSpaceRx, ''}#{LF})
       @attributes.each {|k, v| @header << %(:#{k}: #{v}) } unless @attributes.empty?
       @header.empty? ? body : %(#{@header.join LF}#{body == LF ? '' : LFx2}#{body})
     end

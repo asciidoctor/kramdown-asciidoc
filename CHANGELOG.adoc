@@ -15,6 +15,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * use list continuation to attach blockquote to list item
 * handle case when HTML br element appears at start of paragraph
 * allow blockquotes to be nested to an arbitrary depth
+* remove trailing spaces from output
 
 === Changed
 
