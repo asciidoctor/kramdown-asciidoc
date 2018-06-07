@@ -1,0 +1,1 @@
+Using *_bold and italic_* is the strongest way to emphasize text.
