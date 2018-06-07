@@ -1,0 +1,3 @@
+. **bold**
+. *italic*
+. `monospaced`
