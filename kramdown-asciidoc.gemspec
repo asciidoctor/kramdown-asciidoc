@@ -4,8 +4,8 @@ require 'open3' unless defined? Open3
 Gem::Specification.new do |s|
   s.name = 'kramdown-asciidoc'
   s.version = Kramdown::AsciiDoc::VERSION
-  s.summary = 'A Markdown to AsciiDoc converter based on Kramdown'
-  s.description = 'A Kramdown extension for converting Markdown documents to AsciiDoc.'
+  s.summary = 'A Markdown to AsciiDoc converter based on kramdown'
+  s.description = 'A kramdown extension for converting Markdown documents to AsciiDoc.'
 
   s.authors = ['Dan Allen']
   s.email = ['dan.j.allen@gmail.com']

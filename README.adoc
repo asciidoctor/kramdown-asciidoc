@@ -34,7 +34,7 @@ image:{uri-gem-img}[Gem Version,link={uri-gem}]
 image:{uri-ci-travis-img}[Build Status (Travis CI),link={uri-ci-travis}]
 endif::[]
 
-{uri-repo}[{project-name}] (gem: *{project-handle}*) is a {uri-kramdown}[Kramdown] extension for converting Markdown documents to {uri-asciidoc}[AsciiDoc].
+{uri-repo}[{project-name}] (gem: *{project-handle}*) is a {uri-kramdown}[kramdown] extension for converting Markdown documents to {uri-asciidoc}[AsciiDoc].
 Notably, the converter generates modern AsciiDoc syntax suitable for use with {uri-asciidoctor}[Asciidoctor].
 
 == Prerequisites
