@@ -449,6 +449,8 @@ module Kramdown; module AsciiDoc
       contents = inner el, (opts.merge rstrip: el.options[:category] == :block)
       attrs = (attrs = el.attr).empty? ? '' : attrs.map {|k, v| %( #{k}="#{v}") }.join
       case tagname
+      when 'del'
+        %([.line-through]##{contents}#)
       when 'sup'
         %(^#{contents}^)
       when 'sub'
