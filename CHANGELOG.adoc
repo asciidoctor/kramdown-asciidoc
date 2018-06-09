@@ -9,6 +9,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 === Added
 
+* convert description (aka definition) lists (#8)
 * detect menu reference and convert to inline menu macro
 * add blank line above nested list that follows compound list item
 * convert codeblock with non-contiguous lines beginning with a command prompt to a source,console listing block

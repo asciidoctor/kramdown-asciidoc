@@ -51,6 +51,7 @@ module Kramdown; module AsciiDoc
     ADMON_MARKERS = ADMON_LABELS.map {|l, _| %(#{l}: ) }
     ADMON_FORMATTED_MARKERS = ADMON_LABELS.map {|l, _| [%(#{l}:), l] }.to_h
     ADMON_TYPE_MAP = ADMON_LABELS.map {|l, _| [l, l.upcase] }.to_h.merge 'Attention' => 'IMPORTANT'
+    DLIST_MARKERS = %w(:: ;; ::: ::::)
     # FIXME here we reverse the smart quotes; add option to allow them (needs to be handled carefully)
     SMART_QUOTE_ENTITY_TO_MARKUP = { ldquo: ?", rdquo: ?", lsquo: ?', rsquo: ?' }
     TYPOGRAPHIC_SYMBOL_TO_MARKUP = {
@@ -154,7 +155,7 @@ module Kramdown; module AsciiDoc
     alias convert_header convert_heading
 
     def convert_p el, opts
-      if (parent = opts[:parent]) && parent.type == :li
+      if (parent = opts[:parent]) && (parent.type == :li || parent.type == :dd)
         # NOTE :prev option not set indicates primary text; convert_li appends LF
         return inner el, opts unless opts[:prev]
         parent.options[:compound] = true
@@ -189,7 +190,7 @@ module Kramdown; module AsciiDoc
     # TODO detect admonition masquerading as blockquote
     def convert_blockquote el, opts
       result = []
-      if (parent = opts[:parent]) && parent.type == :li
+      if (parent = opts[:parent]) && (parent.type == :li || parent.type == :dd)
         parent.options[:compound] = true
         list_continuation = %(#{LF}+)
         suffix = ''
@@ -216,7 +217,7 @@ module Kramdown; module AsciiDoc
 
     def convert_codeblock el, opts
       result = []
-      if (parent = opts[:parent]) && parent.type == :li
+      if (parent = opts[:parent]) && (parent.type == :li || parent.type == :dd)
         parent.options[:compound] = true
         if (current_line = opts[:result].pop)
           opts[:result] << current_line.chomp
@@ -254,7 +255,7 @@ module Kramdown; module AsciiDoc
       # TODO create do_in_level block
       level = opts[:list_level] ? (opts[:list_level] += 1) : (opts[:list_level] = 1)
       # REVIEW this is whack
-      if (parent = opts[:parent]) && parent.type == :li
+      if (parent = opts[:parent]) && (parent.type == :li || parent.type == :dd)
         prefix = parent.options[:compound] ? LFx2 : (opts[:result][-1] ? '' : LF)
       else
         prefix = ''
@@ -271,12 +272,23 @@ module Kramdown; module AsciiDoc
     end
 
     alias convert_ol convert_ul
+    alias convert_dl convert_ul
 
     def convert_li el, opts
       prefix = (prev = opts[:prev]) && prev.options[:compound] ? LF : ''
       marker = opts[:parent].type == :ol ? '.' : '*'
       indent = (level = opts[:list_level]) - 1
       %(#{prefix}#{indent > 0 ? ' ' * indent : ''}#{marker * level} #{(inner el, (opts.merge rstrip: true))}#{LF})
+    end
+
+    def convert_dt el, opts
+      prefix = opts[:prev] ? LF : ''
+      marker = DLIST_MARKERS[opts[:list_level] - 1]
+      %(#{prefix}#{inner el, opts}#{marker}#{LF})
+    end
+
+    def convert_dd el, opts
+      %(#{inner el, (opts.merge rstrip: true)}#{LF})
     end
 
     def convert_table el, opts
