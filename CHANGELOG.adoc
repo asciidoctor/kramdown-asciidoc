@@ -17,6 +17,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * handle case when HTML br element appears at start of paragraph
 * allow blockquotes to be nested to an arbitrary depth
 * remove trailing spaces from output
+* convert deleted text span
 
 === Changed
 
@@ -26,7 +27,8 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * change separator comment from //- to //
 * mark br converted from HTML br element
 * round CSS width value for image
-* upgrade Kramdown to 1.17.0
+* upgrade kramdown to 1.17.0
+* use correct casing for kramdown in README and library metadata
 
 == 1.0.0.alpha.3 (2018-05-31) - @mojavelinux
 
