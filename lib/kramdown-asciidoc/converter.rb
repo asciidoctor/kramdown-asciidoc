@@ -77,6 +77,8 @@ module Kramdown; module AsciiDoc
       right: '>',
     }
 
+    NON_DEFAULT_TABLE_ALIGNMENTS = [:center, :right]
+
     ApostropheRx = /\b’\b/
     CommentPrefixRx = /^ *! ?/m
     CssPropDelimRx = /\s*;\s*/
@@ -294,7 +296,7 @@ module Kramdown; module AsciiDoc
     def convert_table el, opts
       head = nil
       cols = (alignments = el.options[:alignment]).size
-      if alignments.any? {|align| align == :center || align == :right }
+      if alignments.any? {|align| NON_DEFAULT_TABLE_ALIGNMENTS.include? align }
         colspecs = alignments.map {|align| TABLE_ALIGNMENTS[align] }.join ','
         colspecs = %("#{colspecs}") if cols > 1
       end
