@@ -20,6 +20,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 === Changed
 
+* use title from front matter as document title if explicit document title (level 1 heading) is absent
 * automatically convert newlines to LF when reading file
 * convert indented codeblock to literal (indented) paragraph
 * change separator comment from //- to //

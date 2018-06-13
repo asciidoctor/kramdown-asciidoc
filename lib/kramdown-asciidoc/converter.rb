@@ -30,10 +30,7 @@ module Kramdown; module AsciiDoc
       return source unless line && line.chomp == '---' && !(front_matter.include? ?\n)
       lines.shift while (line = lines[0]) && line == ?\n
       (::YAML.load front_matter.join).each do |key, val|
-        case key
-        when 'title'
-          # skip
-        when 'layout'
+        if key == 'layout'
           attributes['page-layout'] = val unless val == 'default'
         else
           attributes[key] = val.to_s
@@ -110,6 +107,9 @@ module Kramdown; module AsciiDoc
     def convert_root el, opts
       el = extract_prologue el, opts
       body = %(#{(inner el, (opts.merge rstrip: true)).gsub TrailingSpaceRx, ''}#{LF})
+      if (fallback_doctitle = @attributes.delete 'title')
+        @header << %(= #{fallback_doctitle}) if @header.empty?
+      end
       @attributes.each {|k, v| @header << %(:#{k}: #{v}) } unless @attributes.empty?
       @header.empty? ? body : %(#{@header.join LF}#{body == LF ? '' : LFx2}#{body})
     end

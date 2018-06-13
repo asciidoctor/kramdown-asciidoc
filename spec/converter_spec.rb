@@ -8,6 +8,7 @@ describe Kramdown::AsciiDoc::Converter do
 
   context '#convert' do
     let (:input) { %(# Document Title\n\nBody text.) }
+
     it 'adds line feed (EOL) to end of output document' do
       (expect converter.convert root).to end_with %(\n)
       (expect doc.to_asciidoc).to end_with %(\n)
@@ -45,8 +46,7 @@ describe Kramdown::AsciiDoc::Converter do
       ...
       EOS
 
-      attributes = {}
-      (expect Kramdown::AsciiDoc.replace_toc input, attributes).to be input
+      (expect Kramdown::AsciiDoc.replace_toc input, (attributes = {})).to be input
       (expect attributes).to be_empty
     end
 
@@ -81,8 +81,7 @@ describe Kramdown::AsciiDoc::Converter do
       ...
       EOS
 
-      attributes = {}
-      (expect Kramdown::AsciiDoc.replace_toc input, attributes).to eql expected
+      (expect Kramdown::AsciiDoc.replace_toc input, (attributes = {})).to eql expected
       (expect attributes['toc']).to eql 'macro'
     end
   end
@@ -99,23 +98,21 @@ describe Kramdown::AsciiDoc::Converter do
       more content
       EOS
 
-      attributes = {}
-      (expect Kramdown::AsciiDoc.extract_front_matter input, attributes).to be input
+      (expect Kramdown::AsciiDoc.extract_front_matter input, (attributes = {})).to be input
       (expect attributes).to be_empty
     end
 
     it 'does not modify source if source is empty' do
       input = ''
 
-      attributes = {}
-      (expect Kramdown::AsciiDoc.extract_front_matter input, attributes).to be input
+      (expect Kramdown::AsciiDoc.extract_front_matter input, (attributes = {})).to be input
       (expect attributes).to be_empty
     end
 
     it 'extracts front matter and assigns entries to attributes' do
       input = <<~EOS
       ---
-      title: Introduction
+      title: Introduction From Front Matter
       description: An introduction to this amazing technology.
       keywords: buzz, transformative
       layout: default
@@ -132,13 +129,60 @@ describe Kramdown::AsciiDoc::Converter do
       EOS
 
       expected_attributes = {
+        'title' => 'Introduction From Front Matter',
         'description' => 'An introduction to this amazing technology.',
         'keywords' => 'buzz, transformative',
       }
 
-      attributes = {}
-      (expect Kramdown::AsciiDoc.extract_front_matter input, attributes).to eql expected
+      (expect Kramdown::AsciiDoc.extract_front_matter input, (attributes = {})).to eql expected
       (expect attributes).to eql expected_attributes
+    end
+
+    it 'ignores title from front matter if explicit document title is present' do
+      input = <<~EOS
+      ---
+      title: Document Title From Front Matter
+      description: An introduction to this amazing technology.
+      ---
+      # Introduction
+
+      When using this technology, anything is possible.
+      EOS
+
+      expected = <<~EOS
+      = Introduction
+      :description: An introduction to this amazing technology.
+
+      When using this technology, anything is possible.
+      EOS
+
+      # FIXME can we reuse our lets to handle this test?
+      input = Kramdown::AsciiDoc.extract_front_matter input, (attributes = {})
+      doc = Kramdown::Document.new input, (opts.merge attributes: attributes)
+      (expect doc.to_asciidoc).to eql expected
+    end
+
+    it 'uses title from front matter as document title if explicit document title is absent' do
+      input = <<~EOS
+      ---
+      title: Introduction
+      description: An introduction to this amazing technology.
+      ---
+
+      When using this technology, anything is possible.
+      EOS
+
+      expected = <<~EOS
+      = Introduction
+      :description: An introduction to this amazing technology.
+
+      When using this technology, anything is possible.
+      EOS
+
+      # FIXME can we reuse our lets to handle this test?
+      input = Kramdown::AsciiDoc.extract_front_matter input, (attributes = {})
+      doc = Kramdown::Document.new input, (opts.merge attributes: attributes)
+      (expect doc.to_asciidoc).to eql expected
     end
 
     it 'assigns non-default layout in front matter to page-layout attribute' do
@@ -157,8 +201,7 @@ describe Kramdown::AsciiDoc::Converter do
         'page-layout' => 'home'
       }
 
-      attributes = {}
-      (expect Kramdown::AsciiDoc.extract_front_matter input, attributes).to eql expected
+      (expect Kramdown::AsciiDoc.extract_front_matter input, (attributes = {})).to eql expected
       (expect attributes).to eql expected_attributes
     end
 
@@ -173,8 +216,7 @@ describe Kramdown::AsciiDoc::Converter do
         'description' => 'This page is intentionally left blank.'
       }
 
-      attributes = {}
-      (expect Kramdown::AsciiDoc.extract_front_matter input, attributes).to be_empty
+      (expect Kramdown::AsciiDoc.extract_front_matter input, (attributes = {})).to be_empty
       (expect attributes).to eql expected_attributes
     end
 
@@ -189,16 +231,14 @@ describe Kramdown::AsciiDoc::Converter do
       Move along. There's no front matter to see here.
       EOS
 
-      attributes = {}
-      (expect Kramdown::AsciiDoc.extract_front_matter input, attributes).to eql expected
+      (expect Kramdown::AsciiDoc.extract_front_matter input, (attributes = {})).to eql expected
       (expect attributes).to be_empty
     end
 
     it 'does not remove leading hr' do
       input = '---'
 
-      attributes = {}
-      (expect Kramdown::AsciiDoc.extract_front_matter input, attributes).to eql input
+      (expect Kramdown::AsciiDoc.extract_front_matter input, (attributes = {})).to eql input
       (expect attributes).to be_empty
     end
 
@@ -219,8 +259,7 @@ describe Kramdown::AsciiDoc::Converter do
         'description' => 'Just another page.'
       }
 
-      attributes = {}
-      (expect Kramdown::AsciiDoc.extract_front_matter input, attributes).to eql expected
+      (expect Kramdown::AsciiDoc.extract_front_matter input, (attributes = {})).to eql expected
       (expect attributes).to eql expected_attributes
     end
   end
