@@ -1,0 +1,1 @@
+> Note: The `npm install <package>` command uses the `latest` tag by default.

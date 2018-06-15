@@ -46,6 +46,7 @@ module Kramdown; module AsciiDoc
     RESOLVE_ENTITY_TABLE = { 60 => '<', 62 => '>', 124 => '|' }
     ADMON_LABELS = %w(Note Tip Caution Warning Important Attention).map {|l| [l, l] }.to_h
     ADMON_MARKERS = ADMON_LABELS.map {|l, _| %(#{l}: ) }
+    ADMON_MARKERS_ASCIIDOC = %w(NOTE TIP CAUTION WARNING IMPORTANT).map {|l| %(#{l}: ) }
     ADMON_FORMATTED_MARKERS = ADMON_LABELS.map {|l, _| [%(#{l}:), l] }.to_h
     ADMON_TYPE_MAP = ADMON_LABELS.map {|l, _| [l, l.upcase] }.to_h.merge 'Attention' => 'IMPORTANT'
     DLIST_MARKERS = %w(:: ;; ::: ::::)
@@ -202,17 +203,21 @@ module Kramdown; module AsciiDoc
       if (current_line = opts[:result].pop)
         opts[:result] << current_line.chomp
       end
-      boundary = '____' + ((depth = opts[:blockquote_depth] || 0) > 0 ? '__' * depth : '')
-      contents = inner el, (opts.merge rstrip: true, blockquote_depth: depth + 1)
-      if (contents.include? LF) && ((attribution_line = (lines = contents.split LF).pop).start_with? '-- ')
-        attribution = attribution_line.slice 3, attribution_line.length
-        result << %([,#{attribution}])
-        lines.pop while lines.size > 0 && lines[-1].empty?
-        contents = lines.join LF
+      contents = inner el, (opts.merge rstrip: true, blockquote_depth: (depth = opts[:blockquote_depth] || 0) + 1)
+      if contents.start_with?(*ADMON_MARKERS_ASCIIDOC) && !(contents.include? LFx2)
+        result << contents
+      else
+        boundary = '____' + (depth > 0 ? '__' * depth : '')
+        if (contents.include? LF) && ((attribution_line = (lines = contents.split LF).pop).start_with? '-- ')
+          attribution = attribution_line.slice 3, attribution_line.length
+          result << %([,#{attribution}])
+          lines.pop while lines.size > 0 && lines[-1].empty?
+          contents = lines.join LF
+        end
+        result << boundary
+        result << contents
+        result << boundary
       end
-      result << boundary
-      result << contents
-      result << boundary
       result.unshift list_continuation if list_continuation
       %(#{result.join LF}#{suffix})
     end
