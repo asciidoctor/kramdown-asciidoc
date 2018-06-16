@@ -43,7 +43,7 @@ module Kramdown; module AsciiDoc
   end
 
   class Converter < ::Kramdown::Converter::Base
-    RESOLVE_ENTITY_TABLE = { 60 => '<', 62 => '>', 124 => '|' }
+    RESOLVE_ENTITY_TABLE = { 38 => '&', 60 => '<', 62 => '>', 124 => '|' }
     ADMON_LABELS = %w(Note Tip Caution Warning Important Attention).map {|l| [l, l] }.to_h
     ADMON_MARKERS = ADMON_LABELS.map {|l, _| %(#{l}: ) }
     ADMON_MARKERS_ASCIIDOC = %w(NOTE TIP CAUTION WARNING IMPORTANT).map {|l| %(#{l}: ) }
