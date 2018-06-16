@@ -49,6 +49,7 @@ module Kramdown; module AsciiDoc
     ADMON_MARKERS_ASCIIDOC = %w(NOTE TIP CAUTION WARNING IMPORTANT).map {|l| %(#{l}: ) }
     ADMON_FORMATTED_MARKERS = ADMON_LABELS.map {|l, _| [%(#{l}:), l] }.to_h
     ADMON_TYPE_MAP = ADMON_LABELS.map {|l, _| [l, l.upcase] }.to_h.merge 'Attention' => 'IMPORTANT', 'Hint' => 'TIP'
+    BLOCK_TYPES = [:p, :blockquote, :codeblock]
     DLIST_MARKERS = %w(:: ;; ::: ::::)
     # FIXME here we reverse the smart quotes; add option to allow them (needs to be handled carefully)
     SMART_QUOTE_ENTITY_TO_MARKUP = { ldquo: ?", rdquo: ?", lsquo: ?', rsquo: ?' }
@@ -80,11 +81,11 @@ module Kramdown; module AsciiDoc
 
     NON_DEFAULT_TABLE_ALIGNMENTS = [:center, :right]
 
-    ApostropheRx = /\b’\b/
     CommentPrefixRx = /^ *! ?/m
     CssPropDelimRx = /\s*;\s*/
     MenuRefRx = /^([\p{Word}&].*?)\s>\s([\p{Word}&].*(?:\s>\s|$))+/
     ReplaceableTextRx = /[-=]>|<[-=]|\.\.\./
+    SmartApostropheRx = /\b’\b/
     StartOfLinesRx = /^/m
     TrailingSpaceRx = / +$/
     TypographicSymbolRx = /[“”‘’—–…]/
@@ -97,10 +98,9 @@ module Kramdown; module AsciiDoc
 
     def initialize root, opts
       super
-      @header = []
       @attributes = opts[:attributes] || {}
       @imagesdir = (@attributes.delete 'implicit-imagesdir') || @attributes['imagesdir']
-      @last_heading_level = nil
+      @current_heading_level = nil
     end
 
     def convert el, opts = {}
@@ -108,29 +108,30 @@ module Kramdown; module AsciiDoc
     end
 
     def convert_root el, opts
-      el = extract_prologue el, opts
-      body = %(#{(inner el, (opts.merge rstrip: true)).gsub TrailingSpaceRx, ''}#{LF})
+      writer = Writer.new
+      el = extract_prologue el, (opts.merge writer: writer)
+      traverse el, (opts.merge writer: writer)
       if (fallback_doctitle = @attributes.delete 'title')
-        @header << %(= #{fallback_doctitle}) if @header.empty?
+        writer.doctitle ||= fallback_doctitle
       end
-      @attributes.each {|k, v| @header << %(:#{k}: #{v}) } unless @attributes.empty?
-      @header.empty? ? body : %(#{@header.join LF}#{body == LF ? '' : LFx2}#{body})
+      writer.add_attributes @attributes unless @attributes.empty?
+      writer.to_s.gsub TrailingSpaceRx, ''
     end
 
     def convert_blank el, opts
-      nil
     end
 
     def convert_heading el, opts
-      result = []
-      style = []
+      (writer = opts[:writer]).start_block
       level = el.options[:level]
-      if (discrete = @last_heading_level && level > @last_heading_level + 1)
+      style = []
+      # Q: should writer track last heading level?
+      if (discrete = @current_heading_level && level > @current_heading_level + 1)
         # TODO make block title promotion an option (allow certain levels and titles)
-        #if ((raw_text = el.options[:raw_text]) == 'Example' || raw_text == 'Examples') &&
         if level == 5 && (next_2_siblings = (siblings = opts[:parent].children).slice (siblings.index el) + 1, 2) &&
             next_2_siblings.any? {|sibling| sibling.type == :codeblock }
-          return %(.#{inner el, opts}#{LF})
+          writer.add_line %(.#{compose_text el, strip: true})
+          return
         end
         style << 'discrete'
       end
@@ -142,39 +143,33 @@ module Kramdown; module AsciiDoc
       elsif (role = el.attr['class'])
         style << %(.#{role.tr ' ', '.'})
       end
-      result << %([#{style.join}]) unless style.empty?
-      result << %(#{'=' * level} #{inner el, opts})
-      @last_heading_level = level unless discrete
-      if level == 1 && opts[:result].empty?
-        @header += result
+      lines = []
+      lines << %([#{style.join}]) unless style.empty?
+      lines << %(#{'=' * level} #{compose_text el, strip: true})
+      if level == 1 && writer.empty? && @current_heading_level != 1
+        writer.header += lines
         nil
       else
         @attributes['doctype'] = 'book' if level == 1
-        %(#{result.join LF}#{LFx2})
+        writer.add_lines lines
       end
+      @current_heading_level = level unless discrete
+      nil
     end
 
     # Kramdown incorrectly uses the term header for headings
     alias convert_header convert_heading
 
     def convert_p el, opts
-      if (parent = opts[:parent]) && (parent.type == :li || parent.type == :dd)
-        # NOTE :prev option not set indicates primary text; convert_li appends LF
-        return inner el, opts unless opts[:prev]
-        parent.options[:compound] = true
-        opts[:result].pop unless opts[:result][-1]
-        prefix, suffix = %(#{LF}+#{LF}), ''
-      else
-        prefix, suffix = '', LFx2
-      end
+      (writer = opts[:writer]).start_block
       if (children = el.children).empty?
-        contents = '{blank}'
+        lines = ['{blank}']
       # NOTE detect plain admonition marker (e.g, Note: ...)
+      # TODO these conditionals could be optimized
       elsif (child_i = children[0]).type == :text && (child_i_text = child_i.value).start_with?(*ADMON_MARKERS)
         marker, child_i_text = child_i_text.split ': ', 2
-        child_i = clone child_i, value: %(#{ADMON_TYPE_MAP[marker]}: #{child_i_text})
-        el = clone el, children: [child_i] + (children.drop 1)
-        contents = inner el, opts
+        children = [(clone child_i, value: %(#{ADMON_TYPE_MAP[marker]}: #{child_i_text}))] + (children.drop 1)
+        lines = compose_text children, parent: el, strip: true, split: true
       # NOTE detect formatted admonition marker (e.g., *Note:* ...)
       elsif (child_i.type == :strong || child_i.type == :em) &&
           (marker_el = child_i.children[0]) && ((marker = ADMON_FORMATTED_MARKERS[marker_el.value]) ||
@@ -182,121 +177,111 @@ module Kramdown; module AsciiDoc
           ((child_ii_text = child_ii.value).start_with? ': ')))
         children = children.drop 1
         children[0] = clone child_ii, value: (child_ii_text.slice 1, child_ii_text.length) if child_ii
-        el = clone el, children: children
-        contents = %(#{ADMON_TYPE_MAP[marker]}:#{inner el, opts})
+        # Q: should we only rstrip?
+        lines = compose_text children, parent: el, strip: true, split: true
+        lines.unshift %(#{ADMON_TYPE_MAP[marker]}: #{lines.shift})
       else
-        contents = inner el, opts
+        lines = compose_text el, strip: true, split: true
       end
-      %(#{prefix}#{contents}#{suffix})
+      writer.add_lines lines
     end
 
-    # TODO detect admonition masquerading as blockquote
+    # Q: should we delete blank line between blocks in a nested conversation?
+    # TODO use shorthand for blockquote when contents is paragraph only; or always?
     def convert_blockquote el, opts
-      result = []
-      if (parent = opts[:parent]) && (parent.type == :li || parent.type == :dd)
-        parent.options[:compound] = true
-        list_continuation = %(#{LF}+)
-        suffix = ''
+      (writer = opts[:writer]).start_block
+      traverse el, (opts.merge writer: (block_writer = Writer.new), blockquote_depth: (depth = opts[:blockquote_depth] || 0) + 1)
+      contents = block_writer.body
+      if contents[0].start_with?(*ADMON_MARKERS_ASCIIDOC) && !(contents.include? '')
+        writer.add_lines contents
       else
-        suffix = LFx2
-      end
-      if (current_line = opts[:result].pop)
-        opts[:result] << current_line.chomp
-      end
-      contents = inner el, (opts.merge rstrip: true, blockquote_depth: (depth = opts[:blockquote_depth] || 0) + 1)
-      if contents.start_with?(*ADMON_MARKERS_ASCIIDOC) && !(contents.include? LFx2)
-        result << contents
-      else
-        boundary = '____' + (depth > 0 ? '__' * depth : '')
-        if (contents.include? LF) && ((attribution_line = (lines = contents.split LF).pop).start_with? '-- ')
-          attribution = attribution_line.slice 3, attribution_line.length
-          result << %([,#{attribution}])
-          lines.pop while lines.size > 0 && lines[-1].empty?
-          contents = lines.join LF
+        if contents.size > 1 && (contents[-1].start_with? '-- ')
+          attribution = (attribution_line = contents.pop).slice 3, attribution_line.length
+          writer.add_line %([,#{attribution}])
+          contents.pop while contents.size > 0 && contents[-1].empty?
         end
-        result << boundary
-        result << contents
-        result << boundary
+        # Q: should writer handle delimited block nesting?
+        delimiter = '____' + (depth > 0 ? '__' * depth : '')
+        writer.start_delimited_block delimiter
+        writer.add_lines contents
+        writer.end_delimited_block
       end
-      result.unshift list_continuation if list_continuation
-      %(#{result.join LF}#{suffix})
     end
 
+    # TODO match logic from ditarx
     def convert_codeblock el, opts
-      result = []
-      if (parent = opts[:parent]) && (parent.type == :li || parent.type == :dd)
-        parent.options[:compound] = true
-        if (current_line = opts[:result].pop)
-          opts[:result] << current_line.chomp
-        end unless opts[:result].empty?
-        list_continuation = %(#{LF}+)
-        suffix = ''
-      else
-        suffix = LFx2
+      writer = opts[:writer]
+      # NOTE hack to down-convert level-5 heading to block title
+      if (current_line = writer.current_line) && (!(current_line.start_with? '.') || (current_line.start_with? '. '))
+        writer.start_block
       end
-      contents = el.value.rstrip
+      lines = el.value.rstrip.split LF
       if (lang = el.attr['class'])
         # NOTE Kramdown always prefixes class with language-
         # TODO remap lang if requested
-        result << %([source,#{lang = lang.slice 9, lang.length}])
-      elsif (prompt = contents.start_with? '$ ')
-        result << %([source,#{lang = 'console'}]) if contents.include? LFx2
+        writer.add_line %([source,#{lang = lang.slice 9, lang.length}])
+      elsif (prompt = lines[0].start_with? '$ ')
+        writer.add_line %([source,#{lang = 'console'}]) if lines.include? ''
       end
       if lang || (el.options[:fenced] && !prompt)
-        result << '----'
-        result << contents
-        result << '----'
-      elsif !prompt && (contents.include? LFx2)
-        result << '....'
-        result << contents
-        result << '....'
+        writer.add_line '----'
+        writer.add_lines lines
+        writer.add_line '----'
+      elsif !prompt && (lines.include? '')
+        writer.add_line '....'
+        writer.add_lines lines
+        writer.add_line '....'
       else
-        list_continuation = LF if list_continuation
-        result << (contents.gsub StartOfLinesRx, ' ')
+        # NOTE clear the list continuation (is the condition necessary?)
+        writer.clear_line if writer.current_line == '+'
+        writer.add_line lines.map {|l| %( #{l}) }
       end
-      result.unshift list_continuation if list_continuation
-      %(#{result.join LF}#{suffix})
     end
 
     def convert_ul el, opts
+      nested = (parent = opts[:parent]) && (parent.type == :li || parent.type == :dd)
+      (writer = opts[:writer]).start_list nested && parent.type != :dd && !parent.options[:compound]
       level_opt = el.type == :dl ? :dlist_level : :list_level
-      # TODO create do_in_level block
       level = opts[level_opt] ? (opts[level_opt] += 1) : (opts[level_opt] = 1)
-      # REVIEW this is whack
-      if (parent = opts[:parent]) && (parent.type == :li || parent.type == :dd)
-        prefix = parent.options[:compound] ? LFx2 : (opts[:result][-1] ? '' : LF)
-      else
-        prefix = ''
-      end
-      contents = inner el, (opts.merge rstrip: true)
-      if level == 1
-        suffix = LFx2
-        opts.delete level_opt
-      else
-        suffix = LF
-        opts[level_opt] -= 1
-      end
-      %(#{prefix}#{contents}#{suffix})
+      traverse el, opts
+      opts.delete level_opt if (opts[level_opt] -= 1) < 1
+      writer.end_list nested
     end
 
     alias convert_ol convert_ul
     alias convert_dl convert_ul
 
     def convert_li el, opts
-      prefix = (prev = opts[:prev]) && prev.options[:compound] ? LF : ''
+      writer = opts[:writer]
+      writer.add_blank_line if (prev = opts[:prev]) && prev.options[:compound]
       marker = opts[:parent].type == :ol ? '.' : '*'
       indent = (level = opts[:list_level]) - 1
-      %(#{prefix}#{indent > 0 ? ' ' * indent : ''}#{marker * level} #{(inner el, (opts.merge rstrip: true))}#{LF})
+      primary, remaining = [(children = el.children.dup).shift, children]
+      lines = compose_text [primary], parent: el, strip: true, split: true
+      lines.unshift %(#{indent > 0 ? ' ' * indent : ''}#{marker * level} #{lines.shift})
+      writer.add_lines lines
+      unless remaining.empty?
+        next_node = remaining.find {|n| n.type != :blank }
+        el.options[:compound] = true if next_node && (BLOCK_TYPES.include? next_node.type)
+        traverse remaining, (opts.merge parent: el)
+      end
     end
 
     def convert_dt el, opts
-      prefix = opts[:prev] ? LF : ''
+      term = compose_text el, strip: true
       marker = DLIST_MARKERS[opts[:dlist_level] - 1]
-      %(#{prefix}#{inner el, opts}#{marker}#{LF})
+      opts[:writer].add_blank_line if opts[:prev]
+      opts[:writer].add_line %(#{term}#{marker})
     end
 
     def convert_dd el, opts
-      %(#{inner el, (opts.merge rstrip: true)}#{LF})
+      primary, remaining = [(children = el.children.dup).shift, children]
+      opts[:writer].add_lines compose_text [primary], parent: el, strip: true, split: true
+      unless remaining.empty?
+        next_node = remaining.find {|n| n.type != :blank }
+        el.options[:compound] = true if next_node && (BLOCK_TYPES.include? next_node.type)
+        traverse remaining, (opts.merge parent: el)
+      end
     end
 
     def convert_table el, opts
@@ -306,36 +291,39 @@ module Kramdown; module AsciiDoc
         colspecs = alignments.map {|align| TABLE_ALIGNMENTS[align] }.join ','
         colspecs = %("#{colspecs}") if cols > 1
       end
-      table_buf = ['|===']
+      table_buffer = ['|===']
       el.children.each do |container|
         container.children.each do |row|
-          row_buf = []
+          row_buffer = []
           row.children.each do |cell|
-            cell_contents = inner cell, opts
+            # TODO if using sentence-per-line, append to row_buffer as separate lines
+            cell_contents = compose_text cell
             cell_contents = cell_contents.gsub '|', '\|' if cell_contents.include? '|'
-            row_buf << %(| #{cell_contents})
+            row_buffer << %(| #{cell_contents})
           end
           if container.type == :thead
             head = true
-            row_buf = [row_buf * ' ', '']
+            row_buffer = [row_buffer * ' ', '']
           elsif cols > 1
-            row_buf << ''
+            row_buffer << ''
           end
-          table_buf.concat row_buf
+          table_buffer.concat row_buffer
         end
       end
+      table_buffer.pop if table_buffer[-1] == ''
+      table_buffer << '|==='
+      (writer = opts[:writer]).start_block
       if colspecs
-        table_buf.unshift %([cols=#{colspecs}])
+        writer.add_line %([cols=#{colspecs}])
       elsif !head && cols > 1
-        table_buf.unshift %([cols=#{cols}*])
+        writer.add_line %([cols=#{cols}*])
       end
-      table_buf.pop if table_buf[-1] == ''
-      table_buf << '|==='
-      %(#{table_buf * LF}#{LFx2})
+      opts[:writer].add_lines table_buffer
     end
 
     def convert_hr el, opts
-      %('''#{LFx2})
+      (writer = opts[:writer]).start_block
+      writer.add_line '\'\'\''
     end
 
     def convert_text el, opts
@@ -347,70 +335,69 @@ module Kramdown; module AsciiDoc
       text = text.gsub ' ', '{nbsp}' if text.include? ' '
       text = text.gsub '^', '{caret}' if (text.include? '^') && text != '^'
       text = text.gsub '<=', '\<=' if text.include? '<='
-      if text.ascii_only?
-        text
-      else
-        (text.gsub ApostropheRx, ?').gsub TypographicSymbolRx, TYPOGRAPHIC_SYMBOL_TO_MARKUP
+      unless text.ascii_only?
+        text = (text.gsub SmartApostropheRx, ?').gsub TypographicSymbolRx, TYPOGRAPHIC_SYMBOL_TO_MARKUP
       end
+      opts[:writer].append text
     end
 
     def convert_codespan el, opts
-      (val = el.value) =~ ReplaceableTextRx ? %(`+#{val}+`) : %(`#{val}`)
+      opts[:writer].append (val = el.value) =~ ReplaceableTextRx ? %(`+#{val}+`) : %(`#{val}`)
     end
 
     def convert_em el, opts
-      %(_#{inner el, opts}_)
+      opts[:writer].append %(_#{compose_text el}_)
     end
 
     def convert_strong el, opts
-      content = inner el, opts
-      if (content.include? ' > ') && MenuRefRx =~ content
+      text = compose_text el
+      if (text.include? ' > ') && MenuRefRx =~ text
         @attributes['experimental'] = ''
-        %(menu:#{$1}[#{$2}])
+        opts[:writer].append %(menu:#{$1}[#{$2}])
       else
-        %(*#{content}*)
+        opts[:writer].append %(*#{text}*)
       end
     end
 
     # NOTE this logic assumes the :hard_wrap option is disabled in the parser
     def convert_br el, opts
-      if (current_line = opts[:result][-1])
-        prefix = (current_line.end_with? ' ') ? '' : ' '
+      writer = opts[:writer]
+      if writer.empty?
+        writer.append '{blank} +'
       else
-        prefix = '{blank} '
+        writer.append %(#{(writer.current_line.end_with? ' ') ? '' : ' '}+)
       end
       if el.options[:html_tag]
         siblings = opts[:parent].children
-        suffix = (next_el = siblings[(siblings.index el) + 1] || VoidElement).type == :text && (next_el.value.start_with? LF) ? '' : LF
-      else
-        suffix = ''
+        unless (next_el = siblings[(siblings.index el) + 1] || VoidElement).type == :text && (next_el.value.start_with? LF)
+          writer.add_blank_line
+        end
       end
-      %(#{prefix}+#{suffix})
     end
 
     def convert_smart_quote el, opts
-      SMART_QUOTE_ENTITY_TO_MARKUP[el.value]
+      opts[:writer].append SMART_QUOTE_ENTITY_TO_MARKUP[el.value]
     end
 
     def convert_entity el, opts
-      RESOLVE_ENTITY_TABLE[el.value.code_point] || el.options[:original]
+      opts[:writer].append RESOLVE_ENTITY_TABLE[el.value.code_point] || el.options[:original]
     end
 
     def convert_a el, opts
       if (url = el.attr['href']).start_with? '#'
-        %(<<#{url.slice 1, url.length},#{inner el, opts}>>)
+        opts[:writer].append %(<<#{url.slice 1, url.length},#{compose_text el, strip: true}>>)
       elsif url.start_with? 'https://', 'http://'
         if (children = el.children).size == 1 && (child_i = el.children[0]).type == :img
-          convert_img child_i, parent: opts[:parent], index: 0, url: url
+          convert_img child_i, parent: opts[:parent], index: 0, url: url, writer: opts[:writer]
         else
-          bare = ((contents = inner el, opts).chomp '/') == (url.chomp '/')
+          bare = ((text = compose_text el, strip: true).chomp '/') == (url.chomp '/')
           url = url.gsub '__', '%5F%5F' if (url.include? '__')
-          bare ? url : %(#{url}[#{contents.gsub ']', '\]'}])
+          opts[:writer].append bare ? url : %(#{url}[#{text.gsub ']', '\]'}])
         end
       elsif url.end_with? '.md'
-        %(xref:#{url.slice 0, url.length - 3}.adoc[#{(inner el, opts).gsub ']', '\]'}])
+        opts[:writer].append %(xref:#{url.slice 0, url.length - 3}.adoc[#{(compose_text el, strip: true).gsub ']', '\]'}])
       else
-        %(link:#{url}[#{(inner el, opts).gsub ']', '\]'}])
+        opts[:writer].append %(link:#{url}[#{(compose_text el, strip: true).gsub ']', '\]'}])
       end
     end 
 
@@ -423,9 +410,8 @@ module Kramdown; module AsciiDoc
         if (role = el.attr['class'])
           style << %(.#{role.tr ' ', '.'})
         end
-        macro_prefix = style.empty? ? 'image::' : ([%([#{style.join}]), 'image::'].join LF)
-      else
-        macro_prefix = 'image:'
+        block_attributes_line = %([#{style.join}]) unless style.empty?
+        block = true
       end
       macro_attrs = [nil]
       if (alt_text = el.attr['alt'])
@@ -448,70 +434,81 @@ module Kramdown; module AsciiDoc
       if (imagesdir = @imagesdir) && (src.start_with? %(#{imagesdir}/))
         src = src.slice imagesdir.length + 1, src.length
       end
-      %(#{macro_prefix}#{src}[#{macro_attrs.join ','}])
+      writer = opts[:writer]
+      if block
+        writer.start_block
+        writer.add_line block_attributes_line if block_attributes_line
+        writer.add_line %(image::#{src}[#{macro_attrs.join ','}])
+      else
+        writer.append %(image:#{src}[#{macro_attrs.join ','}])
+      end
     end
 
     # NOTE leave enabled so we can down-convert mdash to --
     def convert_typographic_sym el, opts
-      TYPOGRAPHIC_ENTITY_TO_MARKUP[el.value]
+      opts[:writer].append TYPOGRAPHIC_ENTITY_TO_MARKUP[el.value]
     end
 
     def convert_html_element el, opts
-      if (tagname = el.value) == 'div' && (child_i = el.children[0]) && child_i.options[:transparent] &&
-          (child_i_i = child_i.children[0])
+      if (tag = el.value) == 'div' && (child_i = el.children[0]) && child_i.options[:transparent] && (child_i_i = child_i.children[0])
         if child_i_i.type == :img
-          return convert_img child_i_i, (opts.merge parent: child_i, index: 0) if child_i.children.size == 1
-        elsif child_i_i.value == 'span' && ((role = el.attr['class'] || '').start_with? 'note') &&
-            child_i_i.attr['class'] == 'notetitle'
+          convert_img child_i_i, (opts.merge parent: child_i, index: 0) if child_i.children.size == 1
+          return
+        elsif child_i_i.value == 'span' && ((role = el.attr['class'] || '').start_with? 'note') && child_i_i.attr['class'] == 'notetitle'
           marker = ADMON_FORMATTED_MARKERS[(child_i_i.children[0] || VoidElement).value] || 'Note'
-          (el = child_i.dup).children = el.children.drop 1
-          return %(#{ADMON_TYPE_MAP[marker]}:#{inner el, opts}#{LFx2})
+          lines = compose_text (child_i.children.drop 1), parent: child_i, strip: true, split: true
+          lines.unshift %(#{ADMON_TYPE_MAP[marker]}: #{lines.shift})
+          opts[:writer].start_block
+          opts[:writer].add_lines lines
+          return
         end
       end
-      contents = inner el, (opts.merge rstrip: el.options[:category] == :block)
+
+      contents = compose_text el, (opts.merge strip: el.options[:category] == :block)
       attrs = (attrs = el.attr).empty? ? '' : attrs.map {|k, v| %( #{k}="#{v}") }.join
-      case tagname
+      case tag
       when 'del'
-        %([.line-through]##{contents}#)
+        opts[:writer].append %([.line-through]##{contents}#)
       when 'sup'
-        %(^#{contents}^)
+        opts[:writer].append %(^#{contents}^)
       when 'sub'
-        %(~#{contents}~)
+        opts[:writer].append %(~#{contents}~)
       else
-        %(+++<#{tagname}#{attrs}>+++#{contents}+++</#{tagname}>+++)
+        opts[:writer].append %(+++<#{tag}#{attrs}>+++#{contents}+++</#{tag}>+++)
       end
     end
 
     def convert_xml_comment el, opts
+      writer = opts[:writer]
       XmlCommentRx =~ el.value
-      comment_text = ($1.include? ' !') ? ($1.gsub CommentPrefixRx, '').strip : $1.strip
+      lines = (($1.include? ' !') ? ($1.gsub CommentPrefixRx, '').strip : $1.strip).split LF
       #siblings = (parent = opts[:parent]) ? parent.children : []
       if (el.options[:category] == :block)# || (!opts[:result][-1] && siblings[-1] == el)
-        if comment_text.empty?
-          %(//#{LFx2})
-        elsif comment_text.include? LF
-          %(////#{LF}#{comment_text}#{LF}////#{LFx2})
+        writer.start_block
+        if lines.empty?
+          writer.add_line '//'
+        # Q: should we only use block form if empty line is present?
+        elsif lines.size > 1
+          writer.add_line '////'
+          writer.add_lines lines
+          writer.add_line '////'
         else
-          %(// #{comment_text}#{LFx2})
+          writer.add_line %(// #{lines[0]})
         end
       else
-        if (current_line = opts[:result][-1])
-          if current_line.end_with? LF
-            prefix = ''
-          else
-            prefix = LF
-            opts[:result][-1] = (current_line = current_line.rstrip) if current_line.end_with? ' '
-          end
-        else
-          prefix = ''
+        if (current_line = writer.current_line) && !(current_line.end_with? LF)
+          start_new_line = true
+          # FIXME cleaner API here (writer#strip_line?)
+          writer.current_line.rstrip! if current_line.end_with? ' '
         end
-        siblings = (parent = opts[:parent]) && parent.children
-        suffix = siblings && siblings[(siblings.index el) + 1] ? LF : ''
-        if comment_text.include? LF
-          %(#{prefix}#{comment_text.gsub StartOfLinesRx, '// '}#{suffix})
+        lines = lines.map {|l| %(// #{l}) }
+        if start_new_line
+          writer.add_lines lines
         else
-          %(#{prefix}// #{comment_text}#{suffix})
+          writer.append lines.shift
+          writer.add_lines lines unless lines.empty?
         end
+        writer.add_blank_line
       end
     end
 
@@ -519,20 +516,10 @@ module Kramdown; module AsciiDoc
       if (child_i = (children = el.children)[0] || VoidElement).type == :xml_comment
         (prologue_el = el.dup).children = children.take_while {|child| child.type == :xml_comment || child.type == :blank }
         (el = el.dup).children = children.drop prologue_el.children.size
-        @header += [%(#{inner prologue_el, (opts.merge rstrip: true)})]
+        traverse prologue_el, (opts.merge writer: (prologue_writer = Writer.new))
+        opts[:writer].header += prologue_writer.body
       end
       el
-    end
-
-    def inner el, opts
-      rstrip = opts.delete :rstrip
-      result = []
-      prev = nil
-      el.children.each_with_index do |child, idx|
-        result << (send %(convert_#{child.type}), child, (opts.merge parent: el, index: idx, result: result, prev: prev))
-        prev = child
-      end
-      rstrip ? result.join.rstrip : result.join
     end
 
     def clone el, properties
@@ -541,6 +528,35 @@ module Kramdown; module AsciiDoc
         el.send %(#{name}=).to_sym, value
       end
       el
+    end
+
+    def traverse el, opts = {}
+      prev = nil
+      if ::Array === el
+        nodes = el
+        parent = opts[:parent]
+      else
+        nodes = (parent = el).children
+      end
+      nodes.each_with_index do |child, idx|
+        convert child, (opts.merge parent: parent, index: idx, prev: prev)
+        prev = child
+      end
+      nil
+    end
+
+    # Q: should we support rstrip in addition to strip?
+    # TODO add escaping of closing square bracket
+    # TODO reflow text
+    def compose_text el, opts = {}
+      strip = opts.delete :strip
+      split = opts.delete :split
+      # Q: do we want to merge or just start fresh?
+      traverse el, (opts.merge writer: (span_writer = Writer.new))
+      # NOTE there should only ever be one line
+      text = span_writer.body.join LF
+      text = text.strip if strip
+      split ? (text.split LF) : text
     end
   end
 end; end

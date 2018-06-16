@@ -14,6 +14,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 === Changed
 
+* rewrite converter to use a structured writer
 * remove blockquote enclosure around simple admonition block
 * revert \&amp; back to &
 * use separate list level for dl
