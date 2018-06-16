@@ -44,11 +44,11 @@ module Kramdown; module AsciiDoc
 
   class Converter < ::Kramdown::Converter::Base
     RESOLVE_ENTITY_TABLE = { 38 => '&', 60 => '<', 62 => '>', 124 => '|' }
-    ADMON_LABELS = %w(Note Tip Caution Warning Important Attention).map {|l| [l, l] }.to_h
+    ADMON_LABELS = %w(Note Tip Caution Warning Important Attention Hint).map {|l| [l, l] }.to_h
     ADMON_MARKERS = ADMON_LABELS.map {|l, _| %(#{l}: ) }
     ADMON_MARKERS_ASCIIDOC = %w(NOTE TIP CAUTION WARNING IMPORTANT).map {|l| %(#{l}: ) }
     ADMON_FORMATTED_MARKERS = ADMON_LABELS.map {|l, _| [%(#{l}:), l] }.to_h
-    ADMON_TYPE_MAP = ADMON_LABELS.map {|l, _| [l, l.upcase] }.to_h.merge 'Attention' => 'IMPORTANT'
+    ADMON_TYPE_MAP = ADMON_LABELS.map {|l, _| [l, l.upcase] }.to_h.merge 'Attention' => 'IMPORTANT', 'Hint' => 'TIP'
     DLIST_MARKERS = %w(:: ;; ::: ::::)
     # FIXME here we reverse the smart quotes; add option to allow them (needs to be handled carefully)
     SMART_QUOTE_ENTITY_TO_MARKUP = { ldquo: ?", rdquo: ?", lsquo: ?', rsquo: ?' }

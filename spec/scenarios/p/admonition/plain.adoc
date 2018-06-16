@@ -9,3 +9,5 @@ CAUTION: Slippery when wet.
 WARNING: The software you're about to use has not been tested.
 
 IMPORTANT: Sign off before stepping away from the computer.
+
+TIP: Stop signs with white borders are optional.
