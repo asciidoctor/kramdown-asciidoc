@@ -10,6 +10,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 === Added
 
 * recognize Hint as admonition label; map to TIP
+* replace no-break space with \{nbsp}
 
 === Changed
 

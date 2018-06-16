@@ -342,6 +342,8 @@ module Kramdown; module AsciiDoc
         @attributes['pp'] = '{plus}{plus}'
         text = text.gsub '++', '{pp}'
       end
+      # Q: should we replace with single space instead?
+      text = text.gsub ' ', '{nbsp}' if text.include? ' '
       text = text.gsub '^', '{caret}' if (text.include? '^') && text != '^'
       text = text.gsub '<=', '\<=' if text.include? '<='
       if text.ascii_only?
