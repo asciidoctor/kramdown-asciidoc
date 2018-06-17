@@ -259,8 +259,9 @@ module Kramdown; module AsciiDoc
     end
 
     def convert_ul el, opts
+      level_opt = el.type == :dl ? :dlist_level : :list_level
       # TODO create do_in_level block
-      level = opts[:list_level] ? (opts[:list_level] += 1) : (opts[:list_level] = 1)
+      level = opts[level_opt] ? (opts[level_opt] += 1) : (opts[level_opt] = 1)
       # REVIEW this is whack
       if (parent = opts[:parent]) && (parent.type == :li || parent.type == :dd)
         prefix = parent.options[:compound] ? LFx2 : (opts[:result][-1] ? '' : LF)
@@ -270,10 +271,10 @@ module Kramdown; module AsciiDoc
       contents = inner el, (opts.merge rstrip: true)
       if level == 1
         suffix = LFx2
-        opts.delete :list_level
+        opts.delete level_opt
       else
         suffix = LF
-        opts[:list_level] -= 1
+        opts[level_opt] -= 1
       end
       %(#{prefix}#{contents}#{suffix})
     end
@@ -290,7 +291,7 @@ module Kramdown; module AsciiDoc
 
     def convert_dt el, opts
       prefix = opts[:prev] ? LF : ''
-      marker = DLIST_MARKERS[opts[:list_level] - 1]
+      marker = DLIST_MARKERS[opts[:dlist_level] - 1]
       %(#{prefix}#{inner el, opts}#{marker}#{LF})
     end
 

@@ -1,11 +1,11 @@
 kramdown::
 A Markdown-superset converter (aren't they all?)
- ** Fast
- ** Free
- ** Extensible
+* Fast
+* Free
+* Extensible
 
 kramdown-asciidoc::
 A Markdown to AsciiDoc converter
- ** Based on kramdown
- ** Outputs concise, modern AsciiDoc
- ** Well tested
+* Based on kramdown
+* Outputs concise, modern AsciiDoc
+* Well tested
