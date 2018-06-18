@@ -86,7 +86,6 @@ module Kramdown; module AsciiDoc
     MenuRefRx = /^([\p{Word}&].*?)\s>\s([\p{Word}&].*(?:\s>\s|$))+/
     ReplaceableTextRx = /[-=]>|<[-=]|\.\.\./
     SmartApostropheRx = /\b’\b/
-    StartOfLinesRx = /^/m
     TrailingSpaceRx = / +$/
     TypographicSymbolRx = /[“”‘’—–…]/
     XmlCommentRx = /\A<!--(.*)-->\Z/m
@@ -94,7 +93,6 @@ module Kramdown; module AsciiDoc
     VoidElement = Element.new nil
 
     LF = ?\n
-    LFx2 = LF * 2
 
     def initialize root, opts
       super
