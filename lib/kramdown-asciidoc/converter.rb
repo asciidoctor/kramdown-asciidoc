@@ -10,15 +10,6 @@ module Kramdown; module AsciiDoc
   TocDirectiveTip = '<!-- TOC '
   TocDirectiveRx = /^<!-- TOC .*<!-- \/TOC -->/m
 
-  def self.replace_toc source, attributes
-    if source.include? TocDirectiveTip
-      attributes['toc'] = 'macro'
-      source.gsub TocDirectiveRx, 'toc::[]'
-    else
-      source
-    end
-  end
-
   # TODO return original source if YAML can't be parsed
   def self.extract_front_matter source, attributes
     if (line_i = (lines = source.each_line).first) && line_i.chomp == '---'
@@ -37,6 +28,15 @@ module Kramdown; module AsciiDoc
         end
       end unless front_matter.empty?
       lines.join
+    else
+      source
+    end
+  end
+
+  def self.replace_toc source, attributes
+    if source.include? TocDirectiveTip
+      attributes['toc'] = 'macro'
+      source.gsub TocDirectiveRx, 'toc::[]'
     else
       source
     end
@@ -118,9 +118,6 @@ module Kramdown; module AsciiDoc
       writer.to_s.gsub TrailingSpaceRx, ''
     end
 
-    def convert_blank el, opts
-    end
-
     def convert_heading el, opts
       (writer = opts[:writer]).start_block
       level = el.options[:level]
@@ -159,6 +156,9 @@ module Kramdown; module AsciiDoc
 
     # Kramdown incorrectly uses the term header for headings
     alias convert_header convert_heading
+
+    def convert_blank el, opts
+    end
 
     def convert_p el, opts
       (writer = opts[:writer]).start_block
@@ -235,6 +235,49 @@ module Kramdown; module AsciiDoc
         # NOTE clear the list continuation (is the condition necessary?)
         writer.clear_line if writer.current_line == '+'
         writer.add_line lines.map {|l| %( #{l}) }
+      end
+    end
+
+    def convert_img el, opts
+      if !(parent = opts[:parent]) || parent.type == :p && parent.children.size == 1
+        style = []
+        if (id = el.attr['id'])
+          style << %(##{id})
+        end
+        if (role = el.attr['class'])
+          style << %(.#{role.tr ' ', '.'})
+        end
+        block_attributes_line = %([#{style.join}]) unless style.empty?
+        block = true
+      end
+      macro_attrs = [nil]
+      if (alt_text = el.attr['alt'])
+        macro_attrs[0] = alt_text unless alt_text.empty?
+      end
+      if (width = el.attr['width'])
+        macro_attrs << width
+      elsif (css = el.attr['style']) && (width_css = (css.split CssPropDelimRx).find {|p| p.start_with? 'width:' })
+        width = (width_css.slice (width_css.index ':') + 1, width_css.length).strip
+        width = width.to_f.round unless width.end_with? '%'
+        macro_attrs << width
+      end
+      if macro_attrs.size == 1 && (alt_text = macro_attrs.pop)
+        macro_attrs << alt_text
+      end
+      if (url = opts[:url])
+        macro_attrs << %(link=#{url})
+      end
+      src = el.attr['src']
+      if (imagesdir = @imagesdir) && (src.start_with? %(#{imagesdir}/))
+        src = src.slice imagesdir.length + 1, src.length
+      end
+      writer = opts[:writer]
+      if block
+        writer.start_block
+        writer.add_line block_attributes_line if block_attributes_line
+        writer.add_line %(image::#{src}[#{macro_attrs.join ','}])
+      else
+        writer.append %(image:#{src}[#{macro_attrs.join ','}])
       end
     end
 
@@ -326,20 +369,23 @@ module Kramdown; module AsciiDoc
       writer.add_line '\'\'\''
     end
 
-    def convert_text el, opts
-      if (text = el.value).include? '++'
-        @attributes['pp'] = '{plus}{plus}'
-        text = text.gsub '++', '{pp}'
+    def convert_a el, opts
+      if (url = el.attr['href']).start_with? '#'
+        opts[:writer].append %(<<#{url.slice 1, url.length},#{compose_text el, strip: true}>>)
+      elsif url.start_with? 'https://', 'http://'
+        if (children = el.children).size == 1 && (child_i = el.children[0]).type == :img
+          convert_img child_i, parent: opts[:parent], index: 0, url: url, writer: opts[:writer]
+        else
+          bare = ((text = compose_text el, strip: true).chomp '/') == (url.chomp '/')
+          url = url.gsub '__', '%5F%5F' if (url.include? '__')
+          opts[:writer].append bare ? url : %(#{url}[#{text.gsub ']', '\]'}])
+        end
+      elsif url.end_with? '.md'
+        opts[:writer].append %(xref:#{url.slice 0, url.length - 3}.adoc[#{(compose_text el, strip: true).gsub ']', '\]'}])
+      else
+        opts[:writer].append %(link:#{url}[#{(compose_text el, strip: true).gsub ']', '\]'}])
       end
-      # Q: should we replace with single space instead?
-      text = text.gsub ' ', '{nbsp}' if text.include? ' '
-      text = text.gsub '^', '{caret}' if (text.include? '^') && text != '^'
-      text = text.gsub '<=', '\<=' if text.include? '<='
-      unless text.ascii_only?
-        text = (text.gsub SmartApostropheRx, ?').gsub TypographicSymbolRx, TYPOGRAPHIC_SYMBOL_TO_MARKUP
-      end
-      opts[:writer].append text
-    end
+    end 
 
     def convert_codespan el, opts
       opts[:writer].append (val = el.value) =~ ReplaceableTextRx ? %(`+#{val}+`) : %(`#{val}`)
@@ -359,6 +405,21 @@ module Kramdown; module AsciiDoc
       end
     end
 
+    def convert_text el, opts
+      if (text = el.value).include? '++'
+        @attributes['pp'] = '{plus}{plus}'
+        text = text.gsub '++', '{pp}'
+      end
+      # Q: should we replace with single space instead?
+      text = text.gsub ' ', '{nbsp}' if text.include? ' '
+      text = text.gsub '^', '{caret}' if (text.include? '^') && text != '^'
+      text = text.gsub '<=', '\<=' if text.include? '<='
+      unless text.ascii_only?
+        text = (text.gsub SmartApostropheRx, ?').gsub TypographicSymbolRx, TYPOGRAPHIC_SYMBOL_TO_MARKUP
+      end
+      opts[:writer].append text
+    end
+
     # NOTE this logic assumes the :hard_wrap option is disabled in the parser
     def convert_br el, opts
       writer = opts[:writer]
@@ -375,73 +436,12 @@ module Kramdown; module AsciiDoc
       end
     end
 
-    def convert_smart_quote el, opts
-      opts[:writer].append SMART_QUOTE_ENTITY_TO_MARKUP[el.value]
-    end
-
     def convert_entity el, opts
       opts[:writer].append RESOLVE_ENTITY_TABLE[el.value.code_point] || el.options[:original]
     end
 
-    def convert_a el, opts
-      if (url = el.attr['href']).start_with? '#'
-        opts[:writer].append %(<<#{url.slice 1, url.length},#{compose_text el, strip: true}>>)
-      elsif url.start_with? 'https://', 'http://'
-        if (children = el.children).size == 1 && (child_i = el.children[0]).type == :img
-          convert_img child_i, parent: opts[:parent], index: 0, url: url, writer: opts[:writer]
-        else
-          bare = ((text = compose_text el, strip: true).chomp '/') == (url.chomp '/')
-          url = url.gsub '__', '%5F%5F' if (url.include? '__')
-          opts[:writer].append bare ? url : %(#{url}[#{text.gsub ']', '\]'}])
-        end
-      elsif url.end_with? '.md'
-        opts[:writer].append %(xref:#{url.slice 0, url.length - 3}.adoc[#{(compose_text el, strip: true).gsub ']', '\]'}])
-      else
-        opts[:writer].append %(link:#{url}[#{(compose_text el, strip: true).gsub ']', '\]'}])
-      end
-    end 
-
-    def convert_img el, opts
-      if !(parent = opts[:parent]) || parent.type == :p && parent.children.size == 1
-        style = []
-        if (id = el.attr['id'])
-          style << %(##{id})
-        end
-        if (role = el.attr['class'])
-          style << %(.#{role.tr ' ', '.'})
-        end
-        block_attributes_line = %([#{style.join}]) unless style.empty?
-        block = true
-      end
-      macro_attrs = [nil]
-      if (alt_text = el.attr['alt'])
-        macro_attrs[0] = alt_text unless alt_text.empty?
-      end
-      if (width = el.attr['width'])
-        macro_attrs << width
-      elsif (css = el.attr['style']) && (width_css = (css.split CssPropDelimRx).find {|p| p.start_with? 'width:' })
-        width = (width_css.slice (width_css.index ':') + 1, width_css.length).strip
-        width = width.to_f.round unless width.end_with? '%'
-        macro_attrs << width
-      end
-      if macro_attrs.size == 1 && (alt_text = macro_attrs.pop)
-        macro_attrs << alt_text
-      end
-      if (url = opts[:url])
-        macro_attrs << %(link=#{url})
-      end
-      src = el.attr['src']
-      if (imagesdir = @imagesdir) && (src.start_with? %(#{imagesdir}/))
-        src = src.slice imagesdir.length + 1, src.length
-      end
-      writer = opts[:writer]
-      if block
-        writer.start_block
-        writer.add_line block_attributes_line if block_attributes_line
-        writer.add_line %(image::#{src}[#{macro_attrs.join ','}])
-      else
-        writer.append %(image:#{src}[#{macro_attrs.join ','}])
-      end
+    def convert_smart_quote el, opts
+      opts[:writer].append SMART_QUOTE_ENTITY_TO_MARKUP[el.value]
     end
 
     # NOTE leave enabled so we can down-convert mdash to --
