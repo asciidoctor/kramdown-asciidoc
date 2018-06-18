@@ -2,7 +2,7 @@ module Kramdown; module AsciiDoc
   class Writer
     LF = ?\n
 
-    attr_accessor :header
+    attr_reader :header
     attr_reader :body
 
     def initialize

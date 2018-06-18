@@ -147,7 +147,7 @@ module Kramdown; module AsciiDoc
       lines << %([#{style.join}]) unless style.empty?
       lines << %(#{'=' * level} #{compose_text el, strip: true})
       if level == 1 && writer.empty? && @current_heading_level != 1
-        writer.header += lines
+        writer.header.push(*lines)
         nil
       else
         @attributes['doctype'] = 'book' if level == 1
@@ -517,7 +517,7 @@ module Kramdown; module AsciiDoc
         (prologue_el = el.dup).children = children.take_while {|child| child.type == :xml_comment || child.type == :blank }
         (el = el.dup).children = children.drop prologue_el.children.size
         traverse prologue_el, (opts.merge writer: (prologue_writer = Writer.new))
-        opts[:writer].header += prologue_writer.body
+        opts[:writer].header.push(*prologue_writer.body)
       end
       el
     end
