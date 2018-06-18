@@ -1,5 +1,6 @@
 require 'kramdown'
 require_relative 'kramdown-asciidoc/converter'
+require_relative 'kramdown-asciidoc/writer'
 autoload :YAML, 'yaml'
 
 class Kramdown::Parser::Html::ElementConverter
