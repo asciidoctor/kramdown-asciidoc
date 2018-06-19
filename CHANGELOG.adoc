@@ -18,6 +18,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * remove blockquote enclosure around simple admonition block
 * revert \&amp; back to &
 * use separate list level for dl
+* fold description list item to one line if primary text is a single line
 
 == 1.0.0.alpha.4 (2018-06-12) - @mojavelinux
 

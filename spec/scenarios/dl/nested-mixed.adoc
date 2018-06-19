@@ -1,12 +1,10 @@
-kramdown::
-A Markdown-superset converter (aren't they all?)
+kramdown:: A Markdown-superset converter (aren't they all?)
 
 * Fast
 * Free
 * Extensible
 
-kramdown-asciidoc::
-A Markdown to AsciiDoc converter
+kramdown-asciidoc:: A Markdown to AsciiDoc converter
 
 * Based on kramdown
 * Outputs concise, modern AsciiDoc

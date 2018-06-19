@@ -311,13 +311,20 @@ module Kramdown; module AsciiDoc
     def convert_dt el, opts
       term = compose_text el, strip: true
       marker = DLIST_MARKERS[opts[:dlist_level] - 1]
+      #opts[:writer].add_blank_line if (prev = opts[:prev]) && prev.options[:compound]
       opts[:writer].add_blank_line if opts[:prev]
       opts[:writer].add_line %(#{term}#{marker})
     end
 
     def convert_dd el, opts
       primary, remaining = [(children = el.children.dup).shift, children]
-      opts[:writer].add_lines compose_text [primary], parent: el, strip: true, split: true
+      primary_lines = compose_text [primary], parent: el, strip: true, split: true
+      if primary_lines.size == 1
+        opts[:writer].append %( #{primary_lines[0]})
+      else
+        el.options[:compound] = true
+        opts[:writer].add_lines primary_lines
+      end
       unless remaining.empty?
         next_node = remaining.find {|n| n.type != :blank }
         el.options[:compound] = true if next_node && (BLOCK_TYPES.include? next_node.type)

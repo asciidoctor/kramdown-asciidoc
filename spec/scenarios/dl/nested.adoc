@@ -1,23 +1,15 @@
-kramdown::
-A Markdown-superset converter
+kramdown:: A Markdown-superset converter
 
-Language;;
-Ruby
+Language;; Ruby
 
-License;;
-MIT
+License;; MIT
 
-Author;;
-Thomas Leitner
+Author;; Thomas Leitner
 
-kramdown-asciidoc::
-A Markdown to AsciiDoc converter based on kramdown
+kramdown-asciidoc:: A Markdown to AsciiDoc converter based on kramdown
 
-Language;;
-Ruby
+Language;; Ruby
 
-License;;
-MIT
+License;; MIT
 
-Author;;
-Dan Allen
+Author;; Dan Allen
