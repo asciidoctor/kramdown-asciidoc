@@ -317,13 +317,17 @@ module Kramdown; module AsciiDoc
     end
 
     def convert_dd el, opts
-      primary, remaining = [(children = el.children.dup).shift, children]
-      primary_lines = compose_text [primary], parent: el, strip: true, split: true
-      if primary_lines.size == 1
-        opts[:writer].append %( #{primary_lines[0]})
+      if el.options[:first_as_para] == false
+        remaining = el.children
       else
-        el.options[:compound] = true
-        opts[:writer].add_lines primary_lines
+        remaining = (children = el.children).drop 1
+        primary_lines = compose_text [children[0]], parent: el, strip: true, split: true
+        if primary_lines.size == 1
+          opts[:writer].append %( #{primary_lines[0]})
+        else
+          el.options[:compound] = true
+          opts[:writer].add_lines primary_lines
+        end
       end
       unless remaining.empty?
         next_node = remaining.find {|n| n.type != :blank }

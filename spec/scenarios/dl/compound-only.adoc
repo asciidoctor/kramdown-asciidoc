@@ -1,0 +1,16 @@
+secrets::
+
+. password
+. token
+. private key
+
+create a secret::
+
+ $ echo -n '1234567890' | base64
+ MTIzNDU2Nzg5MA==
+
+Markdown::
++
+____
+Which flavor?
+____
