@@ -102,7 +102,7 @@ module Kramdown; module AsciiDoc
     end
 
     def convert el, opts = {}
-      send %(convert_#{el.type}), el, opts
+      send %(convert_#{el.type}), el, opts if el
     end
 
     def convert_root el, opts
