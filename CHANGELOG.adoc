@@ -7,6 +7,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == Unreleased
 
+=== Added
+
+* added options and usage to CLI (#2)
+
 === Changed
 
 * handle case when dd is nil
