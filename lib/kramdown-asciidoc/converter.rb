@@ -297,10 +297,15 @@ module Kramdown; module AsciiDoc
       writer.add_blank_line if (prev = opts[:prev]) && prev.options[:compound]
       marker = opts[:parent].type == :ol ? '.' : '*'
       indent = (level = opts[:list_level]) - 1
-      primary, remaining = [(children = el.children.dup).shift, children]
-      lines = compose_text [primary], parent: el, strip: true, split: true
-      lines.unshift %(#{indent > 0 ? ' ' * indent : ''}#{marker * level} #{lines.shift})
-      writer.add_lines lines
+      if (children = el.children)[0].type == :p
+        primary, remaining = [(children = children.dup).shift, children]
+        primary_lines = compose_text [primary], parent: el, strip: true, split: true
+      else
+        remaining = children
+        primary_lines = ['{blank}']
+      end
+      primary_lines.unshift %(#{indent > 0 ? ' ' * indent : ''}#{marker * level} #{primary_lines.shift})
+      writer.add_lines primary_lines
       unless remaining.empty?
         next_node = remaining.find {|n| n.type != :blank }
         el.options[:compound] = true if next_node && (BLOCK_TYPES.include? next_node.type)
