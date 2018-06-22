@@ -280,13 +280,12 @@ module Kramdown; module AsciiDoc
     end
 
     def convert_ul el, opts
-      nested = (parent = opts[:parent]) && (parent.type == :li || parent.type == :dd)
-      (writer = opts[:writer]).start_list nested && parent.type != :dd && !parent.options[:compound]
+      (writer = opts[:writer]).start_list (parent = opts[:parent]).type != :dd && !parent.options[:compound]
       level_opt = el.type == :dl ? :dlist_level : :list_level
       level = opts[level_opt] ? (opts[level_opt] += 1) : (opts[level_opt] = 1)
       traverse el, opts
       opts.delete level_opt if (opts[level_opt] -= 1) < 1
-      writer.end_list nested
+      writer.end_list
     end
 
     alias convert_ol convert_ul
