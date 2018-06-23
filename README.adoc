@@ -63,17 +63,26 @@ TIP: To test a feature that's not yet released, you can <<Development,run the ap
 
 == Usage
 
-To convert a Markdown file to AsciiDoc using {project-name}, run the `kramdoc` command as follows:
+To convert a Markdown file to AsciiDoc using {project-name}, pass the name of the file to the `kramdoc` command as follows:
 
  $ kramdoc sample.md
 
-The `kramdoc` command automatically creates the output file [.path]_sample.adoc_ in the same folder as the input file.
-This path is calculated by removing the Markdown file extension, `.md`, and adding the AsciiDoc file extension, `.adoc`.
+By default, the `kramdoc` command automatically creates the output file [.path]_sample.adoc_ in the same folder as the input file.
+This path is calculated by removing the Markdown file extension, `.md`, and replacing it with the AsciiDoc file extension, `.adoc`.
 
 NOTE: The converter assumes the input uses the GitHub-flavor Markdown (GFM) syntax.
 
-The `kramdoc` command does not currently support any options other than the input file.
-Support for additional options is planned.
+If you want to direct the output to a different file, pass the name of that file to the `kramdoc` command using the `-o` option as follows:
+
+ $ kramdoc -o result.adoc sample.md
+
+To direct the output to the console (i.e., STDOUT) instead of a file, use the special value `-` as follows:
+
+ $ kramdoc -o - sample.md
+
+To see all the options the `kramdoc` command accepts, pass the `-h` option to the `kramdoc` command as follows:
+
+ $ kramdoc -h
 
 == Development
 
