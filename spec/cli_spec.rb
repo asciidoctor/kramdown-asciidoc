@@ -39,5 +39,11 @@ describe Kramdown::AsciiDoc::Cli do
         $stdin = old_stdin
       end
     end
+
+    it 'shifts headings by offset when --heading-offset is used' do
+      source_file = File.absolute_path 'scenarios/heading/offset.md', __dir__
+      (expect Kramdown::AsciiDoc::Cli.run %W(-o - --heading-offset=-1 #{source_file})).to eql 0
+      (expect $stdout.string.chomp).to include '= Document Title'
+    end
   end
 end

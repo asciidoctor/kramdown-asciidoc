@@ -98,6 +98,7 @@ module Kramdown; module AsciiDoc
       super
       @attributes = opts[:attributes] || {}
       @imagesdir = (@attributes.delete 'implicit-imagesdir') || @attributes['imagesdir']
+      @heading_offset = opts[:heading_offset] || 0
       @current_heading_level = nil
     end
 
@@ -118,7 +119,7 @@ module Kramdown; module AsciiDoc
 
     def convert_heading el, opts
       (writer = opts[:writer]).start_block
-      level = el.options[:level]
+      level = el.options[:level] + @heading_offset
       style = []
       # Q: should writer track last heading level?
       if (discrete = @current_heading_level && level > @current_heading_level + 1)

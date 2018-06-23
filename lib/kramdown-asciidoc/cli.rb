@@ -18,12 +18,12 @@ module Kramdown; module AsciiDoc
 
         EOS
 
-        opts.on '-o FILE', '--output=FILE', 'Set the output filename or stream' do |o|
-          options[:output] = o
+        opts.on '-o FILE', '--output=FILE', 'Set the output filename or stream' do |file|
+          options[:output] = file
         end
 
-        opts.on '--format=GFM|kramdown|markdown', %w(kramdown markdown GFM), 'Set the flavor of Markdown to parse (default: GFM)' do |f|
-          options[:input] = f
+        opts.on '--format=GFM|kramdown|markdown', %w(kramdown markdown GFM), 'Set the flavor of Markdown to parse (default: GFM)' do |format|
+          options[:input] = format
         end
 
         opts.on '--[no-]html-to-native', 'Set whether to passthrough HTML or convert it to AsciiDoc syntax where possible (default: true)' do |html_to_native|
@@ -34,6 +34,10 @@ module Kramdown; module AsciiDoc
           key, val = attr.split '=', 2
           val = '' unless val
           options[:attributes][key] = val
+        end
+
+        opts.on '--heading-offset=NUMBER', 'Shift the heading level by the specified number', ::Integer do |offset|
+          options[:heading_offset] = offset
         end
 
         opts.on '-h', '--help', 'Display this help text and exit' do
