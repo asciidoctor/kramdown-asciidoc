@@ -6,19 +6,6 @@ else
   require 'kramdown-asciidoc'
 end
 
-infile = ARGV.first
-unless infile
-  warn 'Please specify a Markdown file to convert.'
-  exit 1
-end
-outfile = %(#{infile.slice 0, infile.length - (File.extname infile).length}.adoc)
-input = (IO.read infile, mode: 'r:UTF-8', newline: :universal).rstrip
-input = input.slice 1, input.length while input.start_with? ?\n
-attributes = {}
-input = Kramdown::AsciiDoc.extract_front_matter input, attributes
-input = Kramdown::AsciiDoc.replace_toc input, attributes
-# FIXME allow input type to be specified (Kramdown, GFM, etc)
-doc = Kramdown::Document.new input, (Kramdown::AsciiDoc::DEFAULT_PARSER_OPTS.merge attributes: attributes)
-# FIXME provide option to write to different file or stdout
-IO.write outfile, doc.to_asciidoc
-exit 0
+require 'kramdown-asciidoc/cli'
+
+exit Kramdown::AsciiDoc::Cli.run
