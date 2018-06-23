@@ -1,4 +1,5 @@
 require 'optparse'
+require 'pathname'
 
 module Kramdown; module AsciiDoc
   class Cli
@@ -76,7 +77,9 @@ module Kramdown; module AsciiDoc
       else
         markdown = (::IO.read source_file, mode: 'r:UTF-8', newline: :universal).rstrip
       end
-      unless (output_file = options.delete :output)
+      if (output_file = options.delete :output)
+        (Pathname output_file).dirname.mkpath
+      else
         output_file = ((Pathname source_file).sub_ext '.adoc').to_s
       end
       markdown = markdown.slice 1, markdown.length while markdown.start_with? ?\n
