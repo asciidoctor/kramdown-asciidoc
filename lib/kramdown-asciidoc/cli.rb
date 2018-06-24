@@ -27,10 +27,6 @@ module Kramdown; module AsciiDoc
           options[:input] = format
         end
 
-        opts.on '--[no-]html-to-native', 'Set whether to passthrough HTML or convert it to AsciiDoc syntax where possible (default: true)' do |html_to_native|
-          options[:html_to_native] = html_to_native
-        end
-
         opts.on '-a KEY[=VALUE]', '--attribute=KEY[=VALUE]', 'Set an attribute in the document header (accepts: key, key!, or key=value' do |attr|
           key, val = attr.split '=', 2
           val = '' unless val
@@ -39,6 +35,14 @@ module Kramdown; module AsciiDoc
 
         opts.on '--heading-offset=NUMBER', 'Shift the heading level by the specified number', ::Integer do |offset|
           options[:heading_offset] = offset
+        end
+
+        opts.on '--[no-]html-to-native', 'Set whether to passthrough HTML or convert it to AsciiDoc syntax where possible (default: true)' do |html_to_native|
+          options[:html_to_native] = html_to_native
+        end
+
+        opts.on '--auto-ids', 'Set whether to auto-generate IDs for section titles' do |auto_ids|
+          options[:auto_ids] = auto_ids
         end
 
         opts.on '-h', '--help', 'Display this help text and exit' do
