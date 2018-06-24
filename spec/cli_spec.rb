@@ -75,10 +75,17 @@ describe Kramdown::AsciiDoc::Cli do
       end
     end
 
+    it 'reads Markdown source using specified format' do
+      the_source_file = output_file 'format-markdown.md'
+      IO.write the_source_file, '#Heading'
+      (expect Kramdown::AsciiDoc::Cli.run %W(-o - --format=markdown #{the_source_file})).to eql 0
+      (expect $stdout.string.chomp).to eql '= Heading'
+    end
+
     it 'shifts headings by offset when --heading-offset is used' do
       the_source_file = scenario_file 'heading/offset.md'
       (expect Kramdown::AsciiDoc::Cli.run %W(-o - --heading-offset=-1 #{the_source_file})).to eql 0
-      (expect $stdout.string.chomp).to include '= Document Title'
+      (expect $stdout.string.chomp).to start_with '= Document Title'
     end
 
     it 'adds specified attributes to document header' do
