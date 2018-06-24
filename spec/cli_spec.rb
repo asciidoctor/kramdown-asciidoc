@@ -22,10 +22,18 @@ describe Kramdown::AsciiDoc::Cli do
       (expect $stdout.string.chomp).to include 'Usage: kramdoc'
     end
 
+    it 'computes output file from input file' do
+      source_file = output_file 'sample.md'
+      IO.write source_file, 'This is just a test.'
+      (expect Kramdown::AsciiDoc::Cli.run %W(#{source_file})).to eql 0
+      result = IO.read output_file 'sample.adoc'
+      (expect result.chomp).to eql 'This is just a test.'
+    end
+
     it 'writes output to stdout when -o flag equals -' do
       source_file = File.absolute_path 'scenarios/p/single-line.md', __dir__
       (expect Kramdown::AsciiDoc::Cli.run %W(-o - #{source_file})).to eql 0
-      (expect $stdout.string.chomp).to include 'A paragraph that consists of a single line.'
+      (expect $stdout.string.chomp).to eql 'A paragraph that consists of a single line.'
     end
 
     it 'reads input from stdin when argument is -' do
