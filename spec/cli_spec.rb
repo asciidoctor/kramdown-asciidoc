@@ -5,13 +5,24 @@ require 'stringio'
 describe Kramdown::AsciiDoc::Cli do
   before :each do
     @old_stdout, $stdout = $stdout, StringIO.new
+    @old_stderr, $stderr = $stderr, StringIO.new
   end
 
   after :each do
-    $stdout = @old_stdout
+    $stdout, $stderr = @old_stdout, @old_stderr
   end
 
   context 'option flags' do
+    it 'returns non-zero exit status and displays usage when no arguments are given' do
+      expected = <<~EOS.chomp
+      kramdoc: Please specify a Markdown file to convert.
+      Usage: kramdoc
+      EOS
+      (expect Kramdown::AsciiDoc::Cli.run []).to eql 1
+      (expect $stdout.string.chomp).to be_empty
+      (expect $stderr.string.chomp).to start_with expected
+    end
+
     it 'displays version when -v flag is used' do
       (expect Kramdown::AsciiDoc::Cli.run %w(-v)).to eql 0
       (expect $stdout.string.chomp).to eql %(kramdoc #{Kramdown::AsciiDoc::VERSION})
