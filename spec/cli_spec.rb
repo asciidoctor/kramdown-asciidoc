@@ -38,6 +38,14 @@ describe Kramdown::AsciiDoc::Cli do
       (expect (IO.read the_output_file).chomp).to eql 'This is only a test.'
     end
 
+    it 'ensures directory of explicit output file exists before writing' do
+      the_source_file = output_file 'ensure-output-dir.md'
+      the_output_file = output_file 'path/to/output/file.adoc'
+      IO.write the_source_file, 'Everything is going to be fine.'
+      (expect Kramdown::AsciiDoc::Cli.run %W(-o #{the_output_file} #{the_source_file})).to eql 0
+      (expect (IO.read the_output_file).chomp).to eql 'Everything is going to be fine.'
+    end
+
     it 'writes output to stdout when -o option equals -' do
       the_source_file = scenario_file 'p/single-line.md'
       (expect Kramdown::AsciiDoc::Cli.run %W(-o - #{the_source_file})).to eql 0
