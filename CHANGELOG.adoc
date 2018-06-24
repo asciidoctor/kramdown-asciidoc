@@ -10,6 +10,8 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 === Added
 
 * added options and usage to CLI (#2)
+* ensure directory of output file exists
+* add option to enable automatic generation of IDs for section titles
 
 === Changed
 

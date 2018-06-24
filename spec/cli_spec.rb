@@ -53,5 +53,13 @@ describe Kramdown::AsciiDoc::Cli do
       (expect Kramdown::AsciiDoc::Cli.run %W(-o - --heading-offset=-1 #{source_file})).to eql 0
       (expect $stdout.string.chomp).to include '= Document Title'
     end
+
+    it 'adds specified attributes to document header' do
+      source_file = output_file 'attributes.md'
+      IO.write source_file, %(# Document Title\n\ntext)
+      (expect Kramdown::AsciiDoc::Cli.run %W(-o - -a idprefix -a idseparator=- #{source_file})).to eql 0
+      result = $stdout.string.chomp
+      (expect result).to eql %(= Document Title\n:idprefix:\n:idseparator: -\n\ntext)
+    end
   end
 end
