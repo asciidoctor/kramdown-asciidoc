@@ -4,7 +4,7 @@ require 'yaml'
 describe 'integration scenario' do
   let(:doc) { Kramdown::Document.new input, (Kramdown::AsciiDoc::DEFAULT_PARSER_OPTS.merge extra_options) }
 
-  Dir.chdir File.absolute_path 'scenarios', __dir__ do
+  Dir.chdir scenarios_dir do
     (Dir.glob '**/*.md').each do |input_filename|
       input_stem = input_filename.slice 0, input_filename.length - 3
       scenario_name = input_stem.gsub '/', '::'
