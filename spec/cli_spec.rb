@@ -11,7 +11,7 @@ describe Kramdown::AsciiDoc::Cli do
     $stdout = @old_stdout
   end
 
-  context 'flags' do
+  context 'option flags' do
     it 'displays version when -v flag is used' do
       (expect Kramdown::AsciiDoc::Cli.run %w(-v)).to eql 0
       (expect $stdout.string.chomp).to eql %(kramdoc #{Kramdown::AsciiDoc::VERSION})
@@ -19,20 +19,28 @@ describe Kramdown::AsciiDoc::Cli do
 
     it 'displays help when -h flag is used' do
       (expect Kramdown::AsciiDoc::Cli.run %w(-h)).to eql 0
-      (expect $stdout.string.chomp).to include 'Usage: kramdoc'
+      (expect $stdout.string.chomp).to start_with 'Usage: kramdoc'
     end
 
     it 'computes output file from input file' do
-      source_file = output_file 'sample.md'
-      IO.write source_file, 'This is just a test.'
-      (expect Kramdown::AsciiDoc::Cli.run %W(#{source_file})).to eql 0
-      result = IO.read output_file 'sample.adoc'
-      (expect result.chomp).to eql 'This is just a test.'
+      the_source_file = output_file 'implicit-output.md'
+      the_output_file = output_file 'implicit-output.adoc'
+      IO.write the_source_file, 'This is just a test.'
+      (expect Kramdown::AsciiDoc::Cli.run %W(#{the_source_file})).to eql 0
+      (expect (IO.read the_output_file).chomp).to eql 'This is just a test.'
     end
 
-    it 'writes output to stdout when -o flag equals -' do
-      source_file = File.absolute_path 'scenarios/p/single-line.md', __dir__
-      (expect Kramdown::AsciiDoc::Cli.run %W(-o - #{source_file})).to eql 0
+    it 'writes output to file specified by the -o option' do
+      the_source_file = output_file 'explicit-output.md'
+      the_output_file = output_file 'my-explicit-output.adoc'
+      IO.write the_source_file, 'This is only a test.'
+      (expect Kramdown::AsciiDoc::Cli.run %W(-o #{the_output_file} #{the_source_file})).to eql 0
+      (expect (IO.read the_output_file).chomp).to eql 'This is only a test.'
+    end
+
+    it 'writes output to stdout when -o option equals -' do
+      the_source_file = scenario_file 'p/single-line.md'
+      (expect Kramdown::AsciiDoc::Cli.run %W(-o - #{the_source_file})).to eql 0
       (expect $stdout.string.chomp).to eql 'A paragraph that consists of a single line.'
     end
 
@@ -49,17 +57,22 @@ describe Kramdown::AsciiDoc::Cli do
     end
 
     it 'shifts headings by offset when --heading-offset is used' do
-      source_file = File.absolute_path 'scenarios/heading/offset.md', __dir__
-      (expect Kramdown::AsciiDoc::Cli.run %W(-o - --heading-offset=-1 #{source_file})).to eql 0
+      the_source_file = scenario_file 'heading/offset.md'
+      (expect Kramdown::AsciiDoc::Cli.run %W(-o - --heading-offset=-1 #{the_source_file})).to eql 0
       (expect $stdout.string.chomp).to include '= Document Title'
     end
 
     it 'adds specified attributes to document header' do
-      source_file = output_file 'attributes.md'
-      IO.write source_file, %(# Document Title\n\ntext)
-      (expect Kramdown::AsciiDoc::Cli.run %W(-o - -a idprefix -a idseparator=- #{source_file})).to eql 0
-      result = $stdout.string.chomp
-      (expect result).to eql %(= Document Title\n:idprefix:\n:idseparator: -\n\ntext)
+      the_source_file = scenario_file 'root/header-and-body.md'
+      (expect Kramdown::AsciiDoc::Cli.run %W(-o - -a idprefix -a idseparator=- #{the_source_file})).to eql 0
+      expected = <<~EOS
+      = Document Title
+      :idprefix:
+      :idseparator: -
+
+      Body content.
+      EOS
+      (expect $stdout.string).to eql expected
     end
   end
 end
