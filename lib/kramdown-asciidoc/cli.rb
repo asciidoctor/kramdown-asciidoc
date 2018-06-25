@@ -60,7 +60,7 @@ module Kramdown; module AsciiDoc
 
       if args.empty?
         opt_parser.warn 'Please specify a Markdown file to convert.'
-        $stderr.puts opt_parser
+        $stderr.puts opt_parser.help
         return 1
       end
 
@@ -69,6 +69,7 @@ module Kramdown; module AsciiDoc
         [0, options]
       else
         opt_parser.warn %(extra arguments detected (unparsed arguments: #{(args.drop 1).join ' '}))
+        $stderr.puts opt_parser.help
         [1, options]
       end
     end

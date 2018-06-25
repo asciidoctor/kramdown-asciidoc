@@ -23,6 +23,16 @@ describe Kramdown::AsciiDoc::Cli do
       (expect $stderr.string.chomp).to start_with expected
     end
 
+    it 'returns non-zero exit status and displays usage when more than one argument is given' do
+      expected = <<~EOS.chomp
+      kramdoc: extra arguments detected (unparsed arguments: bar.md)
+      Usage: kramdoc
+      EOS
+      (expect Kramdown::AsciiDoc::Cli.run %w(foo.md bar.md)).to eql 1
+      (expect $stdout.string.chomp).to be_empty
+      (expect $stderr.string.chomp).to start_with expected
+    end
+
     it 'displays version when -v flag is used' do
       (expect Kramdown::AsciiDoc::Cli.run %w(-v)).to eql 0
       (expect $stdout.string.chomp).to eql %(kramdoc #{Kramdown::AsciiDoc::VERSION})
