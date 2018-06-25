@@ -14,23 +14,23 @@ describe Kramdown::AsciiDoc::Cli do
 
   context 'option flags' do
     it 'returns non-zero exit status and displays usage when no arguments are given' do
-      expected = <<~EOS.chomp
-      kramdoc: Please specify a Markdown file to convert.
-      Usage: kramdoc
-      EOS
+      expected = 'kramdoc: Please specify a Markdown file to convert.'
       (expect Kramdown::AsciiDoc::Cli.run []).to eql 1
-      (expect $stdout.string.chomp).to be_empty
-      (expect $stderr.string.chomp).to start_with expected
+      (expect $stderr.string.chomp).to eql expected
+      (expect $stdout.string.chomp).to start_with 'Usage: kramdoc'
     end
 
     it 'returns non-zero exit status and displays usage when more than one argument is given' do
-      expected = <<~EOS.chomp
-      kramdoc: extra arguments detected (unparsed arguments: bar.md)
-      Usage: kramdoc
-      EOS
+      expected = 'kramdoc: extra arguments detected (unparsed arguments: bar.md)'
       (expect Kramdown::AsciiDoc::Cli.run %w(foo.md bar.md)).to eql 1
-      (expect $stdout.string.chomp).to be_empty
-      (expect $stderr.string.chomp).to start_with expected
+      (expect $stderr.string.chomp).to eql expected
+      (expect $stdout.string.chomp).to start_with 'Usage: kramdoc'
+    end
+
+    it 'returns non-zero exit status when invalid argument is given' do
+      (expect Kramdown::AsciiDoc::Cli.run %w(--invalid-option)).to eql 1
+      (expect $stderr.string.chomp).to eql 'kramdoc: invalid option: --invalid-option'
+      (expect $stdout.string.chomp).to start_with 'Usage: kramdoc'
     end
 
     it 'displays version when -v flag is used' do
