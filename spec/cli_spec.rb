@@ -115,5 +115,14 @@ describe Kramdown::AsciiDoc::Cli do
       EOS
       (expect $stdout.string).to eql expected
     end
+
+    it 'passes through HTML when --no-html-to-native flag is used' do
+      the_source_file = scenario_file 'html_element/native.md'
+      (expect Kramdown::AsciiDoc::Cli.run %W(-o - --no-html-to-native #{the_source_file})).to eql 0
+      expected = <<~EOS
+      +++<p>++++++<strong>+++strong emphasis (aka bold)+++</strong>+++ +++<em>+++emphasis (aka italic)+++</em>+++ +++<code>+++monospace+++</code>++++++</p>+++
+      EOS
+      (expect $stdout.string).to eql expected
+    end
   end
 end
