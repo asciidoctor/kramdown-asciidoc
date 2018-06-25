@@ -84,8 +84,16 @@ describe Kramdown::AsciiDoc::Cli do
 
     it 'shifts headings by offset when --heading-offset is used' do
       the_source_file = scenario_file 'heading/offset.md'
+      expected = IO.read scenario_file 'heading/offset.adoc'
       (expect Kramdown::AsciiDoc::Cli.run %W(-o - --heading-offset=-1 #{the_source_file})).to eql 0
-      (expect $stdout.string.chomp).to start_with '= Document Title'
+      (expect $stdout.string).to eql expected
+    end
+
+    it 'automatically generates IDs for section titles when --auto-ids is used' do
+      the_source_file = scenario_file 'heading/auto-ids.md'
+      expected = IO.read scenario_file 'heading/auto-ids.adoc'
+      (expect Kramdown::AsciiDoc::Cli.run %W(-o - --auto-ids #{the_source_file})).to eql 0
+      (expect $stdout.string).to eql expected
     end
 
     it 'adds specified attributes to document header' do
