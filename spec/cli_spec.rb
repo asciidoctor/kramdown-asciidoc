@@ -75,6 +75,13 @@ describe Kramdown::AsciiDoc::Cli do
       end
     end
 
+    it 'removes leading blank lines and trailing whitespace from source' do
+      the_source_file = output_file 'leading-trailing-space.md'
+      IO.write the_source_file, %(\n\n\n\n# Heading\n\ncontent.   \n\n)
+      (expect Kramdown::AsciiDoc::Cli.run %W(-o - #{the_source_file})).to eql 0
+      (expect $stdout.string.chomp).to eql %(= Heading\n\ncontent.)
+    end
+
     it 'reads Markdown source using specified format' do
       the_source_file = output_file 'format-markdown.md'
       IO.write the_source_file, '#Heading'
