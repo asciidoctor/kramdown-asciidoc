@@ -134,5 +134,16 @@ describe Kramdown::AsciiDoc::Cli do
       EOS
       (expect $stdout.string).to eql expected
     end
+
+    it 'reads arguments from ARGV by default' do
+      old_ARGV = ARGV.dup
+      ARGV.replace %w(-v)
+      begin
+        (expect Kramdown::AsciiDoc::Cli.run).to eql 0
+        (expect $stdout.string.chomp).to eql %(kramdoc #{Kramdown::AsciiDoc::VERSION})
+      ensure
+        ARGV.replace old_ARGV
+      end
+    end
   end
 end
