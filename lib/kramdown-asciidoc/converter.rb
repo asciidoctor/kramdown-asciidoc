@@ -410,8 +410,7 @@ module Kramdown; module AsciiDoc
     end
 
     def convert_strong el, opts
-      text = compose_text el
-      if (text.include? ' > ') && MenuRefRx =~ text
+      if ((text = compose_text el).include? ' > ') && MenuRefRx =~ text
         @attributes['experimental'] = ''
         opts[:writer].append %(menu:#{$1}[#{$2}])
       else
