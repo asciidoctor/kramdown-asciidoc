@@ -26,7 +26,7 @@ RSpec.configure do |config|
   end
 
   def scenarios_dir 
-    dir = File.join __dir__, 'scenarios'
+    File.join __dir__, 'scenarios'
   end
 
   def scenario_file path

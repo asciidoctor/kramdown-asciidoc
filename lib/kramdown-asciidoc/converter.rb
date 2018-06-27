@@ -283,7 +283,7 @@ module Kramdown; module AsciiDoc
     def convert_ul el, opts
       (writer = opts[:writer]).start_list (parent = opts[:parent]).type != :dd && !parent.options[:compound]
       level_opt = el.type == :dl ? :dlist_level : :list_level
-      level = opts[level_opt] ? (opts[level_opt] += 1) : (opts[level_opt] = 1)
+      opts[level_opt] = (opts[level_opt] || 0) + 1
       traverse el, opts
       opts.delete level_opt if (opts[level_opt] -= 1) < 1
       writer.end_list
