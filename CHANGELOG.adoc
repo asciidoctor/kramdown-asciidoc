@@ -16,6 +16,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 === Changed
 
 * handle case when dd is nil
+* handle case when dd has no primary text
+* handle case when li has no primary text
+* use writer to track list nesting level
+* fix warnings
 
 == 1.0.0.alpha.5 (2018-06-19) - @mojavelinux
 
