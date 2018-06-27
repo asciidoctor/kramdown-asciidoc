@@ -512,8 +512,7 @@ module Kramdown; module AsciiDoc
       else
         if (current_line = writer.current_line) && !(current_line.end_with? LF)
           start_new_line = true
-          # FIXME cleaner API here (writer#strip_line?)
-          writer.current_line.rstrip! if current_line.end_with? ' '
+          writer.replace_line current_line.rstrip if current_line.end_with? ' '
         end
         lines = lines.map {|l| %(// #{l}) }
         if start_new_line

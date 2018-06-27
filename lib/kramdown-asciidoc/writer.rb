@@ -70,11 +70,6 @@ module Kramdown; module AsciiDoc
       nil
     end
 
-    def clear_line
-      @body[-1] = '' unless empty?
-      nil
-    end
-
     def add_blank_line
       @body << ''
       nil
@@ -96,6 +91,17 @@ module Kramdown; module AsciiDoc
       else
         @body[-1] += str
       end
+      nil
+    end
+
+    def clear_line
+      @body[-1] = '' unless empty?
+      nil
+    end
+
+    def replace_line line
+      @body.pop
+      @body << line
       nil
     end
 
