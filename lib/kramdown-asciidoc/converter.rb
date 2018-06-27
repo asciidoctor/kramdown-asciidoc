@@ -83,6 +83,7 @@ module Kramdown; module AsciiDoc
 
     CommentPrefixRx = /^ *! ?/m
     CssPropDelimRx = /\s*;\s*/
+    FullStopRx = /(?<=\.)\p{Blank}+(?!\Z)/
     MenuRefRx = /^([\p{Word}&].*?)\s>\s([\p{Word}&].*(?:\s>\s|$))+/
     ReplaceableTextRx = /[-=]>|<[-=]|\.\.\./
     SmartApostropheRx = /\b’\b/
@@ -100,6 +101,7 @@ module Kramdown; module AsciiDoc
       @imagesdir = (@attributes.delete 'implicit-imagesdir') || @attributes['imagesdir']
       @heading_offset = opts[:heading_offset] || 0
       @current_heading_level = nil
+      @wrap = opts[:wrap] || :preserve
     end
 
     def convert el, opts = {}
@@ -141,6 +143,7 @@ module Kramdown; module AsciiDoc
       end
       lines = []
       lines << %([#{style.join}]) unless style.empty?
+      # NOTE kramdown removes newlines from heading
       lines << %(#{'=' * level} #{compose_text el, strip: true})
       if level == 1 && writer.empty? && @current_heading_level != 1
         writer.header.push(*lines)
@@ -168,7 +171,7 @@ module Kramdown; module AsciiDoc
       elsif (child_i = children[0]).type == :text && (child_i_text = child_i.value).start_with?(*ADMON_MARKERS)
         marker, child_i_text = child_i_text.split ': ', 2
         children = [(clone child_i, value: %(#{ADMON_TYPE_MAP[marker]}: #{child_i_text}))] + (children.drop 1)
-        lines = compose_text children, parent: el, strip: true, split: true
+        lines = compose_text children, parent: el, strip: true, split: true, wrap: @wrap
       # NOTE detect formatted admonition marker (e.g., *Note:* ...)
       elsif (child_i.type == :strong || child_i.type == :em) &&
           (marker_el = child_i.children[0]) && ((marker = ADMON_FORMATTED_MARKERS[marker_el.value]) ||
@@ -177,10 +180,10 @@ module Kramdown; module AsciiDoc
         children = children.drop 1
         children[0] = clone child_ii, value: (child_ii_text.slice 1, child_ii_text.length) if child_ii
         # Q: should we only rstrip?
-        lines = compose_text children, parent: el, strip: true, split: true
+        lines = compose_text children, parent: el, strip: true, split: true, wrap: @wrap
         lines.unshift %(#{ADMON_TYPE_MAP[marker]}: #{lines.shift})
       else
-        lines = compose_text el, strip: true, split: true
+        lines = compose_text el, strip: true, split: true, wrap: @wrap
       end
       writer.add_lines lines
     end
@@ -299,7 +302,7 @@ module Kramdown; module AsciiDoc
       indent = (level = opts[:list_level]) - 1
       if (children = el.children)[0].type == :p
         primary, remaining = [(children = children.dup).shift, children]
-        primary_lines = compose_text [primary], parent: el, strip: true, split: true
+        primary_lines = compose_text [primary], parent: el, strip: true, split: true, wrap: @wrap
       else
         remaining = children
         primary_lines = ['{blank}']
@@ -314,6 +317,7 @@ module Kramdown; module AsciiDoc
     end
 
     def convert_dt el, opts
+      # NOTE kramdown removes newlines from term
       term = compose_text el, strip: true
       marker = DLIST_MARKERS[opts[:dlist_level] - 1]
       #opts[:writer].add_blank_line if (prev = opts[:prev]) && prev.options[:compound]
@@ -326,7 +330,7 @@ module Kramdown; module AsciiDoc
         remaining = el.children
       else
         remaining = (children = el.children).drop 1
-        primary_lines = compose_text [children[0]], parent: el, strip: true, split: true
+        primary_lines = compose_text [children[0]], parent: el, strip: true, split: true, wrap: @wrap
         if primary_lines.size == 1
           opts[:writer].append %( #{primary_lines[0]})
         else
@@ -349,14 +353,22 @@ module Kramdown; module AsciiDoc
         colspecs = %("#{colspecs}") if cols > 1
       end
       table_buffer = ['|===']
+      ventilate = @wrap == :ventilate
       el.children.each do |container|
         container.children.each do |row|
           row_buffer = []
           row.children.each do |cell|
-            # TODO if using sentence-per-line, append to row_buffer as separate lines
-            cell_contents = compose_text cell
-            cell_contents = cell_contents.gsub '|', '\|' if cell_contents.include? '|'
-            row_buffer << %(| #{cell_contents})
+            if ventilate
+              cell_contents = (compose_text cell, split: true, wrap: :ventilate).map do |line|
+                (line.include? '|') ? (line.gsub '|', '\|') : line
+              end
+              cell_contents[0] = %(| #{cell_contents[0]})
+              row_buffer += cell_contents
+            else
+              cell_contents = compose_text cell
+              cell_contents = cell_contents.gsub '|', '\|' if cell_contents.include? '|'
+              row_buffer << %(| #{cell_contents})
+            end
           end
           if container.type == :thead
             head = true
@@ -469,7 +481,7 @@ module Kramdown; module AsciiDoc
           return
         elsif child_i_i.value == 'span' && ((role = el.attr['class'] || '').start_with? 'note') && child_i_i.attr['class'] == 'notetitle'
           marker = ADMON_FORMATTED_MARKERS[(child_i_i.children[0] || VoidElement).value] || 'Note'
-          lines = compose_text (child_i.children.drop 1), parent: child_i, strip: true, split: true
+          lines = compose_text (child_i.children.drop 1), parent: child_i, strip: true, split: true, wrap: @wrap
           lines.unshift %(#{ADMON_TYPE_MAP[marker]}: #{lines.shift})
           opts[:writer].start_block
           opts[:writer].add_lines lines
@@ -559,16 +571,52 @@ module Kramdown; module AsciiDoc
 
     # Q: should we support rstrip in addition to strip?
     # TODO add escaping of closing square bracket
-    # TODO reflow text
     def compose_text el, opts = {}
       strip = opts.delete :strip
       split = opts.delete :split
+      wrap_style = (opts.delete :wrap) || :preserve
       # Q: do we want to merge or just start fresh?
       traverse el, (opts.merge writer: (span_writer = Writer.new))
       # NOTE there should only ever be one line
       text = span_writer.body.join LF
       text = text.strip if strip
+      text = reflow text, wrap_style
       split ? (text.split LF) : text
+    end
+
+    def reflow str, wrap_style
+      return str if str.empty?
+      case wrap_style
+      when :ventilate
+        unwrap str, true
+      when :none
+        unwrap str
+      else # :preserve
+        str
+      end
+    end
+
+    # NOTE this method requires contiguous non-blank lines
+    def unwrap str, ventilate = false
+      result = []
+      start_new_line = true
+      lines = str.split LF
+      while (line = lines.shift)
+        if line.start_with? '//'
+          result << line
+          start_new_line = true
+        elsif start_new_line
+          result << line
+          start_new_line = false
+        else
+          result << %(#{result.pop} #{line})
+        end
+      end
+      if ventilate
+        result.map {|line| (line.start_with? '//') ? line : ((line.include? '.') ? (line.gsub FullStopRx, LF) : line) }.join LF
+      else
+        result.join LF
+      end
     end
   end
 end; end
