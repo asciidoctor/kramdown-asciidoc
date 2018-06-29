@@ -7,6 +7,11 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == Unreleased
 
+=== Added
+
+* add :wrap option to control line wrapping behavior (:ventilate, :none, and :preserve) (#11)
+* add --wrap CLI option to control :wrap option (#11)
+
 === Changed
 
 * add replace_line method to Writer
@@ -15,7 +20,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 === Added
 
-* added options and usage to CLI (#2)
+* add options and usage to CLI (#2)
 * ensure directory of output file exists
 * add option to enable automatic generation of IDs for section titles
 

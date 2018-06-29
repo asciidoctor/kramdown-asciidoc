@@ -33,6 +33,10 @@ module Kramdown; module AsciiDoc
           options[:attributes][key] = val
         end
 
+        opts.on '--wrap=preserve|none|ventilate', %w(none preserve ventilate), 'Set how lines are wrapped in the AsciiDoc document (default: preserve)' do |wrap|
+          options[:wrap] = wrap.to_sym
+        end
+
         opts.on '--heading-offset=NUMBER', 'Shift the heading level by the specified number', ::Integer do |offset|
           options[:heading_offset] = offset
         end
