@@ -1,4 +1,6 @@
+[cols=2*]
 |===
 | Turn left.
 Then turn right.
+| left \| right
 |===

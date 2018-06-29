@@ -574,19 +574,19 @@ module Kramdown; module AsciiDoc
     def compose_text el, opts = {}
       strip = opts.delete :strip
       split = opts.delete :split
-      wrap_style = (opts.delete :wrap) || :preserve
+      wrap = (opts.delete :wrap) || :preserve
       # Q: do we want to merge or just start fresh?
       traverse el, (opts.merge writer: (span_writer = Writer.new))
       # NOTE there should only ever be one line
       text = span_writer.body.join LF
       text = text.strip if strip
-      text = reflow text, wrap_style
+      text = reflow text, wrap
       split ? (text.split LF) : text
     end
 
-    def reflow str, wrap_style
-      return str if str.empty?
-      case wrap_style
+    def reflow str, wrap
+      #return str if str.empty?
+      case wrap
       when :ventilate
         unwrap str, true
       when :none

@@ -1,2 +1,2 @@
-| --------------------------- |
-| Turn left. Then turn right. |
+| --------------------------- | ------------- |
+| Turn left. Then turn right. | left \| right |

@@ -101,6 +101,13 @@ describe Kramdown::AsciiDoc::Cli do
       (expect $stdout.string.chomp).to eql '= Heading'
     end
 
+    it 'wraps output as specified by the --wrap option' do
+      the_source_file = scenario_file 'wrap/ventilate.md'
+      expected = IO.read scenario_file 'wrap/ventilate.adoc'
+      (expect subject.run %W(-o - --wrap=ventilate #{the_source_file})).to eql 0
+      (expect $stdout.string).to eql expected
+    end
+
     it 'shifts headings by offset when --heading-offset is used' do
       the_source_file = scenario_file 'heading/offset.md'
       expected = IO.read scenario_file 'heading/offset.adoc'
