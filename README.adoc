@@ -132,6 +132,55 @@ Then, use the `bundle` command to install the project dependencies under the pro
 
 NOTE: You must invoke `bundle` from the project's root directory so it can locate the [.path]_Gemfile_.
 
+=== Run the Tests
+
+The test suite is located in the [.path]_spec_ directory.
+The tests are all based on RSpec.
+
+Most specs are scenarios, located under the [.path]_spec/scenarios_ directory.
+Each scenario consists of a Markdown file that ends in .md (the given), an AsciiDoc file that ends in .adoc (the then), and an optional options file that ends in .opts.
+The test converts the Markdown to AsciiDoc (the when) and validates the result against what's expected.
+The specification name of each scenario is derived from the directory name.
+
+You can run all of the tests using Rake:
+
+ $ bundle exec rake
+
+For more fine-grained control, you can also run the tests directly using RSpec:
+
+ $ bundle exec rspec
+
+To run all the scenarios, point RSpec at the spec file:
+
+ $ bundle exec rspec spec/integration_spec.rb
+
+==== Run Individual Tests
+
+If you only want to run a single test, or a group of tests, you can do so by tagging the test cases, then filtering the test run using that tag.
+
+Start by adding the `wip` tag to one or more specifications:
+
+[source,ruby]
+----
+it 'should do something new', wip: true do
+  expect(true).to be true
+end
+----
+
+Next, run RSpec with the `wip` flag enabled:
+
+ $ bundle exec rspec -t wip
+
+RSpec will only run the specifications that contain this flag.
+
+You can also filter tests by keyword.
+Let's assume we want to run all the tests that have `wrap` in the description.
+Run RSpec with the example filter:
+
+ $ bundle exec rspec -e wrap
+
+RSpec will only run the specifications that have a description containing the text `wrap`.
+
 === Usage
 
 When running the `kramdoc` command from source, you must prefix the command with `bundle exec`:
