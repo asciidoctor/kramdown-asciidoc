@@ -203,7 +203,7 @@ module Kramdown; module AsciiDoc
           contents.pop while contents.size > 0 && contents[-1].empty?
         end
         # Q: should writer handle delimited block nesting?
-        delimiter = '____' + (depth > 0 ? '__' * depth : '')
+        delimiter = depth > 0 ? ('____' + '__' * depth) : '_'
         writer.start_delimited_block delimiter
         writer.add_lines contents
         writer.end_delimited_block
@@ -234,7 +234,7 @@ module Kramdown; module AsciiDoc
         writer.add_lines lines
         writer.add_line '....'
       else
-        # NOTE clear the list continuation (is the condition necessary?)
+        # NOTE clear the list continuation
         writer.clear_line if writer.current_line == '+'
         writer.add_line lines.map {|l| %( #{l}) }
       end
