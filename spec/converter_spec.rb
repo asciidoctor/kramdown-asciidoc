@@ -13,6 +13,11 @@ describe Kramdown::AsciiDoc::Converter do
       (expect converter.convert root).to end_with %(\n)
       (expect doc.to_asciidoc).to end_with %(\n)
     end
+
+    # Q: can we find a scenario that covers this?
+    it 'does not crash if element is nil' do
+      (expect converter.convert nil).to be_nil
+    end
   end
 
   context '#clone' do
