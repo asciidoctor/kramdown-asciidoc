@@ -554,7 +554,7 @@ module Kramdown; module AsciiDoc
       el
     end
 
-    def traverse el, opts = {}
+    def traverse el, opts
       prev = nil
       if ::Array === el
         nodes = el
