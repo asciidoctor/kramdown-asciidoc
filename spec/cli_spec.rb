@@ -89,9 +89,44 @@ describe Kramdown::AsciiDoc::Cli do
 
     it 'removes leading blank lines and trailing whitespace from source' do
       the_source_file = output_file 'leading-trailing-space.md'
-      IO.write the_source_file, %(\n\n\n\n# Heading\n\ncontent.   \n\n)
+      IO.write the_source_file, <<~EOS
+      \n\n\n\n
+      # Heading
+
+      Body content.#{'  '}
+      \n\n\n\n
+      EOS
       (expect subject.run %W(-o - #{the_source_file})).to eql 0
-      (expect $stdout.string.chomp).to eql %(= Heading\n\ncontent.)
+      (expect $stdout.string.chomp).to eql %(= Heading\n\nBody content.)
+    end
+
+    it 'processes front matter in source' do
+      the_source_file = output_file 'front-matter.md'
+      IO.write the_source_file, <<~EOS
+      ---
+      title: Document Title
+      ---
+      Body content.
+      EOS
+      (expect subject.run %W(-o - #{the_source_file})).to eql 0
+      (expect $stdout.string.chomp).to eql %(= Document Title\n\nBody content.)
+    end
+
+    it 'replaces explicit toc in source' do
+      the_source_file = output_file 'toc.md'
+      IO.write the_source_file, <<~EOS
+      # Guide
+
+      <!-- TOC depthFrom:2 depthTo:6 -->
+      - [Prerequisites](#prerequisites)
+      - [Installation](#installation)
+      - [Deployment](#deployment)
+      <!-- /TOC -->
+
+      ...
+      EOS
+      (expect subject.run %W(-o - #{the_source_file})).to eql 0
+      (expect $stdout.string.chomp).to eql %(= Guide\n:toc: macro\n\ntoc::[]\n\n...)
     end
 
     it 'reads Markdown source using specified format' do
