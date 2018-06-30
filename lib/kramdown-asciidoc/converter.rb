@@ -89,6 +89,8 @@ module Kramdown; module AsciiDoc
     SmartApostropheRx = /\b’\b/
     TrailingSpaceRx = / +$/
     TypographicSymbolRx = /[“”‘’—–…]/
+    WordishRx = /[\p{Word};:]/
+    WordRx = /\p{Word}/
     XmlCommentRx = /\A<!--(.*)-->\Z/m
 
     VoidElement = Element.new nil
@@ -416,19 +418,24 @@ module Kramdown; module AsciiDoc
     end 
 
     def convert_codespan el, opts
-      opts[:writer].append (val = el.value) =~ ReplaceableTextRx ? %(`+#{val}+`) : %(`#{val}`)
+      text = el.value
+      mark = (unconstrained? opts[:prev], opts[:next]) ? '``' : '`'
+      opts[:writer].append text =~ ReplaceableTextRx ? %(#{mark}+#{text}+#{mark}) : %(#{mark}#{text}#{mark})
     end
 
     def convert_em el, opts
-      opts[:writer].append %(_#{compose_text el}_)
+      composed_text = compose_text el
+      mark = (unconstrained? opts[:prev], opts[:next]) ? '__' : '_'
+      opts[:writer].append %(#{mark}#{composed_text}#{mark})
     end
 
     def convert_strong el, opts
-      if ((text = compose_text el).include? ' > ') && MenuRefRx =~ text
+      if ((composed_text = compose_text el).include? ' > ') && MenuRefRx =~ composed_text
         @attributes['experimental'] = ''
         opts[:writer].append %(menu:#{$1}[#{$2}])
       else
-        opts[:writer].append %(*#{text}*)
+        mark = (unconstrained? opts[:prev], opts[:next]) ? '**' : '*'
+        opts[:writer].append %(#{mark}#{composed_text}#{mark})
       end
     end
 
@@ -456,10 +463,7 @@ module Kramdown; module AsciiDoc
         writer.append %(#{(writer.current_line.end_with? ' ') ? '' : ' '}+)
       end
       if el.options[:html_tag]
-        siblings = opts[:parent].children
-        unless (next_el = siblings[(siblings.index el) + 1] || VoidElement).type == :text && (next_el.value.start_with? LF)
-          writer.add_blank_line
-        end
+        writer.add_blank_line unless (next_el = opts[:next] || VoidElement).type == :text && (next_el.value.start_with? LF)
       end
     end
 
@@ -557,7 +561,6 @@ module Kramdown; module AsciiDoc
     end
 
     def traverse el, opts
-      prev = nil
       if ::Array === el
         nodes = el
         parent = opts[:parent]
@@ -565,8 +568,7 @@ module Kramdown; module AsciiDoc
         nodes = (parent = el).children
       end
       nodes.each_with_index do |child, idx|
-        convert child, (opts.merge parent: parent, index: idx, prev: prev)
-        prev = child
+        convert child, (opts.merge parent: parent, index: idx, prev: (idx == 0 ? nil : nodes[idx - 1]), next: nodes[idx + 1])
       end
       nil
     end
@@ -584,6 +586,18 @@ module Kramdown; module AsciiDoc
       text = text.strip if strip
       text = reflow text, wrap
       split ? (text.split LF) : text
+    end
+
+    def unconstrained? prev_el, next_el
+      (next_char_word? next_el) || (prev_char_wordish? prev_el)
+    end
+
+    def prev_char_wordish? prev_el
+      prev_el && (prev_el.type == :entity || ((prev_ch = prev_el.type == :text && prev_el.value[-1]) && (WordishRx.match? prev_ch)))
+    end
+
+    def next_char_word? next_el
+      next_el && (next_ch = next_el.type == :text && next_el.value.chr) && (WordRx.match? next_ch)
     end
 
     def reflow str, wrap
