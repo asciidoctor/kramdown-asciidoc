@@ -152,7 +152,7 @@ For more fine-grained control, you can also run the tests directly using RSpec:
 
 To run all the scenarios, point RSpec at the spec file:
 
- $ bundle exec rspec spec/integration_spec.rb
+ $ bundle exec rspec spec/scenario_spec.rb
 
 ==== Run Individual Tests
 

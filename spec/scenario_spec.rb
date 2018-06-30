@@ -1,7 +1,7 @@
 require_relative 'spec_helper'
 require 'yaml'
 
-describe 'integration scenario' do
+describe 'scenario' do
   let(:doc) { Kramdown::Document.new input, (Kramdown::AsciiDoc::DEFAULT_PARSER_OPTS.merge extra_options) }
 
   Dir.chdir scenarios_dir do
