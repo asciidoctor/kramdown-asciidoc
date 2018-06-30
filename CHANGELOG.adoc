@@ -15,6 +15,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 === Changed
 
 * add replace_line method to Writer
+* replace .md extension with .adoc in text of interdoc xref
 
 == 1.0.0.alpha.6 (2018-06-26) - @mojavelinux
 

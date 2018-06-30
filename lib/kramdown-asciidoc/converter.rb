@@ -407,7 +407,9 @@ module Kramdown; module AsciiDoc
           opts[:writer].append bare ? url : %(#{url}[#{text.gsub ']', '\]'}])
         end
       elsif url.end_with? '.md'
-        opts[:writer].append %(xref:#{url.slice 0, url.length - 3}.adoc[#{(compose_text el, strip: true).gsub ']', '\]'}])
+        text = (compose_text el, strip: true).gsub ']', '\]'
+        text = %(#{text.slice 0, text.length - 3}.adoc) if text.end_with? '.md'
+        opts[:writer].append %(xref:#{url.slice 0, url.length - 3}.adoc[#{text}])
       else
         opts[:writer].append %(link:#{url}[#{(compose_text el, strip: true).gsub ']', '\]'}])
       end
