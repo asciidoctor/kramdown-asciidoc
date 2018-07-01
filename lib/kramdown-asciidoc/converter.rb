@@ -419,13 +419,13 @@ module Kramdown; module AsciiDoc
 
     def convert_codespan el, opts
       text = el.value
-      mark = (unconstrained? opts[:prev], opts[:next]) ? '``' : '`'
+      mark = (unconstrained? opts[:prev], opts[:next], :codespan) ? '``' : '`'
       opts[:writer].append text =~ ReplaceableTextRx ? %(#{mark}+#{text}+#{mark}) : %(#{mark}#{text}#{mark})
     end
 
     def convert_em el, opts
       composed_text = compose_text el
-      mark = (unconstrained? opts[:prev], opts[:next]) ? '__' : '_'
+      mark = (unconstrained? opts[:prev], opts[:next], :em) ? '__' : '_'
       opts[:writer].append %(#{mark}#{composed_text}#{mark})
     end
 
@@ -434,9 +434,25 @@ module Kramdown; module AsciiDoc
         @attributes['experimental'] = ''
         opts[:writer].append %(menu:#{$1}[#{$2}])
       else
-        mark = (unconstrained? opts[:prev], opts[:next]) ? '**' : '*'
+        mark = (unconstrained? opts[:prev], opts[:next], :strong) ? '**' : '*'
         opts[:writer].append %(#{mark}#{composed_text}#{mark})
       end
+    end
+
+    def unconstrained? prev_el, next_el, enclosure
+      (next_char_word? next_el, enclosure) || (prev_char_wordish? prev_el)
+    end
+
+    def prev_char_wordish? prev_el
+      prev_el && (prev_el.type == :entity || ((prev_ch = prev_el.type == :text && prev_el.value[-1]) && (WordishRx.match? prev_ch)))
+    end
+
+    def next_char_word? next_el, enclosure
+      if next_el.type == :text
+        (next_ch = next_el.value.chr) && ((WordRx.match? next_ch) || (enclosure == :codespan && next_ch == ?'))
+      elsif enclosure == :codespan && next_el.type == :smart_quote && next_el.value == :rsquo
+        true
+      end if next_el
     end
 
     def convert_text el, opts
@@ -586,18 +602,6 @@ module Kramdown; module AsciiDoc
       text = text.strip if strip
       text = reflow text, wrap
       split ? (text.split LF) : text
-    end
-
-    def unconstrained? prev_el, next_el
-      (next_char_word? next_el) || (prev_char_wordish? prev_el)
-    end
-
-    def prev_char_wordish? prev_el
-      prev_el && (prev_el.type == :entity || ((prev_ch = prev_el.type == :text && prev_el.value[-1]) && (WordishRx.match? prev_ch)))
-    end
-
-    def next_char_word? next_el
-      next_el && (next_ch = next_el.type == :text && next_el.value.chr) && (WordRx.match? next_ch)
     end
 
     def reflow str, wrap
