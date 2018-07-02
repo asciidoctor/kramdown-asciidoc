@@ -424,7 +424,12 @@ module Kramdown; module AsciiDoc
         @attributes['pp'] = '{plus}{plus}'
         text = text.gsub '++', '{pp}'
       end
-      opts[:writer].append text =~ ReplaceableTextRx ? %(#{mark}+#{text}+#{mark}) : %(#{mark}#{text}#{mark})
+      if (escape_replacements text) == text
+        opts[:writer].append %(#{mark}#{text}#{mark})
+      else
+        # FIXME use pass:[] if contains {pp}
+        opts[:writer].append %(#{mark}+#{text}+#{mark})
+      end
     end
 
     def convert_em el, opts
