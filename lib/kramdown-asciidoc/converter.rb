@@ -464,7 +464,7 @@ module Kramdown; module AsciiDoc
       # QUESTION should we apply this replacement globally?
       text = text.tr NBSP, ' ' if text.include? NBSP
       text = text.gsub '^', '{caret}' if (text.include? '^') && text != '^'
-      text = text.gsub '<=', '\<=' if text.include? '<='
+      text = text.gsub ReplaceableTextRx, '\\\\\0' if ReplaceableTextRx.match? text
       unless text.ascii_only?
         text = (text.gsub SmartApostropheRx, ?').gsub TypographicSymbolRx, TYPOGRAPHIC_SYMBOL_TO_MARKUP
       end
