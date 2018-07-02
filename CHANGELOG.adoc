@@ -13,6 +13,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * add --wrap CLI option to control :wrap option (#11)
 * add support for unconstrained formatting (em, strong, and codespan) (#6)
 * escape all replaceable text (arrows and ellipses) when converting regular text
+* replace double plus in codespan with \{pp} attribute reference
 
 === Changed
 

@@ -419,8 +419,11 @@ module Kramdown; module AsciiDoc
     end 
 
     def convert_codespan el, opts
-      text = el.value
       mark = (unconstrained? opts[:prev], opts[:next], :codespan) ? '``' : '`'
+      if (text = el.value).include? '++'
+        @attributes['pp'] = '{plus}{plus}'
+        text = text.gsub '++', '{pp}'
+      end
       opts[:writer].append text =~ ReplaceableTextRx ? %(#{mark}+#{text}+#{mark}) : %(#{mark}#{text}#{mark})
     end
 
