@@ -461,6 +461,10 @@ module Kramdown; module AsciiDoc
         @attributes['pp'] = '{plus}{plus}'
         text = text.gsub '++', '{pp}'
       end
+      opts[:writer].append escape_replacements text
+    end
+
+    def escape_replacements text
       # QUESTION should we apply this replacement globally?
       text = text.tr NBSP, ' ' if text.include? NBSP
       text = text.gsub '^', '{caret}' if (text.include? '^') && text != '^'
@@ -468,7 +472,7 @@ module Kramdown; module AsciiDoc
       unless text.ascii_only?
         text = (text.gsub SmartApostropheRx, ?').gsub TypographicSymbolRx, TYPOGRAPHIC_SYMBOL_TO_MARKUP
       end
-      opts[:writer].append text
+      text
     end
 
     # NOTE this logic assumes the :hard_wrap option is disabled in the parser
