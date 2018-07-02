@@ -460,7 +460,7 @@ module Kramdown; module AsciiDoc
     def next_char_word? next_el, enclosure
       if next_el.type == :text
         (next_ch = next_el.value.chr) && ((WordRx.match? next_ch) || (enclosure == :codespan && next_ch == ?'))
-      elsif enclosure == :codespan && next_el.type == :smart_quote && next_el.value == :rsquo
+      elsif enclosure == :codespan && next_el.type == :smart_quote
         true
       end if next_el
     end
