@@ -96,6 +96,7 @@ module Kramdown; module AsciiDoc
     VoidElement = Element.new nil
 
     LF = ?\n
+    NBSP = ?\u00a0
 
     def initialize root, opts
       super
@@ -460,8 +461,8 @@ module Kramdown; module AsciiDoc
         @attributes['pp'] = '{plus}{plus}'
         text = text.gsub '++', '{pp}'
       end
-      # Q: should we replace with single space instead?
-      text = text.gsub ' ', '{nbsp}' if text.include? ' '
+      # QUESTION should we apply this replacement globally?
+      text = text.tr NBSP, ' ' if text.include? NBSP
       text = text.gsub '^', '{caret}' if (text.include? '^') && text != '^'
       text = text.gsub '<=', '\<=' if text.include? '<='
       unless text.ascii_only?

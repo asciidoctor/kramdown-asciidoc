@@ -17,6 +17,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 * add replace_line method to Writer
 * replace .md extension with .adoc in text of interdoc xref
+* replace a non-breaking space with a single space instead of \{nbsp}
 
 == 1.0.0.alpha.6 (2018-06-26) - @mojavelinux
 
