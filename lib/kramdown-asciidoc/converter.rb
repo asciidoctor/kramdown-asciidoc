@@ -85,7 +85,7 @@ module Kramdown; module AsciiDoc
     CssPropDelimRx = /\s*;\s*/
     FullStopRx = /(?<=\.)\p{Blank}+(?!\Z)/
     MenuRefRx = /^([\p{Word}&].*?)\s>\s([\p{Word}&].*(?:\s>\s|$))+/
-    ReplaceableTextRx = /[-=]>|<[-=]|\.\.\./
+    ReplaceableTextRx = /[-=]>|<[-=]|\.\.\.|\{\p{Word}[\p{Word}-]*\}/
     SmartApostropheRx = /\b’\b/
     TrailingSpaceRx = / +$/
     TypographicSymbolRx = /[“”‘’—–…]/
@@ -420,15 +420,16 @@ module Kramdown; module AsciiDoc
 
     def convert_codespan el, opts
       mark = (unconstrained? opts[:prev], opts[:next], :codespan) ? '``' : '`'
-      if (text = el.value).include? '++'
+      pass = (text = el.value) != (escape_replacements text)
+      if text.include? '++'
         @attributes['pp'] = '{plus}{plus}'
         text = text.gsub '++', '{pp}'
       end
-      if (escape_replacements text) == text
-        opts[:writer].append %(#{mark}#{text}#{mark})
-      else
+      if pass
         # FIXME use pass:[] if contains {pp}
         opts[:writer].append %(#{mark}+#{text}+#{mark})
+      else
+        opts[:writer].append %(#{mark}#{text}#{mark})
       end
     end
 
@@ -465,18 +466,19 @@ module Kramdown; module AsciiDoc
     end
 
     def convert_text el, opts
-      if (text = el.value).include? '++'
+      text = escape_replacements el.value
+      if text.include? '++'
         @attributes['pp'] = '{plus}{plus}'
         text = text.gsub '++', '{pp}'
       end
-      opts[:writer].append escape_replacements text
+      opts[:writer].append text
     end
 
     def escape_replacements text
       # QUESTION should we apply this replacement globally?
       text = text.tr NBSP, ' ' if text.include? NBSP
-      text = text.gsub '^', '{caret}' if (text.include? '^') && text != '^'
       text = text.gsub ReplaceableTextRx, '\\\\\0' if ReplaceableTextRx.match? text
+      text = text.gsub '^', '{caret}' if (text.include? '^') && text != '^'
       unless text.ascii_only?
         text = (text.gsub SmartApostropheRx, ?').gsub TypographicSymbolRx, TYPOGRAPHIC_SYMBOL_TO_MARKUP
       end
