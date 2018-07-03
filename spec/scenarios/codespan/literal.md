@@ -2,6 +2,8 @@ Use the `<=` operator to define a version that is less than or equal to a specif
 
 Use `(start...end)` to create a sequence that ranges from `start--end`, but excludes the last element.
 
+Use the `--verbose` option to see more output.
+
 Use an `<!-- XML comment -->` to disable or hide markup.
 
 In AsciiDoc, `{name}` is the syntax for an attribute reference.

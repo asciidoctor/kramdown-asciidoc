@@ -11,6 +11,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 * add support for Ruby 2.3; add to CI matrix
 
+=== Changed
+
+* don't escape double hyphen in codespan unless surrounded by spaces or word chars
+
 == 1.0.0.alpha.7 (2018-07-02) - @mojavelinux
 
 === Added
