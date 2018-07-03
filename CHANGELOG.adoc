@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
-== Unreleased
+== 1.0.0.alpha.7 (2018-07-02) - @mojavelinux
 
 === Added
 
