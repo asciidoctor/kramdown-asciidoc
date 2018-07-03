@@ -420,14 +420,19 @@ module Kramdown; module AsciiDoc
 
     def convert_codespan el, opts
       mark = (unconstrained? opts[:prev], opts[:next], :codespan) ? '``' : '`'
-      pass = (text = el.value) != (escape_replacements text)
+      pass = (text = el.value) != (escape_replacements text) ? :shorthand : nil
       if text.include? '++'
-        @attributes['pp'] = '{plus}{plus}'
-        text = text.gsub '++', '{pp}'
+        if pass
+          pass = :macro
+        else
+          @attributes['pp'] = '{plus}{plus}'
+          text = text.gsub '++', '{pp}'
+        end
       end
-      if pass
-        # FIXME use pass:[] if contains {pp}
+      if pass == :shorthand
         opts[:writer].append %(#{mark}+#{text}+#{mark})
+      elsif pass == :macro
+        opts[:writer].append %(#{mark}pass:[#{text}]#{mark})
       else
         opts[:writer].append %(#{mark}#{text}#{mark})
       end

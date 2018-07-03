@@ -5,3 +5,5 @@ Use `(start...end)` to create a range from start to end that excludes the last e
 Use an `<!-- XML comment -->` to disable or hide markup.
 
 In AsciiDoc, `{name}` is the syntax for an attribute reference.
+
+`{lang}++` is simply better than `{lang}`.
