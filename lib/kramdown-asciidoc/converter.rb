@@ -120,7 +120,10 @@ module Kramdown; module AsciiDoc
         writer.doctitle ||= fallback_doctitle
       end
       writer.add_attributes @attributes unless @attributes.empty?
-      writer.to_s.gsub TrailingSpaceRx, ''
+      result = writer.to_s.gsub TrailingSpaceRx, ''
+      # QUESTION should we add a preprocessor step to clean the source?
+      result = result.tr NBSP, ' ' if result.include? NBSP
+      result
     end
 
     def convert_heading el, opts
@@ -486,8 +489,6 @@ module Kramdown; module AsciiDoc
     end
 
     def escape_replacements text
-      # QUESTION should we apply this replacement globally?
-      text = text.tr NBSP, ' ' if text.include? NBSP
       text = text.gsub AccidentalReplacementsRx, '\\\\\0' if AccidentalReplacementsRx.match? text
       text = text.gsub '^', '{caret}' if (text.include? '^') && text != '^'
       unless text.ascii_only?
