@@ -17,6 +17,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * escape attribute references in regular text
 * use passthrough for codespan if text contains an attribute reference
 * use pass macro to escape literal codespan that contains ++
+* escape codespan that contains replacements (#12)
 
 === Changed
 
