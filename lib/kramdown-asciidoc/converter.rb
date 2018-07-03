@@ -90,7 +90,7 @@ module Kramdown; module AsciiDoc
     SmartApostropheRx = /\b’\b/
     TrailingSpaceRx = / +$/
     TypographicSymbolRx = /[“”‘’—–…]/
-    WordishRx = /[\p{Word};:]/
+    WordishRx = /[\p{Word};:<>&]/
     WordRx = /\p{Word}/
     XmlCommentRx = /\A<!--(.*)-->\Z/m
 

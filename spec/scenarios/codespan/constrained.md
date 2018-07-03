@@ -1,1 +1,1 @@
-A boolean value can be `true` or `false`.
+A boolean value can be `true` or `false` (and sometimes `nil`).
