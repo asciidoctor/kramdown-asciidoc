@@ -81,11 +81,12 @@ module Kramdown; module AsciiDoc
 
     NON_DEFAULT_TABLE_ALIGNMENTS = [:center, :right]
 
+    AccidentalReplacementsRx = /[-=]>|<[-=]|\.\.\.|\{\p{Word}[\p{Word}-]*\}/
     CommentPrefixRx = /^ *! ?/m
     CssPropDelimRx = /\s*;\s*/
     FullStopRx = /(?<=\.)\p{Blank}+(?!\Z)/
     MenuRefRx = /^([\p{Word}&].*?)\s>\s([\p{Word}&].*(?:\s>\s|$))+/
-    ReplaceableTextRx = /[-=]>|<[-=]|\.\.\.|\{\p{Word}[\p{Word}-]*\}/
+    ReplaceableTextRx = /[-=]>|<[-=]|--|\*\*|\.\.\.|&\S+;|\{\p{Word}[\p{Word}-]*\}|\((?:C|R|TM)\)/
     SmartApostropheRx = /\b’\b/
     TrailingSpaceRx = / +$/
     TypographicSymbolRx = /[“”‘’—–…]/
@@ -420,7 +421,8 @@ module Kramdown; module AsciiDoc
 
     def convert_codespan el, opts
       mark = (unconstrained? opts[:prev], opts[:next], :codespan) ? '``' : '`'
-      pass = (text = el.value) != (escape_replacements text) ? :shorthand : nil
+      text = el.value
+      pass = (replaceable? text) ? :shorthand : nil
       if text.include? '++'
         if pass
           pass = :macro
@@ -479,10 +481,14 @@ module Kramdown; module AsciiDoc
       opts[:writer].append text
     end
 
+    def replaceable? text
+      (ReplaceableTextRx.match? text) || (text != '^' && (text.include? '^'))
+    end
+
     def escape_replacements text
       # QUESTION should we apply this replacement globally?
       text = text.tr NBSP, ' ' if text.include? NBSP
-      text = text.gsub ReplaceableTextRx, '\\\\\0' if ReplaceableTextRx.match? text
+      text = text.gsub AccidentalReplacementsRx, '\\\\\0' if AccidentalReplacementsRx.match? text
       text = text.gsub '^', '{caret}' if (text.include? '^') && text != '^'
       unless text.ascii_only?
         text = (text.gsub SmartApostropheRx, ?').gsub TypographicSymbolRx, TYPOGRAPHIC_SYMBOL_TO_MARKUP

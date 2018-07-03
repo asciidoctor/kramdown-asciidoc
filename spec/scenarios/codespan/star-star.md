@@ -1,0 +1,1 @@
+`**` is the exponent operator in Ruby. For example `4 ** 2` is 4 to the power of 2 (i.e., 16).
