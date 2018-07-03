@@ -7,6 +7,7 @@ language: ruby
 rvm:
 - &release_rvm 2.5.1
 - 2.4.4
+- 2.3.7
 script: COVERAGE=deep bundle exec rake spec
 deploy:
   provider: rubygems

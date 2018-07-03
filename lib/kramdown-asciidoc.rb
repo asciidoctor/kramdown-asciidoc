@@ -1,4 +1,5 @@
 require 'kramdown'
+require_relative 'kramdown-asciidoc/core_ext/regexp/is_match'
 require_relative 'kramdown-asciidoc/converter'
 require_relative 'kramdown-asciidoc/writer'
 autoload :YAML, 'yaml'
