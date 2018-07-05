@@ -91,7 +91,7 @@ module Kramdown; module AsciiDoc
         markdown = (::IO.read source_file, mode: 'r:UTF-8', newline: :universal).rstrip
       end
       if (output_file = options.delete :output)
-        (Pathname output_file).dirname.mkpath
+        (Pathname output_file).dirname.mkpath unless output_file == '-'
       else
         output_file = ((Pathname source_file).sub_ext '.adoc').to_s
       end
