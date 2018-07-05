@@ -69,6 +69,7 @@ module Kramdown; module AsciiDoc
       end
 
       if args.size == 1
+        # NOTE we can't use :input because that option is reserved for another purpose in kramdown
         options[:source] = args[0]
         [0, options]
       else
@@ -86,21 +87,30 @@ module Kramdown; module AsciiDoc
       code, options = new.parse args
       return code unless code == 0 && options
       if (source_file = options.delete :source) == '-'
+        pipe_in = true
         markdown = $stdin.read.rstrip
       else
         markdown = (::IO.read source_file, mode: 'r:UTF-8', newline: :universal).rstrip
       end
       if (output_file = options.delete :output)
-        (Pathname output_file).dirname.mkpath unless output_file == '-'
+        if output_file == '-'
+          pipe_out = true
+        else
+          (Pathname output_file).dirname.mkpath
+        end
       else
         output_file = ((Pathname source_file).sub_ext '.adoc').to_s
+      end
+      if !(pipe_in || pipe_out) && (::File.absolute_path source_file) == (::File.absolute_path output_file)
+        $stderr.puts %(kramdoc: input and output file cannot be the same: #{source_file})
+        return 1
       end
       markdown = markdown.slice 1, markdown.length while markdown.start_with? ?\n
       attributes = options[:attributes]
       markdown = ::Kramdown::AsciiDoc.extract_front_matter markdown, attributes
       markdown = ::Kramdown::AsciiDoc.replace_toc markdown, attributes
       doc = ::Kramdown::Document.new markdown, (::Kramdown::AsciiDoc::DEFAULT_PARSER_OPTS.merge options)
-      if output_file == '-'
+      if pipe_out
         $stdout.puts doc.to_asciidoc
       else
         ::IO.write output_file, doc.to_asciidoc

@@ -69,6 +69,23 @@ describe Kramdown::AsciiDoc::Cli do
       (expect (IO.read the_output_file).chomp).to eql 'Everything is going to be fine.'
     end
 
+    it 'prevents computed output file from overwriting input file' do
+      the_source_file = output_file 'implicit-conflict.adoc'
+      IO.write the_source_file, 'No can do.'
+      expected = %(kramdoc: input and output file cannot be the same: #{the_source_file})
+      (expect subject.run %W(#{the_source_file})).to eql 1
+      (expect $stderr.string.chomp).to eql expected
+    end
+
+    it 'prevents explicit output file from overwriting input file' do
+      the_source_file = output_file 'explicit-conflict.md'
+      the_output_file = the_source_file
+      IO.write the_source_file, 'No can do.'
+      expected = %(kramdoc: input and output file cannot be the same: #{the_source_file})
+      (expect subject.run %W(-o #{the_output_file} #{the_source_file})).to eql 1
+      (expect $stderr.string.chomp).to eql expected
+    end
+
     it 'writes output to stdout when -o option equals -' do
       the_source_file = scenario_file 'p/single-line.md'
       (expect subject.run %W(-o - #{the_source_file})).to eql 0
