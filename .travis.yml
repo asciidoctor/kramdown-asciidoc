@@ -5,10 +5,14 @@ git:
   depth: 2
 language: ruby
 rvm:
-- &release_rvm 2.5.1
 - 2.4.4
 - 2.3.7
-script: COVERAGE=deep bundle exec rake spec
+- jruby-9.2.0.0
+matrix:
+  include:
+  - rvm: &release_rvm 2.5.1
+    env: COVERAGE=deep
+script: bundle exec rake spec
 deploy:
   provider: rubygems
   api_key: ${RUBYGEMS_API_KEY}
