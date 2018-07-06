@@ -95,10 +95,10 @@ module Kramdown; module AsciiDoc
         if output_file == '-'
           pipe_out = true
         else
-          (Pathname output_file).dirname.mkpath
+          (::Pathname.new output_file).dirname.mkpath
         end
       else
-        output_file = ((Pathname input_file).sub_ext '.adoc').to_s
+        output_file = ((::Pathname.new input_file).sub_ext '.adoc').to_s
       end
       if !(pipe_in || pipe_out) && (::File.absolute_path input_file) == (::File.absolute_path output_file)
         $stderr.puts %(kramdoc: input and output file cannot be the same: #{input_file})
