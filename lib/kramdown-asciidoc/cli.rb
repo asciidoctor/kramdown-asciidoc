@@ -20,7 +20,7 @@ module Kramdown; module AsciiDoc
         EOS
 
         opts.on '-o FILE', '--output=FILE', 'Set the output filename or stream' do |file|
-          options[:output] = file
+          options[:output_file] = file
         end
 
         opts.on '--format=GFM|kramdown|markdown', %w(kramdown markdown GFM), 'Set the flavor of Markdown to parse (default: GFM)' do |format|
@@ -69,8 +69,7 @@ module Kramdown; module AsciiDoc
       end
 
       if args.size == 1
-        # NOTE we can't use :input because that option is reserved for another purpose in kramdown
-        options[:source] = args[0]
+        options[:input_file] = args[0]
         [0, options]
       else
         opt_parser.warn %(extra arguments detected (unparsed arguments: #{(args.drop 1).join ' '}))
@@ -86,23 +85,23 @@ module Kramdown; module AsciiDoc
     def self.run args = ARGV
       code, options = new.parse args
       return code unless code == 0 && options
-      if (source_file = options.delete :source) == '-'
+      if (input_file = options.delete :input_file) == '-'
         pipe_in = true
         markdown = $stdin.read.rstrip
       else
-        markdown = (::IO.read source_file, mode: 'r:UTF-8', newline: :universal).rstrip
+        markdown = (::IO.read input_file, mode: 'r:UTF-8', newline: :universal).rstrip
       end
-      if (output_file = options.delete :output)
+      if (output_file = options.delete :output_file)
         if output_file == '-'
           pipe_out = true
         else
           (Pathname output_file).dirname.mkpath
         end
       else
-        output_file = ((Pathname source_file).sub_ext '.adoc').to_s
+        output_file = ((Pathname input_file).sub_ext '.adoc').to_s
       end
-      if !(pipe_in || pipe_out) && (::File.absolute_path source_file) == (::File.absolute_path output_file)
-        $stderr.puts %(kramdoc: input and output file cannot be the same: #{source_file})
+      if !(pipe_in || pipe_out) && (::File.absolute_path input_file) == (::File.absolute_path output_file)
+        $stderr.puts %(kramdoc: input and output file cannot be the same: #{input_file})
         return 1
       end
       markdown = markdown.slice 1, markdown.length while markdown.start_with? ?\n
