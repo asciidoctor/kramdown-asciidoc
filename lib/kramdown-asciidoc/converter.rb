@@ -430,7 +430,7 @@ module Kramdown; module AsciiDoc
       if pass == :shorthand
         opts[:writer].append %(#{mark}+#{text}+#{mark})
       elsif pass == :macro
-        opts[:writer].append %(#{mark}pass:[#{text}]#{mark})
+        opts[:writer].append %(#{mark}pass:c[#{text}]#{mark})
       else
         opts[:writer].append %(#{mark}#{text}#{mark})
       end

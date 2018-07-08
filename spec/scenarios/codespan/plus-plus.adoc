@@ -1,1 +1,1 @@
-`pass:[C++]` is a programming language. The name comes from the `pass:[++]` operator, which increments the value of a variable by one.
+`pass:c[C++]` is a programming language. The name comes from the `pass:c[++]` operator, which increments the value of a variable by one.

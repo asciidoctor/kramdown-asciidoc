@@ -8,6 +8,6 @@ Use an `+<!-- XML comment -->+` to disable or hide markup.
 
 In AsciiDoc, `+{name}+` is the syntax for an attribute reference.
 
-`pass:[{lang}++]` is simply better than `+{lang}+`.
+`pass:c[{lang}++]` is simply better than `+{lang}+`.
 
 Type `+&copy;+` or `+(C)+` to enter a copyright symbol.
