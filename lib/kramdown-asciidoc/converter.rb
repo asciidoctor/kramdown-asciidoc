@@ -426,14 +426,7 @@ module Kramdown; module AsciiDoc
       mark = (unconstrained? opts[:prev], opts[:next], :codespan) ? '``' : '`'
       text = el.value
       pass = (replaceable? text) ? :shorthand : nil
-      if text.include? '++'
-        if pass
-          pass = :macro
-        else
-          @attributes['pp'] = '{plus}{plus}'
-          text = text.gsub '++', '{pp}'
-        end
-      end
+      pass = :macro if text.include? '++'
       if pass == :shorthand
         opts[:writer].append %(#{mark}+#{text}+#{mark})
       elsif pass == :macro

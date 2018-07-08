@@ -5,6 +5,12 @@
 This document provides a high-level view of the changes to {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
+== Unreleased
+
+=== Changed
+
+* escape codespan using pass macro if text contains double plus
+
 == 1.0.0.alpha.8 (2018-07-03) - @mojavelinux
 
 === Added

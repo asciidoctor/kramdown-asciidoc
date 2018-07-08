@@ -1,3 +1,1 @@
-:pp: {plus}{plus}
-
-`C{pp}` is hard. `C{pp}` is fast.
+`pass:[C++]` is a programming language. The name comes from the `pass:[++]` operator, which increments the value of a variable by one.
