@@ -81,10 +81,10 @@ module Kramdown; module AsciiDoc
 
     NON_DEFAULT_TABLE_ALIGNMENTS = [:center, :right]
 
-    AccidentalReplacementsRx = /[-=]>|<[-=]|\.\.\.|\{\p{Word}[\p{Word}-]*\}/
     CommentPrefixRx = /^ *! ?/m
     CssPropDelimRx = /\s*;\s*/
     FullStopRx = /(?<=\.)\p{Blank}+(?!\Z)/
+    InadvertentReplacementsRx = /[-=]>|<[-=]|\.\.\.|\{\p{Word}[\p{Word}-]*\}/
     MenuRefRx = /^([\p{Word}&].*?)\s>\s([\p{Word}&].*(?:\s>\s|$))+/
     ReplaceableTextRx = /[-=]>|<[-=]| -- |\p{Word}--\p{Word}|\*\*|\.\.\.|&\S+;|\{\p{Word}[\p{Word}-]*\}|\((?:C|R|TM)\)/
     SmartApostropheRx = /\b’\b/
@@ -482,7 +482,8 @@ module Kramdown; module AsciiDoc
     end
 
     def escape_replacements text
-      text = text.gsub AccidentalReplacementsRx, '\\\\\0' if AccidentalReplacementsRx.match? text
+      # NOTE the replacement \\\\\& inserts a single backslash in front of the matched text
+      text = text.gsub InadvertentReplacementsRx, '\\\\\&' if InadvertentReplacementsRx.match? text
       text = text.gsub '^', '{caret}' if (text.include? '^') && text != '^'
       unless text.ascii_only?
         text = (text.gsub SmartApostropheRx, ?').gsub TypographicSymbolRx, TYPOGRAPHIC_SYMBOL_TO_MARKUP
