@@ -117,6 +117,13 @@ describe Kramdown::AsciiDoc::Cli do
       (expect $stdout.string.chomp).to eql %(= Heading\n\nBody content.)
     end
 
+    it 'converts all newlines to line feed characters' do
+      the_source_file = output_file 'newlines.md'
+      IO.write the_source_file, %(\r\n\r\n# Document Title\r\n\r\nFirst paragraph.\r\n\r\nSecond paragraph.\r\n)
+      (expect subject.run %W(-o - #{the_source_file})).to eql 0
+      (expect $stdout.string.chomp).to eql %(= Document Title\n\nFirst paragraph.\n\nSecond paragraph.)
+    end
+
     it 'processes front matter in source' do
       the_source_file = output_file 'front-matter.md'
       IO.write the_source_file, <<~EOS
