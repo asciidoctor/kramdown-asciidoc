@@ -11,6 +11,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 * escape codespan using pass macro if text contains double plus
 * add specialcharacters replacement to inline pass macro
+* don't add newline after period at start of line when producing ventilated prose
 
 == 1.0.0.alpha.8 (2018-07-03) - @mojavelinux
 
