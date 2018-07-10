@@ -160,6 +160,13 @@ describe Kramdown::AsciiDoc::Cli do
       (expect $stdout.string.chomp).to eql '= Heading'
     end
 
+    it 'removes directory prefix from image references specified by the --imagesdir option' do
+      the_source_file = scenario_file 'img/implicit-imagesdir.md'
+      expected = IO.read scenario_file 'img/implicit-imagesdir.adoc'
+      (expect subject.run %W(-o - --imagesdir=images #{the_source_file})).to eql 0
+      (expect $stdout.string).to eql expected
+    end
+
     it 'wraps output as specified by the --wrap option' do
       the_source_file = scenario_file 'wrap/ventilate.md'
       expected = IO.read scenario_file 'wrap/ventilate.adoc'

@@ -84,6 +84,48 @@ To see all the options the `kramdoc` command accepts, pass the `-h` option to th
 
  $ kramdoc -h
 
+== Configure shared images directory
+
+If the images in the source document share a common directory prefix, such as [.path]_images/_, you can configure the converter to extract that prefix, optionally promoting it to the document header.
+
+Let's assume you want to convert the following Markdown source:
+
+[source,markdown]
+----
+# Document Title
+
+![Octocat](images/octocat.png)
+----
+
+You can extract the [.path]_images/_ prefix from the image reference and promote this value to the header of the output document by setting the `imagesdir` attribute:
+
+ $ kramdoc -a imagesdir=images sample.md
+
+Setting this attribute will produce the following document:
+
+[source,asciidoc]
+----
+= Document Title
+:imagesdir: images
+
+image::octocat.png[Octocat]
+----
+
+If you want the [.path]_images/_ prefix to be removed altogether and not added to the document header (i.e., an implied prefix), set the `--imagesdir` option instead:
+
+ $ kramdoc --imagesdir=images sample.md
+
+Setting this option will produce the following document:
+
+[source,asciidoc]
+----
+= Document Title
+
+image::octocat.png[Octocat]
+----
+
+In this scenario, you may need to pass the `imagesdir` attribute to the AsciiDoc processor when converting the output document so the image is resolved, depending on where the image is stored.
+
 == Development
 
 To help develop {project-name}, or to simply test-drive the development version, you need to retrieve the source from GitHub.

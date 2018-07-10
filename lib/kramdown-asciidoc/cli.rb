@@ -37,6 +37,10 @@ module Kramdown; module AsciiDoc
           options[:wrap] = wrap
         end
 
+        opts.on '--imagesdir=DIR', 'Set the leading directory to remove from image references' do |dir|
+          options[:imagesdir] = dir
+        end
+
         opts.on '--heading-offset=NUMBER', ::Integer, 'Shift the heading level by the specified number' do |offset|
           options[:heading_offset] = offset
         end

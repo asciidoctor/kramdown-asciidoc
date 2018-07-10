@@ -102,7 +102,7 @@ module Kramdown; module AsciiDoc
     def initialize root, opts
       super
       @attributes = opts[:attributes] || {}
-      @imagesdir = (@attributes.delete 'implicit-imagesdir') || @attributes['imagesdir']
+      @imagesdir = opts[:imagesdir] || @attributes['imagesdir']
       @heading_offset = opts[:heading_offset] || 0
       @current_heading_level = nil
       @wrap = opts[:wrap] || :preserve
