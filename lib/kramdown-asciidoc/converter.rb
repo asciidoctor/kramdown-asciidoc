@@ -86,7 +86,7 @@ module Kramdown; module AsciiDoc
     FullStopRx = /(?<=.\.)\p{Blank}+(?!\Z)/
     InadvertentReplacementsRx = /[-=]>|<[-=]|\.\.\.|\{\p{Word}[\p{Word}-]*\}/
     MenuRefRx = /^([\p{Word}&].*?)\s>\s([\p{Word}&].*(?:\s>\s|$))+/
-    ReplaceableTextRx = /[-=]>|<[-=]| -- |\p{Word}--\p{Word}|\*\*|\.\.\.|&\S+;|\{\p{Word}[\p{Word}-]*\}|\((?:C|R|TM)\)/
+    ReplaceableTextRx = /[-=]>|<[-=]| -- |\p{Word}--\p{Word}|\*\*|\.\.\.|&\S+;|\{\p{Word}[\p{Word}-]*\}|(?:https?|ftp):\/\/[^\s\[]|\((?:C|R|TM)\)/
     SmartApostropheRx = /\b’\b/
     TrailingSpaceRx = / +$/
     TypographicSymbolRx = /[“”‘’—–…]/
