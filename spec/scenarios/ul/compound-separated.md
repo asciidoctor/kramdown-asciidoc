@@ -17,6 +17,13 @@
 
       $ git init project
 
+* Create boilerplate files
+
+  | Filename    | Purpose                     |
+  | ----------- | --------------------------- |
+  | README.adoc | Introduces the project      |
+  | .gitignore  | Ignores non-versioned files |
+
 * Create source files
 
   We can't help you here.
