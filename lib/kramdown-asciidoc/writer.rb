@@ -39,20 +39,7 @@ module Kramdown; module AsciiDoc
     end
 
     def start_block
-      @body << (@block_separator.last || '') unless empty?
-      nil
-    end
-
-    # Q: perhaps in_list that takes a block?
-    # Q: should we keep stack of list depth?
-    def start_list compound
-      @body << '' unless (compound && @block_separator.last == '+') || empty?
-      @block_separator << '+'
-      nil
-    end
-
-    def end_list
-      @block_separator.pop
+      @body << (@block_separator[-1] || '') unless empty?
       nil
     end
 
@@ -67,6 +54,19 @@ module Kramdown; module AsciiDoc
       parent_body, @block_delimiter, @block_separator = @nesting_stack.pop
       @body = (parent_body + @body) << @block_delimiter
       @block_delimiter = nil
+      nil
+    end
+
+    # Q: perhaps in_list that takes a block?
+    # Q: should we keep stack of list depth?
+    def start_list compound
+      @body << '' unless (compound && @block_separator[-1] == '+') || empty?
+      @block_separator << '+'
+      nil
+    end
+
+    def end_list
+      @block_separator.pop
       nil
     end
 
