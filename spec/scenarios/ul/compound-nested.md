@@ -3,6 +3,8 @@
   attached paragraph
 
   * nested list item
+
+    deep paragraph
 * another list item
 
   > attached blockquote
