@@ -57,10 +57,11 @@ module Kramdown; module AsciiDoc
       nil
     end
 
-    # Q: perhaps in_list that takes a block?
-    # Q: should we keep stack of list depth?
+    # Q: perhaps do_in_list that takes a block?
+    # Q: should we keep track of list depth?
     def start_list compound
-      @body << '' unless (compound && @block_separator[-1] == '+') || empty?
+      # Q: can this be further optimized?
+      @body << '' if in_list? ? compound : !empty?
       @block_separator << '+'
       nil
     end
@@ -68,6 +69,10 @@ module Kramdown; module AsciiDoc
     def end_list
       @block_separator.pop
       nil
+    end
+
+    def in_list?
+      @block_separator[-1] == '+'
     end
 
     def add_blank_line
