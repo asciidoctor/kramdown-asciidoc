@@ -1,0 +1,9 @@
+* Follow these rules:
++
+____
+* Work hard
+* Play hard
+* Drink beer
+____
+
+* Profit!
