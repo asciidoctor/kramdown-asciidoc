@@ -456,12 +456,12 @@ module Kramdown; module AsciiDoc
     end
 
     def prev_char_wordish? prev_el
-      prev_el && (prev_el.type == :entity || ((prev_ch = prev_el.type == :text && prev_el.value[-1]) && (WordishRx.match? prev_ch)))
+      prev_el && (prev_el.type == :entity || (prev_el.type == :text && (WordishRx.match? prev_el.value[-1])))
     end
 
     def next_char_word? next_el, enclosure
       if next_el.type == :text
-        (next_ch = next_el.value.chr) && ((WordRx.match? next_ch) || (enclosure == :codespan && next_ch == ?'))
+        (WordRx.match? (next_ch = next_el.value.chr)) || (enclosure == :codespan && next_ch == ?')
       elsif enclosure == :codespan && next_el.type == :smart_quote
         true
       end if next_el

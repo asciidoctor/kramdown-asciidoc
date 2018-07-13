@@ -3,5 +3,6 @@
 **U**pdate.
 **D**elete.
 Also known as *CRUD*.
+*CRUD*--the essential database operations.
 Not to be confused with E**CRU**, which is a color.
 &reg;**CRUD** it is not.
