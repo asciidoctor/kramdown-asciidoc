@@ -11,6 +11,7 @@ module Kramdown; module AsciiDoc
       @nesting_stack = []
       @block_delimiter = nil
       @block_separator = []
+      @list_level = { list: 0, dlist: 0 }
     end
 
     def doctitle
@@ -45,30 +46,36 @@ module Kramdown; module AsciiDoc
 
     def start_delimited_block delimiter
       @body << (@block_delimiter = delimiter.length == 1 ? delimiter * 4 : delimiter)
-      @nesting_stack << [(@body.pop @body.length), @block_delimiter, @block_separator]
+      @nesting_stack << [(@body.pop @body.length), @block_delimiter, @block_separator, @list_level]
       @block_separator = []
+      @list_level = { list: 0, dlist: 0 }
       nil
     end
 
     def end_delimited_block
-      parent_body, @block_delimiter, @block_separator = @nesting_stack.pop
+      parent_body, @block_delimiter, @block_separator, @list_level = @nesting_stack.pop
       @body = (parent_body + @body) << @block_delimiter
       @block_delimiter = nil
       nil
     end
 
     # Q: perhaps do_in_list that takes a block?
-    # Q: should we keep track of list depth?
-    def start_list compound
+    def start_list compound, kin = :list
       # Q: can this be further optimized?
       @body << '' if in_list? ? compound : !empty?
       @block_separator << '+'
+      @list_level[kin] += 1
       nil
     end
 
-    def end_list
+    def end_list kin = :list
       @block_separator.pop
+      @list_level[kin] -= 1
       nil
+    end
+
+    def list_level kin = :list
+      @list_level[kin]
     end
 
     def in_list?

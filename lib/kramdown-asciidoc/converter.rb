@@ -291,12 +291,10 @@ module Kramdown; module AsciiDoc
     end
 
     def convert_ul el, opts
-      (writer = opts[:writer]).start_list (parent = opts[:parent]).type == :dd || parent.options[:compound]
-      level_opt = el.type == :dl ? :dlist_level : :list_level
-      opts[level_opt] = (opts[level_opt] || 0) + 1
+      kin = el.type == :dl ? :dlist : :list
+      (writer = opts[:writer]).start_list (parent = opts[:parent]).type == :dd || parent.options[:compound], kin
       traverse el, opts
-      opts.delete level_opt if (opts[level_opt] -= 1) < 1
-      writer.end_list
+      writer.end_list kin
     end
 
     alias convert_ol convert_ul
@@ -306,7 +304,7 @@ module Kramdown; module AsciiDoc
       writer = opts[:writer]
       writer.add_blank_line if (prev = opts[:prev]) && prev.options[:compound]
       marker = opts[:parent].type == :ol ? '.' : '*'
-      indent = (level = opts[:list_level]) - 1
+      indent = (level = writer.list_level) - 1
       if (children = el.children)[0].type == :p
         primary, remaining = [(children = children.dup).shift, children]
         primary_lines = compose_text [primary], parent: el, strip: true, split: true, wrap: @wrap
@@ -324,12 +322,13 @@ module Kramdown; module AsciiDoc
     end
 
     def convert_dt el, opts
+      writer = opts[:writer]
       # NOTE kramdown removes newlines from term
       term = compose_text el, strip: true
-      marker = DLIST_MARKERS[opts[:dlist_level] - 1]
-      #opts[:writer].add_blank_line if (prev = opts[:prev]) && prev.options[:compound]
-      opts[:writer].add_blank_line if opts[:prev]
-      opts[:writer].add_line %(#{term}#{marker})
+      marker = DLIST_MARKERS[(writer.list_level :dlist) - 1]
+      #writer.add_blank_line if (prev = opts[:prev]) && prev.options[:compound]
+      writer.add_blank_line if opts[:prev]
+      writer.add_line %(#{term}#{marker})
     end
 
     def convert_dd el, opts

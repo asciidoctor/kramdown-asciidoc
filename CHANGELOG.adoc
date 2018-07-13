@@ -11,6 +11,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 * escape codespan text using passthrough if it contains a URL
 * add blank line after list item that contains a table
+* move list level handling into writer
 
 == 1.0.0.alpha.9 (2018-07-10) - @mojavelinux
 
