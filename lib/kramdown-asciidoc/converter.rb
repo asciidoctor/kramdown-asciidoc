@@ -295,6 +295,7 @@ module Kramdown; module AsciiDoc
       (writer = opts[:writer]).start_list (parent = opts[:parent]).type == :dd || parent.options[:compound], kin
       traverse el, opts
       writer.end_list kin
+      writer.add_blank_line if writer.in_list? && opts[:next]
     end
 
     alias convert_ol convert_ul
