@@ -10,7 +10,7 @@ module Kramdown; module AsciiDoc
       @body = []
       @nesting_stack = []
       @block_delimiter = nil
-      @block_separator = []
+      @block_separator = ['']
       @list_level = { list: 0, dlist: 0 }
     end
 
@@ -40,14 +40,14 @@ module Kramdown; module AsciiDoc
     end
 
     def start_block
-      @body << (@block_separator[-1] || '') unless empty?
+      @body << @block_separator[-1] unless empty?
       nil
     end
 
     def start_delimited_block delimiter
       @body << (@block_delimiter = delimiter.length == 1 ? delimiter * 4 : delimiter)
       @nesting_stack << [(@body.pop @body.length), @block_delimiter, @block_separator, @list_level]
-      @block_separator = []
+      @block_separator = ['']
       @list_level = { list: 0, dlist: 0 }
       nil
     end
