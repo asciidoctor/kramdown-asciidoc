@@ -53,6 +53,10 @@ module Kramdown; module AsciiDoc
           options[:auto_ids] = auto_ids
         end
 
+        opts.on '--[no-]auto-links', 'Set whether to automatically convert bare URLs into links (default: true)' do |auto_links|
+          options[:auto_links] = auto_links
+        end
+
         opts.on '-h', '--help', 'Display this help text and exit' do
           $stdout.puts opts.help
           return 0

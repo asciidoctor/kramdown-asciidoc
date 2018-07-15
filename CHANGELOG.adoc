@@ -7,6 +7,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == Unreleased
 
+=== Added
+
+* add :auto_links API option and --no-auto-links CLI option to control whether bare URLs are converted into links
+
 === Changed
 
 * escape codespan text using passthrough if it contains a URL

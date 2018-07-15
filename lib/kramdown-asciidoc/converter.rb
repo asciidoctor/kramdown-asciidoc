@@ -86,10 +86,11 @@ module Kramdown; module AsciiDoc
     FullStopRx = /(?<=.\.)\p{Blank}+(?!\Z)/
     InadvertentReplacementsRx = /[-=]>|<[-=]|\.\.\.|\{\p{Word}[\p{Word}-]*\}/
     MenuRefRx = /^([\p{Word}&].*?)\s>\s([\p{Word}&].*(?:\s>\s|$))+/
-    ReplaceableTextRx = /[-=]>|<[-=]| -- |\p{Word}--\p{Word}|\*\*|\.\.\.|&\S+;|\{\p{Word}[\p{Word}-]*\}|(?:https?|ftp):\/\/[^\s\[]|\((?:C|R|TM)\)/
+    ReplaceableTextRx = /[-=]>|<[-=]| -- |\p{Word}--\p{Word}|\*\*|\.\.\.|&\S+;|\{\p{Word}[\p{Word}-]*\}|(?:https?|ftp):\/\/\p{Word}|\((?:C|R|TM)\)/
     SmartApostropheRx = /\b’\b/
     TrailingSpaceRx = / +$/
     TypographicSymbolRx = /[“”‘’—–…]/
+    UriSchemeRx = /(?:https?|ftp):\/\/\p{Word}/
     WordishRx = /[\p{Word};:<>&]/
     WordRx = /\p{Word}/
     XmlCommentRx = /\A<!--(.*)-->\Z/m
@@ -102,10 +103,11 @@ module Kramdown; module AsciiDoc
     def initialize root, opts
       super
       @attributes = opts[:attributes] || {}
-      @imagesdir = opts[:imagesdir] || @attributes['imagesdir']
+      @auto_links = opts.fetch :auto_links, true
       @heading_offset = opts[:heading_offset] || 0
-      @current_heading_level = nil
+      @imagesdir = opts[:imagesdir] || @attributes['imagesdir']
       @wrap = opts[:wrap] || :preserve
+      @current_heading_level = nil
     end
 
     def convert el, opts = {}
@@ -484,6 +486,7 @@ module Kramdown; module AsciiDoc
     def escape_replacements text
       # NOTE the replacement \\\\\& inserts a single backslash in front of the matched text
       text = text.gsub InadvertentReplacementsRx, '\\\\\&' if InadvertentReplacementsRx.match? text
+      text = text.gsub UriSchemeRx, '\\\\\&' if !@auto_links && (text.include? '://')
       text = text.gsub '^', '{caret}' if (text.include? '^') && text != '^'
       unless text.ascii_only?
         text = (text.gsub SmartApostropheRx, ?').gsub TypographicSymbolRx, TYPOGRAPHIC_SYMBOL_TO_MARKUP
