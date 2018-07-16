@@ -174,7 +174,14 @@ describe Kramdown::AsciiDoc::Cli do
       (expect $stdout.string).to eql expected
     end
 
-    it 'escapes bare URLs with --no-auto-links is used' do
+    it 'does not escape bare URLs when --auto-links is used' do
+      the_source_file = scenario_file 'a/bare-url.md'
+      expected = IO.read scenario_file 'a/bare-url.adoc'
+      (expect subject.run %W(-o - --auto-links #{the_source_file})).to eql 0
+      (expect $stdout.string).to eql expected
+    end
+
+    it 'escapes bare URLs when --no-auto-links is used' do
       the_source_file = scenario_file 'a/no-auto-links.md'
       expected = IO.read scenario_file 'a/no-auto-links.adoc'
       (expect subject.run %W(-o - --no-auto-links #{the_source_file})).to eql 0

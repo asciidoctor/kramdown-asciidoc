@@ -49,7 +49,7 @@ module Kramdown; module AsciiDoc
           options[:html_to_native] = html_to_native
         end
 
-        opts.on '--auto-ids', 'Set whether to auto-generate IDs for section titles' do |auto_ids|
+        opts.on '--auto-ids', 'Set whether to auto-generate IDs for all section titles' do |auto_ids|
           options[:auto_ids] = auto_ids
         end
 
