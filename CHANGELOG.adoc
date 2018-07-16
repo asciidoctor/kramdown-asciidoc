@@ -9,6 +9,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 === Added
 
+* add --auto-id-prefix CLI option to set the prefix added to all auto-generated section title IDs (#26)
 * add :auto_links API option and --no-auto-links CLI option to control whether bare URLs are converted into links
 
 === Changed

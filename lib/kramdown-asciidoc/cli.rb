@@ -53,6 +53,10 @@ module Kramdown; module AsciiDoc
           options[:auto_ids] = auto_ids
         end
 
+        opts.on '--auto-id-prefix=STRING', 'Set the prefix to add to auto-generated section title IDs' do |string|
+          options[:auto_id_prefix] = string
+        end
+
         opts.on '--[no-]auto-links', 'Set whether to automatically convert bare URLs into links (default: true)' do |auto_links|
           options[:auto_links] = auto_links
         end
