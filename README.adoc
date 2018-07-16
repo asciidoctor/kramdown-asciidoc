@@ -84,6 +84,12 @@ To see all the options the `kramdoc` command accepts, pass the `-h` option to th
 
  $ kramdoc -h
 
+For example, you can inject attributes (key/value pairs) into the header of the AsciiDoc output document using the `-a` option.
+
+ $ kramdoc -a product-name="ACME Cloud" -a hide-uri-scheme sample.md
+
+Another use for attributes is setting the shared images directory, which is coverd in the next section.
+
 == Configure shared images directory
 
 If the images in the source document share a common directory prefix, such as [.path]_images/_, you can configure the converter to extract that prefix, optionally promoting it to the document header.
