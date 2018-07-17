@@ -202,6 +202,25 @@ describe Kramdown::AsciiDoc::Cli do
       (expect $stdout.string).to eql expected
     end
 
+    it 'adds prefix specified by --auto-id-prefix to any automatically generated section title ID' do
+      the_source_file = scenario_file 'heading/auto-ids.md'
+      expected = <<~EOS
+      [#_heading-1]
+      = Heading 1
+
+      [#_heading-2]
+      == Heading 2
+
+      [#_heading-3]
+      === Heading 3
+
+      [#_back-to-heading-2]
+      == Back to Heading 2
+      EOS
+      (expect subject.run %W(-o - --auto-id-prefix=_ --auto-ids #{the_source_file})).to eql 0
+      (expect $stdout.string).to eql expected
+    end
+
     it 'adds specified attributes to document header' do
       the_source_file = scenario_file 'root/header-and-body.md'
       (expect subject.run %W(-o - -a idprefix -a idseparator=- #{the_source_file})).to eql 0
