@@ -24,6 +24,8 @@ endif::[]
 :uri-kramdown: https://kramdown.gettalong.org
 :uri-rvm: https://rvm.io
 :uri-rvm-install: https://rvm.io/rvm/install
+:uri-ci-appveyor: https://ci.appveyor.com/project/asciidoctor/kramdown-asciidoc
+:img-ci-appveyor: https://ci.appveyor.com/api/projects/status/2pwvdbcoeux1ifb5/branch/master?svg=true
 :uri-ci-travis: https://travis-ci.org/asciidoctor/kramdown-asciidoc
 :uri-ci-travis-img: https://img.shields.io/travis/asciidoctor/kramdown-asciidoc/master.svg
 :uri-gem: https://rubygems.org/gems/kramdown-asciidoc
@@ -32,6 +34,7 @@ endif::[]
 ifdef::status[]
 image:{uri-gem-img}[Gem Version,link={uri-gem}]
 image:{uri-ci-travis-img}[Build Status (Travis CI),link={uri-ci-travis}]
+image:{img-ci-appveyor}[Build Status (AppVeyor),link={uri-ci-appveyor}]
 endif::[]
 
 {uri-repo}[{project-name}] (gem: *{project-handle}*) is a {uri-kramdown}[kramdown] extension for converting Markdown documents to {uri-asciidoc}[AsciiDoc].

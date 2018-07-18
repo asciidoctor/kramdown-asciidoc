@@ -5,6 +5,12 @@
 This document provides a high-level view of the changes to {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
+== Unreleased
+
+=== Added
+
+* run test suite on Windows using AppVeyor
+
 == 1.0.0.alpha.10 (2018-07-16) - @mojavelinux
 
 === Added
