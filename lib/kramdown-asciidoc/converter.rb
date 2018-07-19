@@ -144,7 +144,7 @@ module Kramdown; module AsciiDoc
       end
       if (id = el.attr['id'])
         style << %(##{id})
-      elsif (child_i = el.children[0] || VoidElement).type == :html_element && child_i.value == 'a' && (id = child_i.attr['id'])
+      elsif (child_i = to_element el.children[0]).type == :html_element && child_i.value == 'a' && (id = child_i.attr['id'])
         el = clone el, children: child_i.children + (el.children.drop 1)
         style << %(##{id})
       elsif (role = el.attr['class'])
@@ -184,7 +184,7 @@ module Kramdown; module AsciiDoc
       # NOTE detect formatted admonition marker (e.g., *Note:* ...)
       elsif (child_i.type == :strong || child_i.type == :em) &&
           (marker_el = child_i.children[0]) && ((marker = ADMON_FORMATTED_MARKERS[marker_el.value]) ||
-          ((marker = ADMON_LABELS[marker_el.value]) && (child_ii = children[1] || VoidElement).type == :text &&
+          ((marker = ADMON_LABELS[marker_el.value]) && (child_ii = to_element children[1]).type == :text &&
           ((child_ii_text = child_ii.value).start_with? ': ')))
         children = children.drop 1
         children[0] = clone child_ii, value: (child_ii_text.slice 1, child_ii_text.length) if child_ii
@@ -503,7 +503,7 @@ module Kramdown; module AsciiDoc
         writer.append %(#{(writer.current_line.end_with? ' ') ? '' : ' '}+)
       end
       if el.options[:html_tag]
-        writer.add_blank_line unless (next_el = opts[:next] || VoidElement).type == :text && (next_el.value.start_with? LF)
+        writer.add_blank_line unless (next_el = to_element opts[:next]).type == :text && (next_el.value.start_with? LF)
       end
     end
 
@@ -526,7 +526,7 @@ module Kramdown; module AsciiDoc
           convert_img child_i_i, (opts.merge parent: child_i, index: 0) if child_i.children.size == 1
           return
         elsif child_i_i.value == 'span' && ((role = el.attr['class'] || '').start_with? 'note') && child_i_i.attr['class'] == 'notetitle'
-          marker = ADMON_FORMATTED_MARKERS[(child_i_i.children[0] || VoidElement).value] || 'Note'
+          marker = ADMON_FORMATTED_MARKERS[(to_element child_i_i.children[0]).value] || 'Note'
           lines = compose_text (child_i.children.drop 1), parent: child_i, strip: true, split: true, wrap: @wrap
           lines.unshift %(#{ADMON_TYPE_MAP[marker]}: #{lines.shift})
           opts[:writer].start_block
@@ -583,7 +583,7 @@ module Kramdown; module AsciiDoc
     end
 
     def extract_prologue el, opts
-      if (child_i = (children = el.children)[0] || VoidElement).type == :xml_comment
+      if (child_i = to_element (children = el.children)[0]).type == :xml_comment
         (prologue_el = el.dup).children = children.take_while {|child| child.type == :xml_comment || child.type == :blank }
         (el = el.dup).children = children.drop prologue_el.children.size
         traverse prologue_el, (opts.merge writer: (prologue_writer = Writer.new))
@@ -598,6 +598,10 @@ module Kramdown; module AsciiDoc
         el.send %(#{name}=).to_sym, value
       end
       el
+    end
+
+    def to_element el
+      el || VoidElement
     end
 
     def traverse el, opts
