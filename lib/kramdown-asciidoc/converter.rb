@@ -142,12 +142,13 @@ module Kramdown; module AsciiDoc
         end
         style << 'discrete'
       end
-      if (id = el.attr['id'])
-        style << %(##{id})
-      elsif (child_i = to_element el.children[0]).type == :html_element && child_i.value == 'a' && (id = child_i.attr['id'])
+      if (child_i = to_element el.children[0]).type == :html_element && child_i.value == 'a' && (id = child_i.attr['id'])
         el = clone el, children: child_i.children + (el.children.drop 1)
         style << %(##{id})
-      elsif (role = el.attr['class'])
+      elsif (id = el.attr['id'])
+        style << %(##{id})
+      end
+      if (role = el.attr['class'])
         style << %(.#{role.tr ' ', '.'})
       end
       lines = []

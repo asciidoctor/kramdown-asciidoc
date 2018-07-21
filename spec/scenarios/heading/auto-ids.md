@@ -2,6 +2,6 @@
 
 ## Heading 2
 
-### Heading 3
+### <a id="explicit-id"></a>Heading 3
 
 ## Back to Heading 2

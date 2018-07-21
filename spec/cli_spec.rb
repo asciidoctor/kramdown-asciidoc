@@ -211,7 +211,7 @@ describe Kramdown::AsciiDoc::Cli do
       [#_heading-2]
       == Heading 2
 
-      [#_heading-3]
+      [#explicit-id]
       === Heading 3
 
       [#_back-to-heading-2]

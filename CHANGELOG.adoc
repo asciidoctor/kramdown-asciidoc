@@ -11,6 +11,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 * run test suite on Windows using AppVeyor
 
+=== Changed
+
+* ignore auto-generated ID if heading has an explicit inline anchor
+
 == 1.0.0.alpha.10 (2018-07-16) - @mojavelinux
 
 === Added
