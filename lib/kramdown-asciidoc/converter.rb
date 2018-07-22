@@ -210,7 +210,8 @@ module Kramdown; module AsciiDoc
         if contents.size > 1 && (contents[-1].start_with? '-- ')
           attribution = (attribution_line = contents.pop).slice 3, attribution_line.length
           writer.add_line %([,#{attribution}])
-          contents.pop while contents.size > 0 && contents[-1].empty?
+          # NOTE there will be at least one non-blank line, but coerce .to_s just to be safe
+          contents.pop while contents[-1].to_s.empty?
         end
         # Q: should writer handle delimited block nesting?
         delimiter = depth > 0 ? ('____' + '__' * depth) : '_'
@@ -251,7 +252,7 @@ module Kramdown; module AsciiDoc
     end
 
     def convert_img el, opts
-      if !(parent = opts[:parent]) || parent.type == :p && parent.children.size == 1
+      if (parent = opts[:parent]).type == :p && parent.children.size == 1
         style = []
         if (id = el.attr['id'])
           style << %(##{id})
