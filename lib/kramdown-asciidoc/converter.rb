@@ -320,8 +320,9 @@ module Kramdown; module AsciiDoc
       primary_lines.unshift %(#{indent > 0 ? ' ' * indent : ''}#{marker * level} #{primary_lines.shift})
       writer.add_lines primary_lines
       unless remaining.empty?
-        next_node = remaining.find {|n| n.type != :blank }
-        el.options[:compound] = true if next_node && (BLOCK_TYPES.include? next_node.type)
+        if remaining.find {|n| (type = n.type) == :blank ? nil : ((BLOCK_TYPES.include? type) ? true : break) }
+          el.options[:compound] = true 
+        end
         traverse remaining, (opts.merge parent: el)
       end
     end
@@ -350,8 +351,9 @@ module Kramdown; module AsciiDoc
         end
       end
       unless remaining.empty?
-        next_node = remaining.find {|n| n.type != :blank }
-        el.options[:compound] = true if next_node && (BLOCK_TYPES.include? next_node.type)
+        if remaining.find {|n| (type = n.type) == :blank ? nil : ((BLOCK_TYPES.include? type) ? true : break) }
+          el.options[:compound] = true
+        end
         traverse remaining, (opts.merge parent: el)
       end
     end
