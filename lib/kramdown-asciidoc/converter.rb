@@ -570,7 +570,7 @@ module Kramdown; module AsciiDoc
         else
           writer.add_line %(// #{lines[0]})
         end
-      else
+      elsif !lines.empty?
         if (current_line = writer.current_line) && !(current_line.end_with? LF)
           start_new_line = true
           writer.replace_line current_line.rstrip if current_line.end_with? ' '

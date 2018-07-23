@@ -10,6 +10,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 === Added
 
 * run test suite on Windows using AppVeyor
+* don't crash when empty comment occurs under primary text of list item
 
 === Changed
 
