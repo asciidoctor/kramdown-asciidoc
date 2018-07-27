@@ -526,16 +526,15 @@ module Kramdown; module AsciiDoc
 
     def convert_html_element el, opts
       if (tag = el.value) == 'div' && (child_i = el.children[0]) && child_i.options[:transparent] && (child_i_i = child_i.children[0])
-        if child_i_i.type == :img
-          convert_img child_i_i, (opts.merge parent: child_i, index: 0) if child_i.children.size == 1
-          return
-        elsif child_i_i.value == 'span' && ((role = el.attr['class'].to_s).start_with? 'note') && child_i_i.attr['class'] == 'notetitle'
+        if child_i_i.value == 'span' && ((role = el.attr['class'].to_s).start_with? 'note') && child_i_i.attr['class'] == 'notetitle'
           marker = ADMON_FORMATTED_MARKERS[(to_element child_i_i.children[0]).value] || 'Note'
           lines = compose_text (child_i.children.drop 1), parent: child_i, strip: true, split: true, wrap: @wrap
           lines.unshift %(#{ADMON_TYPE_MAP[marker]}: #{lines.shift})
           opts[:writer].start_block
           opts[:writer].add_lines lines
           return
+        else
+          return convert_p child_i, (opts.merge parent: el, index: 0)
         end
       end
 

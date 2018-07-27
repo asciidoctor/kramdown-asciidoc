@@ -1,0 +1,1 @@
+Being able to write in AsciiDoc instead of Markdown, *priceless*.
