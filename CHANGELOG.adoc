@@ -11,7 +11,8 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 * run test suite on Windows using AppVeyor
 * don't crash when empty comment occurs under primary text of list item
-* convert a bare div as a paragraph
+* convert <mark> phrase
+* convert a bare <div> as a paragraph
 
 === Changed
 

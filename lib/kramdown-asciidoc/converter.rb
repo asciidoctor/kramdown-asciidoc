@@ -543,6 +543,8 @@ module Kramdown; module AsciiDoc
       case tag
       when 'del'
         opts[:writer].append %([.line-through]##{contents}#)
+      when 'mark'
+        opts[:writer].append %(##{contents}#)
       when 'sup'
         opts[:writer].append %(^#{contents}^)
       when 'sub'
