@@ -529,7 +529,7 @@ module Kramdown; module AsciiDoc
         if child_i_i.type == :img
           convert_img child_i_i, (opts.merge parent: child_i, index: 0) if child_i.children.size == 1
           return
-        elsif child_i_i.value == 'span' && ((role = el.attr['class'] || '').start_with? 'note') && child_i_i.attr['class'] == 'notetitle'
+        elsif child_i_i.value == 'span' && ((role = el.attr['class'].to_s).start_with? 'note') && child_i_i.attr['class'] == 'notetitle'
           marker = ADMON_FORMATTED_MARKERS[(to_element child_i_i.children[0]).value] || 'Note'
           lines = compose_text (child_i.children.drop 1), parent: child_i, strip: true, split: true, wrap: @wrap
           lines.unshift %(#{ADMON_TYPE_MAP[marker]}: #{lines.shift})
