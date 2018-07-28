@@ -9,13 +9,14 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 === Added
 
-* run test suite on Windows using AppVeyor
+* run test suite on Windows using AppVeyor (#32)
 * don't crash when empty comment occurs under primary text of list item
 * convert <mark> phrase
 * convert a bare <div> as a paragraph
 
 === Changed
 
+* add code role to codespan if enclosed in quotes (required for AsciiDoc to parse properly) (#29)
 * ignore auto-generated ID if heading has an explicit inline anchor
 
 == 1.0.0.alpha.10 (2018-07-16) - @mojavelinux
