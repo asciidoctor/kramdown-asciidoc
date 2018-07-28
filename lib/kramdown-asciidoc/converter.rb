@@ -429,7 +429,21 @@ module Kramdown; module AsciiDoc
     end 
 
     def convert_codespan el, opts
-      mark = (unconstrained? opts[:prev], opts[:next], :codespan) ? '``' : '`'
+      attrlist, mark = '', '`'
+      if unconstrained? (prev_el = opts[:prev]), (next_el = opts[:next])
+        mark = '``'
+      elsif next_el
+        case next_el.type
+        when :smart_quote
+          if prev_el && prev_el.type == :smart_quote
+            attrlist, mark = '[.code]', '``'
+          elsif next_el.value == :rsquo
+            mark = '``'
+          end
+        when :text
+          mark = '``' if next_el.value.chr == ?'
+        end
+      end
       text = el.value
       pass = (replaceable? text) ? :shorthand : nil
       pass = :macro if text.include? '++'
@@ -438,13 +452,13 @@ module Kramdown; module AsciiDoc
       elsif pass == :macro
         opts[:writer].append %(#{mark}pass:c[#{text}]#{mark})
       else
-        opts[:writer].append %(#{mark}#{text}#{mark})
+        opts[:writer].append %(#{attrlist}#{mark}#{text}#{mark})
       end
     end
 
     def convert_em el, opts
       composed_text = compose_text el
-      mark = (unconstrained? opts[:prev], opts[:next], :em) ? '__' : '_'
+      mark = (unconstrained? opts[:prev], opts[:next]) ? '__' : '_'
       opts[:writer].append %(#{mark}#{composed_text}#{mark})
     end
 
@@ -453,25 +467,21 @@ module Kramdown; module AsciiDoc
         @attributes['experimental'] = ''
         opts[:writer].append %(menu:#{$1}[#{$2}])
       else
-        mark = (unconstrained? opts[:prev], opts[:next], :strong) ? '**' : '*'
+        mark = (unconstrained? opts[:prev], opts[:next]) ? '**' : '*'
         opts[:writer].append %(#{mark}#{composed_text}#{mark})
       end
     end
 
-    def unconstrained? prev_el, next_el, enclosure
-      (next_char_word? next_el, enclosure) || (prev_char_wordish? prev_el)
+    def unconstrained? prev_el, next_el
+      (next_char_word? next_el) || (prev_char_wordish? prev_el)
     end
 
     def prev_char_wordish? prev_el
       prev_el && (prev_el.type == :entity || (prev_el.type == :text && (WordishRx.match? prev_el.value[-1])))
     end
 
-    def next_char_word? next_el, enclosure
-      if next_el.type == :text
-        (WordRx.match? (next_ch = next_el.value.chr)) || (enclosure == :codespan && next_ch == ?')
-      elsif enclosure == :codespan && next_el.type == :smart_quote
-        true
-      end if next_el
+    def next_char_word? next_el
+      next_el && next_el.type == :text && (WordRx.match? next_el.value.chr)
     end
 
     def convert_text el, opts
