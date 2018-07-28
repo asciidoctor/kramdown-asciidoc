@@ -437,11 +437,11 @@ module Kramdown; module AsciiDoc
         when :smart_quote
           if prev_el && prev_el.type == :smart_quote
             attrlist, mark = '[.code]', '``'
-          elsif next_el.value == :rsquo
+          else
             mark = '``'
           end
         when :text
-          mark = '``' if next_el.value.chr == ?'
+          mark = '``' if (next_el.value.chr == ?') || (prev_el && prev_el.type == :smart_quote)
         end
       end
       text = el.value

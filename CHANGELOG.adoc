@@ -17,6 +17,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 === Changed
 
 * add code role to codespan if enclosed in quotes (required for AsciiDoc to parse properly) (#29)
+* use unconstrained codespan if bounded on either side by a smart quote
 * ignore auto-generated ID if heading has an explicit inline anchor
 
 == 1.0.0.alpha.10 (2018-07-16) - @mojavelinux
