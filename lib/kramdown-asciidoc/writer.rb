@@ -60,7 +60,7 @@ module Kramdown; module AsciiDoc
     end
 
     # Q: perhaps do_in_list that takes a block?
-    def start_list compound, kin = :list
+    def start_list compound, kin
       # Q: can this be further optimized?
       @body << '' if in_list? ? compound : !empty?
       @block_separator << '+'
@@ -68,7 +68,7 @@ module Kramdown; module AsciiDoc
       nil
     end
 
-    def end_list kin = :list
+    def end_list kin
       @block_separator.pop
       @list_level[kin] -= 1
       nil
