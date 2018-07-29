@@ -549,17 +549,23 @@ module Kramdown; module AsciiDoc
       end
 
       contents = compose_text el, (opts.merge strip: el.options[:category] == :block)
-      attrs = (attrs = el.attr).empty? ? '' : attrs.map {|k, v| %( #{k}="#{v}") }.join
       case tag
       when 'del'
         opts[:writer].append %([.line-through]##{contents}#)
       when 'mark'
         opts[:writer].append %(##{contents}#)
+      when 'span'
+        if (role = el.attr['class'])
+          opts[:writer].append %([.#{role.tr ' ', '.'}]##{contents}#)
+        else
+          opts[:writer].append contents
+        end
       when 'sup'
         opts[:writer].append %(^#{contents}^)
       when 'sub'
         opts[:writer].append %(~#{contents}~)
       else
+        attrs = (attrs = el.attr).empty? ? '' : attrs.map {|k, v| %( #{k}="#{v}") }.join
         opts[:writer].append %(+++<#{tag}#{attrs}>+++#{contents}+++</#{tag}>+++)
       end
     end
