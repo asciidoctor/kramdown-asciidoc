@@ -1,0 +1,5 @@
+I am text that has succumbed to the
+<!-- note to self -->hard wrapping of a text editor and
+therefore hard to edit. Ventilate me
+to set me free from this tyranny.
+<!-- end of thought -->
