@@ -1,0 +1,3 @@
+vanilla phrase
+
+[.term]#term#
