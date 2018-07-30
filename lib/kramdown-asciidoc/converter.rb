@@ -490,7 +490,11 @@ module Kramdown; module AsciiDoc
         @attributes['pp'] = '{plus}{plus}'
         text = text.gsub '++', '{pp}'
       end
-      opts[:writer].append text
+      if (current_line = (writer = opts[:writer]).current_line).to_s.empty?
+        writer.append text.lstrip
+      else
+        writer.append text
+      end
     end
 
     def replaceable? text
