@@ -125,7 +125,7 @@ module Kramdown; module AsciiDoc
     end
 
     def to_s
-      ((@header.empty? ? @body : (@header + (@body.empty? ? [] : ['']) + @body)).join LF) + LF
+      (@header.empty? ? @body : (@header + (@body.empty? ? [] : [''] + @body))).join LF
     end
   end
 end; end

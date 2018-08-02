@@ -9,6 +9,7 @@ end
 
 require 'kramdown-asciidoc'
 require 'fileutils'
+autoload :StringIO, 'stringio'
 
 RSpec.configure do |config|
   config.after :suite do

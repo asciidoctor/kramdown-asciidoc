@@ -1,6 +1,5 @@
 require_relative 'spec_helper'
 require 'kramdown-asciidoc/cli'
-require 'stringio'
 
 describe Kramdown::AsciiDoc::Cli do
   subject { Kramdown::AsciiDoc::Cli }

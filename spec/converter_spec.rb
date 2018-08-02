@@ -9,9 +9,9 @@ describe Kramdown::AsciiDoc::Converter do
   context '#convert' do
     let (:input) { %(# Document Title\n\nBody text.) }
 
-    it 'adds line feed (EOL) to end of output document' do
-      (expect converter.convert root).to end_with %(\n)
-      (expect doc.to_asciidoc).to end_with %(\n)
+    it 'does not add line feed (EOL) to end of output document' do
+      (expect converter.convert root).not_to end_with ?\n
+      (expect doc.to_asciidoc).not_to end_with ?\n
     end
 
     # Q: can we find a scenario that covers this?
@@ -154,7 +154,7 @@ describe Kramdown::AsciiDoc::Converter do
       When using this technology, anything is possible.
       EOS
 
-      expected = <<~EOS
+      expected = <<~EOS.chomp
       = Introduction
       :description: An introduction to this amazing technology.
 
@@ -177,7 +177,7 @@ describe Kramdown::AsciiDoc::Converter do
       When using this technology, anything is possible.
       EOS
 
-      expected = <<~EOS
+      expected = <<~EOS.chomp
       = Introduction
       :description: An introduction to this amazing technology.
 
