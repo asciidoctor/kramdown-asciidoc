@@ -1,3 +1,3 @@
 module Kramdown; module AsciiDoc
-  VERSION = '1.0.0.alpha.11'
+  VERSION = '1.0.0.dev'
 end; end
