@@ -62,12 +62,12 @@ module Kramdown; module AsciiDoc
         end
 
         opts.on '-h', '--help', 'Display this help text and exit' do
-          $stdout.puts opts.help
+          $stdout.write opts.help
           return 0
         end
 
         opts.on '-v', '--version', %(Display version information and exit) do
-          $stdout.puts %(#{opts.program_name} #{VERSION})
+          $stdout.write %(#{opts.program_name} #{VERSION}\n)
           return 0
         end
       end
@@ -76,7 +76,7 @@ module Kramdown; module AsciiDoc
 
       if args.empty?
         opt_parser.warn 'Please specify a Markdown file to convert.'
-        $stdout.puts opt_parser.help
+        $stdout.write opt_parser.help
         return 1
       end
 
@@ -85,12 +85,12 @@ module Kramdown; module AsciiDoc
         [0, options]
       else
         opt_parser.warn %(extra arguments detected (unparsed arguments: #{(args.drop 1).join ' '}))
-        $stdout.puts opt_parser.help
+        $stdout.write opt_parser.help
         [1, options]
       end
     rescue ::OptionParser::InvalidOption
-      $stderr.puts %(#{opt_parser.program_name}: #{$!.message})
-      $stdout.puts opt_parser.help
+      $stderr.write %(#{opt_parser.program_name}: #{$!.message}\n)
+      $stdout.write opt_parser.help
       return 1
     end
 
@@ -99,33 +99,25 @@ module Kramdown; module AsciiDoc
       return code unless code == 0 && options
       if (input_file = options.delete :input_file) == '-'
         pipe_in = true
-        markdown = $stdin.read.rstrip
+        markdown = $stdin.read
       else
-        markdown = (::IO.read input_file, mode: 'r:UTF-8', newline: :universal).rstrip
+        markdown = ::IO.read input_file, mode: 'r:UTF-8', newline: :universal
       end
       if (output_file = options.delete :output_file)
         if output_file == '-'
           pipe_out = true
         else
-          (::Pathname.new output_file).dirname.mkpath
+          (output_file = ::Pathname.new output_file).dirname.mkpath
         end
       else
-        output_file = ((::Pathname.new input_file).sub_ext '.adoc').to_s
+        output_file = (::Pathname.new input_file).sub_ext '.adoc'
       end
-      if !(pipe_in || pipe_out) && (::File.absolute_path input_file) == (::File.absolute_path output_file)
-        $stderr.puts %(kramdoc: input and output file cannot be the same: #{input_file})
+      if !pipe_in && !pipe_out && (::File.expand_path input_file) == output_file.expand_path.to_s
+        $stderr.write %(kramdoc: input and output file cannot be the same: #{input_file}\n)
         return 1
       end
-      markdown = markdown.slice 1, markdown.length while markdown.start_with? ?\n
-      attributes = options[:attributes]
-      markdown = ::Kramdown::AsciiDoc.extract_front_matter markdown, attributes
-      markdown = ::Kramdown::AsciiDoc.replace_toc markdown, attributes
-      doc = ::Kramdown::Document.new markdown, (::Kramdown::AsciiDoc::DEFAULT_PARSER_OPTS.merge options)
-      if pipe_out
-        $stdout.puts doc.to_asciidoc
-      else
-        ::IO.write output_file, doc.to_asciidoc
-      end
+      # QUESTION should we set :from option?
+      ::Kramdoc.convert markdown, (options.merge to: (pipe_out ? $stdout : output_file))
       0
     end
   end

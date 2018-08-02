@@ -9,6 +9,8 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 === Added
 
+* add a public API (Kramdoc.convert and Kramdoc.convert_file) for converting input strings and paths, respectively (#31)
+* update CLI to use public API (#31)
 * run test suite on Windows using AppVeyor (#32)
 * don't crash when empty comment occurs under primary text of list item
 * convert phrase enclosed in <span> (#36)
