@@ -20,6 +20,27 @@ describe Kramdown::AsciiDoc do
       (expect subject.convert input).to eql expected
     end
 
+    it 'encodes Markdown source to UTF-8' do
+      input = %(bien s\u00fbr !).encode Encoding::ISO_8859_1
+      output = subject.convert input
+      (expect output.encoding).to eql Encoding::UTF_8
+      (expect output).to eql %(bien s\u00fbr !\n)
+    end
+
+    it 'converts CRLF newlines in Markdown source to LF newlines' do
+      input = %(\r\n\r\none\r\ntwo\r\nthree\r\n)
+      output = subject.convert input
+      (expect output.encoding).to eql Encoding::UTF_8
+      (expect output).to eql %(one\ntwo\nthree\n)
+    end
+
+    it 'converts CR newlines in Markdown source to LF newlines' do
+      input = %(\r\rone\rtwo\rthree\r)
+      output = subject.convert input
+      (expect output.encoding).to eql Encoding::UTF_8
+      (expect output).to eql %(one\ntwo\nthree\n)
+    end
+
     it 'writes AsciiDoc to filename specified in :to option' do
       the_output_file = output_file 'convert-api.adoc'
       (expect subject.convert 'Converted using the API', to: the_output_file).to be_nil

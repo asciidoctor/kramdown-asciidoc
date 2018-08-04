@@ -102,6 +102,7 @@ module Kramdown; module AsciiDoc
         markdown = $stdin.read
       else
         markdown = ::IO.read input_file, mode: 'r:UTF-8', newline: :universal
+        options[:encode] = false
       end
       if (output_file = options.delete :output_file)
         if output_file == '-'
