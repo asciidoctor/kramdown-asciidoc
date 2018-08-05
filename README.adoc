@@ -135,6 +135,66 @@ image::octocat.png[Octocat]
 
 In this scenario, you may need to pass the `imagesdir` attribute to the AsciiDoc processor when converting the output document so the image is resolved, depending on where the image is stored.
 
+== API
+
+In additional to the command-line interface, {project-name} also provides a porcelain API.
+We use the term "`porcelain`" because the API hides the details of registering the converter, preprocessing the Markdown document, parsing the document with kramdown, and calling the converter method to transform the parse tree to AsciiDoc.
+
+The API consists of two static methods:
+
+* `Kramdoc.convert(source, opts)` - convert a Markdown string to AsciiDoc
+* `Kramdoc.convert_file(file, opts)` - convert a Markdown file to AsciiDoc
+
+NOTE: `Kramdoc` is shorthand for `Kramdown::AsciiDoc` to align with the name of the CLI.
+
+Both API methods accept the source as the first argument and an options hash as the second.
+
+To convert a Markdown file to AsciiDoc using the {project-name} API, pass the name of the file to the `Kramdoc.convert_file` method as follows:
+
+[source,ruby]
+----
+require 'kramdown-asciidoc'
+
+Kramdoc.convert_file 'sample.md'
+----
+
+Like the command-line, `Kramdoc.convert_file` converts the Markdown file to an adjacent AsciiDoc file calculated by removing the Markdown file extension, `.md`, and replacing it with the AsciiDoc file extension, `.adoc`.
+
+////
+If you want to direct the output to a different file, pass the name of that file to the `Kramdoc.convert_file` method using the `:to` option as follows:
+
+[source,ruby]
+----
+require 'kramdown-asciidoc'
+
+Kramdoc.convert_file 'sample.md', to: 'result.adoc'
+----
+////
+
+To convert a Markdown string to an AsciiDoc string using the {project-name} API, pass the string to the `Kramdoc.convert` method as follows:
+
+[source,ruby]
+----
+require 'kramdown-asciidoc'
+
+markdown = <<~EOS
+# Document Title
+
+Hello, world!
+EOS
+
+asciidoc = Kramdoc.convert markdown
+----
+
+If you want to direct the output to a file, pass the name of that file to the `Kramdoc.convert` method using the `:to` option as follows:
+
+[source,ruby]
+----
+Kramdoc.convert markdown, to: 'result.adoc'
+----
+
+The input string is automatically converted to UTF-8.
+
 == Development
 
 To help develop {project-name}, or to simply test-drive the development version, you need to retrieve the source from GitHub.
