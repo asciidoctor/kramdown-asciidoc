@@ -72,7 +72,24 @@ describe Kramdown::AsciiDoc do
       the_output_file = output_file 'convert-file-api.adoc'
       IO.write the_source_file, 'Converted using the API'
       (expect subject.convert_file the_source_file).to be_nil
+      (expect Pathname.new the_output_file).to exist
       (expect (IO.read the_output_file)).to eql %(Converted using the API\n)
+    end
+
+    it 'writes output file to file at string path specified by :to option' do
+      the_source_file = output_file 'convert-file-to.md'
+      the_output_file = output_file 'convert-file-to-string-path.adoc'
+      IO.write the_source_file, 'Converted to string path using the API'
+      (expect subject.convert_file the_source_file, to: the_output_file).to be_nil
+      (expect (IO.read the_output_file)).to eql %(Converted to string path using the API\n)
+    end
+
+    it 'writes output file to file at string path specified by :to option' do
+      the_source_file = output_file 'convert-file-to.md'
+      the_output_file = Pathname.new output_file 'convert-file-to-pathname.adoc'
+      IO.write the_source_file, 'Converted to pathname using the API'
+      (expect subject.convert_file the_source_file, to: the_output_file).to be_nil
+      (expect (the_output_file.read)).to eql %(Converted to pathname using the API\n)
     end
   end
 end
