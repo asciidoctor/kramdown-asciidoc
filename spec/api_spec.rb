@@ -98,4 +98,8 @@ describe Kramdoc do
   it 'supports Kramdoc as an alias for Kramdown::AsciiDoc' do
     (expect Kramdoc).to eql Kramdown::AsciiDoc
   end
+
+  it 'can be required using the alias kramdoc' do
+    require 'kramdoc'
+  end
 end
