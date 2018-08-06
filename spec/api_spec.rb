@@ -67,29 +67,27 @@ describe Kramdown::AsciiDoc do
   end
 
   context '#convert_file' do
+    let(:source) { 'Markdown was *here*, but it has become **AsciiDoc**!' }
+    let(:expected_output) { %(Markdown was _here_, but it has become *AsciiDoc*!\n) }
+    let!(:the_source_file) { (output_file %(convert-file-api-#{object_id}.md)).tap {|file| IO.write file, source } }
+
     it 'converts Markdown file to AsciiDoc file' do
-      the_source_file = output_file 'convert-file-api.md'
-      the_output_file = output_file 'convert-file-api.adoc'
-      IO.write the_source_file, 'Converted using the API'
+      the_output_file = output_file %(convert-file-api-#{object_id}.adoc)
       (expect subject.convert_file the_source_file).to be_nil
       (expect Pathname.new the_output_file).to exist
-      (expect (IO.read the_output_file)).to eql %(Converted using the API\n)
+      (expect (IO.read the_output_file)).to eql expected_output
     end
 
-    it 'writes output file to file at string path specified by :to option' do
-      the_source_file = output_file 'convert-file-to.md'
+    it 'writes output file to string path specified by :to option' do
       the_output_file = output_file 'convert-file-to-string-path.adoc'
-      IO.write the_source_file, 'Converted to string path using the API'
       (expect subject.convert_file the_source_file, to: the_output_file).to be_nil
-      (expect (IO.read the_output_file)).to eql %(Converted to string path using the API\n)
+      (expect (IO.read the_output_file)).to eql expected_output
     end
 
-    it 'writes output file to file at string path specified by :to option' do
-      the_source_file = output_file 'convert-file-to.md'
+    it 'writes output file to pathname specified by :to option' do
       the_output_file = Pathname.new output_file 'convert-file-to-pathname.adoc'
-      IO.write the_source_file, 'Converted to pathname using the API'
       (expect subject.convert_file the_source_file, to: the_output_file).to be_nil
-      (expect (the_output_file.read)).to eql %(Converted to pathname using the API\n)
+      (expect (the_output_file.read)).to eql expected_output
     end
   end
 end
