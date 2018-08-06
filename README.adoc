@@ -160,7 +160,6 @@ Kramdoc.convert_file 'sample.md'
 
 Like the command-line, `Kramdoc.convert_file` converts the Markdown file to an adjacent AsciiDoc file calculated by removing the Markdown file extension, `.md`, and replacing it with the AsciiDoc file extension, `.adoc`.
 
-////
 If you want to direct the output to a different file, pass the name of that file to the `Kramdoc.convert_file` method using the `:to` option as follows:
 
 [source,ruby]
@@ -169,7 +168,6 @@ require 'kramdown-asciidoc'
 
 Kramdoc.convert_file 'sample.md', to: 'result.adoc'
 ----
-////
 
 To convert a Markdown string to an AsciiDoc string using the {project-name} API, pass the string to the `Kramdoc.convert` method as follows:
 
