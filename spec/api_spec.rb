@@ -89,6 +89,10 @@ describe Kramdown::AsciiDoc do
       (expect subject.convert_file the_source_file, to: the_output_file).to be_nil
       (expect (the_output_file.read)).to eql expected_output
     end
+
+    it 'returns output as string if value of :to option is falsy' do
+      (expect subject.convert_file the_source_file, to: nil).to eql expected_output
+    end
   end
 end
 

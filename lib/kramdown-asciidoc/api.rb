@@ -25,12 +25,16 @@ module Kramdown; module AsciiDoc
 
   def self.convert_file markdown_file, opts = {}
     markdown = ::IO.read markdown_file, mode: 'r:UTF-8', newline: :universal
-    if (output_file = opts.delete :to)
-      output_file = ::Pathname.new output_file unless ::Pathname === output_file
+    if opts.key? :to
+      if (output_file = opts.delete :to)
+        output_file = ::Pathname.new output_file unless ::Pathname === output_file
+        output_file.dirname.mkpath
+      else
+        output_file = nil
+      end
     else
       output_file = (::Pathname.new markdown_file).sub_ext '.adoc'
     end
-    output_file.dirname.mkpath
     convert markdown, (opts.merge to: output_file, encode: false)
   end
 end; end
