@@ -93,6 +93,12 @@ describe Kramdown::AsciiDoc do
     it 'returns output as string if value of :to option is falsy' do
       (expect subject.convert_file the_source_file, to: nil).to eql expected_output
     end
+
+    it 'writes output to IO object specified by :to option' do
+      output_sink = StringIO.new
+      (expect subject.convert_file the_source_file, to: output_sink).to be_nil
+      (expect output_sink.string).to eql expected_output
+    end
   end
 end
 
