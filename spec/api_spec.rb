@@ -84,10 +84,23 @@ describe Kramdown::AsciiDoc do
       (expect (IO.read the_output_file)).to eql expected_output
     end
 
+    it 'creates intermediary directories when writing to string path specified by :to option' do
+      the_output_file = output_file 'path/to/convert-file-to-pathname.adoc'
+      the_output_dir = (Pathname.new the_output_file).dirname
+      (expect subject.convert_file the_source_file, to: the_output_file).to be_nil
+      (expect the_output_dir).to exist
+    end
+
     it 'writes output file to pathname specified by :to option' do
       the_output_file = Pathname.new output_file 'convert-file-to-pathname.adoc'
       (expect subject.convert_file the_source_file, to: the_output_file).to be_nil
       (expect (the_output_file.read)).to eql expected_output
+    end
+
+    it 'creates intermediary directories when writing to pathname specified by :to option' do
+      the_output_file = Pathname.new output_file 'path/to/convert-file-to-pathname.adoc'
+      (expect subject.convert_file the_source_file, to: the_output_file).to be_nil
+      (expect the_output_file.dirname).to exist
     end
 
     it 'returns output as string if value of :to option is falsy' do
