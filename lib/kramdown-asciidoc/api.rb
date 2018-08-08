@@ -27,10 +27,11 @@ module Kramdown; module AsciiDoc
     markdown = ::IO.read markdown_file, mode: 'r:UTF-8', newline: :universal
     if opts.key? :to
       if (output_file = opts.delete :to)
-        output_file = ::Pathname.new output_file unless ::Pathname === output_file
-        output_file.dirname.mkpath
-      else
-        output_file = nil
+        if ::Pathname === output_file
+          output_file.dirname.mkpath
+        elsif !(output_file.respond_to? :write)
+          (output_file = ::Pathname.new output_file.to_s).dirname.mkpath
+        end
       end
     else
       output_file = (::Pathname.new markdown_file).sub_ext '.adoc'
