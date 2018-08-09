@@ -85,7 +85,7 @@ describe Kramdown::AsciiDoc do
     end
 
     it 'creates intermediary directories when writing to string path specified by :to option' do
-      the_output_file = output_file 'path/to/convert-file-to-pathname.adoc'
+      the_output_file = output_file 'path/to/convert-file-to-string-path.adoc'
       the_output_dir = (Pathname.new the_output_file).dirname
       (expect subject.convert_file the_source_file, to: the_output_file).to be_nil
       (expect the_output_dir).to exist
