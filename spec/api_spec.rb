@@ -41,13 +41,13 @@ describe Kramdown::AsciiDoc do
       (expect output).to eql %(one\ntwo\nthree\n)
     end
 
-    it 'writes AsciiDoc to filename specified in :to option' do
+    it 'writes AsciiDoc to filename specified by :to option' do
       the_output_file = output_file 'convert-api.adoc'
       (expect subject.convert 'Converted using the API', to: the_output_file).to be_nil
       (expect (IO.read the_output_file)).to eql %(Converted using the API\n)
     end
 
-    it 'writes AsciiDoc to IO object specified in :to option' do
+    it 'writes AsciiDoc to IO object specified by :to option' do
       old_stdout, $stdout = $stdout, StringIO.new
       begin
         (expect subject.convert 'text', to: $stdout).to be_nil
