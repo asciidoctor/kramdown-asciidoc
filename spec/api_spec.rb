@@ -41,10 +41,29 @@ describe Kramdown::AsciiDoc do
       (expect output).to eql %(one\ntwo\nthree\n)
     end
 
-    it 'writes AsciiDoc to filename specified by :to option' do
-      the_output_file = output_file 'convert-api.adoc'
+    it 'writes AsciiDoc to string path specified by :to option' do
+      the_output_file = output_file 'convert-to-string-path.adoc'
       (expect subject.convert 'Converted using the API', to: the_output_file).to be_nil
       (expect (IO.read the_output_file)).to eql %(Converted using the API\n)
+    end
+
+    it 'creates intermediary directories when writing to string path specified by :to option' do
+      the_output_file = output_file 'path/to/convert-to-string-path.adoc'
+      the_output_dir = (Pathname.new the_output_file).dirname
+      (expect subject.convert 'Converted using the API', to: the_output_file).to be_nil
+      (expect the_output_dir).to exist
+    end
+
+    it 'writes AsciiDoc to pathname specified by :to option' do
+      the_output_file = Pathname.new output_file 'convert-to-pathname.adoc'
+      (expect subject.convert 'Converted using the API', to: the_output_file).to be_nil
+      (expect the_output_file.read).to eql %(Converted using the API\n)
+    end
+
+    it 'creates intermediary directories when writing to pathname specified by :to option' do
+      the_output_file = Pathname.new output_file 'path/to/convert-to-pathname.adoc'
+      (expect subject.convert 'Converted using the API', to: the_output_file).to be_nil
+      (expect the_output_file.dirname).to exist
     end
 
     it 'writes AsciiDoc to IO object specified by :to option' do
