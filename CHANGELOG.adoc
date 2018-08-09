@@ -14,6 +14,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * `convert_file` now returns output as string when value of :to option is falsy (#39)
 * IO object can be used as value of :to option in `convert` and `convert_file` (#43)
 * intermediate directories are now created in `convert` instead of `convert_file` (#45)
+* `convert_file` now writes output file using explicit UTF-8 encoding (#46)
 * allow library to be required via alias `kramdoc`
 
 == 1.0.0.alpha.11 (2018-08-02) - @mojavelinux
