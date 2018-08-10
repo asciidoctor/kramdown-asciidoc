@@ -16,7 +16,10 @@ module Kramdown; module AsciiDoc
     asciidoc = (::Kramdown::Document.new markdown, (::Kramdown::AsciiDoc::DEFAULT_PARSER_OPTS.merge opts)).to_asciidoc
     asciidoc += LF unless asciidoc.empty?
     if (to = opts[:to])
-      (to.respond_to? :write) ? (to.write asciidoc) : (::IO.write to, asciidoc)
+      if ::Pathname === to || (!(to.respond_to? :write) && (to = ::Pathname.new to.to_s))
+        to.dirname.mkpath
+      end
+      to.write asciidoc
       nil
     else
       asciidoc
@@ -26,9 +29,7 @@ module Kramdown; module AsciiDoc
   def self.convert_file markdown_file, opts = {}
     markdown = ::IO.read markdown_file, mode: 'r:UTF-8', newline: :universal
     if (to = opts[:to])
-      if ::Pathname === to || (!(to.respond_to? :write) && (to = ::Pathname.new to.to_s))
-        to.dirname.mkpath
-      end
+      to = ::Pathname.new to.to_s unless ::Pathname === to || (to.respond_to? :write)
     else
       to = (::Pathname.new markdown_file).sub_ext '.adoc' unless opts.key? :to
     end
