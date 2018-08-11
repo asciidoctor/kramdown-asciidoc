@@ -91,35 +91,28 @@ module Kramdown; module AsciiDoc
     rescue ::OptionParser::InvalidOption
       $stderr.write %(#{opt_parser.program_name}: #{$!.message}\n)
       $stdout.write opt_parser.help
-      return 1
+      1
     end
 
     def self.run args = ARGV
-      code, options = new.parse args
+      code, options = new.parse (Array args)
       return code unless code == 0 && options
-      if (input_file = options.delete :input_file) == '-'
-        pipe_in = true
-        markdown = $stdin.read
-      else
-        markdown = ::IO.read input_file, mode: 'r:UTF-8', newline: :universal
-        options[:encode] = false
-      end
-      if (output_file = options.delete :output_file)
-        if output_file == '-'
-          pipe_out = true
-        else
-          (output_file = ::Pathname.new output_file).dirname.mkpath
-        end
-      else
-        output_file = (::Pathname.new input_file).sub_ext '.adoc'
-      end
-      if !pipe_in && !pipe_out && (::File.expand_path input_file) == output_file.expand_path.to_s
-        $stderr.write %(kramdoc: input and output file cannot be the same: #{input_file}\n)
+      pipe_in = (input_file = options.delete :input_file) == '-'
+      pipe_out = (output_file = options.delete :output_file) == '-'
+      if pipe_in
+        options[:to] = pipe_out || !output_file ? $stdout : output_file
+        ::Kramdoc.convert $stdin.read, options
+      elsif output_file && !pipe_out && (::File.expand_path input_file) == (::File.expand_path output_file)
+        $stderr.write %(kramdoc: input and output cannot be the same file: #{input_file}\n)
         return 1
+      else
+        options[:to] = pipe_out ? $stdout : output_file if output_file
+        ::Kramdoc.convert_file input_file, options
       end
-      # QUESTION should we set :from option?
-      ::Kramdoc.convert markdown, (options.merge to: (pipe_out ? $stdout : output_file))
       0
+    rescue ::IOError => e
+      $stderr.write %(kramdoc: #{e.message}\n)
+      1
     end
   end
 end; end

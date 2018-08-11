@@ -33,7 +33,10 @@ module Kramdown; module AsciiDoc
     if (to = opts[:to])
       to = ::Pathname.new to.to_s unless ::Pathname === to || (to.respond_to? :write)
     else
-      to = (::Pathname.new markdown_file).sub_ext '.adoc' unless opts.key? :to
+      unless opts.key? :to
+        to = (::Pathname.new markdown_file).sub_ext '.adoc'
+        raise ::IOError, %(input and output cannot be the same file: #{markdown_file}) if to.to_s == markdown_file.to_s
+      end
     end
     convert markdown, (opts.merge to: to, encode: false)
   end
