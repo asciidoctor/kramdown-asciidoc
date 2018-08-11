@@ -18,8 +18,10 @@ module Kramdown; module AsciiDoc
     if (to = opts[:to])
       if ::Pathname === to || (!(to.respond_to? :write) && (to = ::Pathname.new to.to_s))
         to.dirname.mkpath
+        to.write asciidoc, encoding: UTF_8
+      else
+        to.write asciidoc
       end
-      to.write asciidoc
       nil
     else
       asciidoc

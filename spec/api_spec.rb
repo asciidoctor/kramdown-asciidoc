@@ -131,6 +131,19 @@ describe Kramdown::AsciiDoc do
       (expect subject.convert_file the_source_file, to: output_sink).to be_nil
       (expect output_sink.string).to eql expected_output
     end
+
+    it 'writes output file as UTF-8 regardless of default external encoding' do
+      source = %(tr\u00e8s bien !)
+      the_output_file = output_file 'force-encoding.adoc'
+      script_file = output_file 'force-encoding.rb'
+      IO.write script_file, <<~EOS
+      require 'kramdown-asciidoc'
+      Kramdoc.convert '#{source}', to: '#{the_output_file}'
+      EOS
+      # NOTE internal encoding must also be set for test to work on JRuby
+      `#{ruby} -E ISO-8859-1:ISO-8859-1 #{Shellwords.escape script_file}`
+      (expect IO.read the_output_file, mode: 'r:UTF-8').to eql %(#{source}\n)
+    end
   end
 end
 

@@ -10,6 +10,7 @@ end
 require 'kramdown-asciidoc'
 require 'fileutils'
 autoload :StringIO, 'stringio'
+autoload :Shellwords, 'shellwords'
 
 RSpec.configure do |config|
   config.after :suite do
@@ -32,5 +33,9 @@ RSpec.configure do |config|
 
   def scenario_file path
     File.join scenarios_dir, path
+  end
+
+  def ruby
+    Shellwords.escape File.join RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name']
   end
 end
