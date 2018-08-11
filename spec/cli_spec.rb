@@ -6,12 +6,13 @@ describe Kramdown::AsciiDoc::Cli do
   subject { Kramdown::AsciiDoc::Cli }
 
   before :each do
+    @old_stdin, $stdin = $stdin, StringIO.new
     @old_stdout, $stdout = $stdout, StringIO.new
     @old_stderr, $stderr = $stderr, StringIO.new
   end
 
   after :each do
-    $stdout, $stderr = @old_stdout, @old_stderr
+    $stdin, $stdout, $stderr = @old_stdin, @old_stdout, @old_stderr
   end
 
   context 'option flags' do
@@ -49,7 +50,7 @@ describe Kramdown::AsciiDoc::Cli do
       the_source_file = output_file 'implicit-output.md'
       the_output_file = output_file 'implicit-output.adoc'
       IO.write the_source_file, 'This is just a test.'
-      (expect subject.run %W(#{the_source_file})).to eql 0
+      (expect subject.run the_source_file).to eql 0
       (expect (IO.read the_output_file).chomp).to eql 'This is just a test.'
     end
 
@@ -72,8 +73,8 @@ describe Kramdown::AsciiDoc::Cli do
     it 'prevents computed output file from overwriting input file' do
       the_source_file = output_file 'implicit-conflict.adoc'
       IO.write the_source_file, 'No can do.'
-      expected = %(kramdoc: input and output file cannot be the same: #{the_source_file})
-      (expect subject.run %W(#{the_source_file})).to eql 1
+      expected = %(kramdoc: input and output cannot be the same file: #{the_source_file})
+      (expect subject.run the_source_file).to eql 1
       (expect $stderr.string.chomp).to eql expected
     end
 
@@ -81,7 +82,7 @@ describe Kramdown::AsciiDoc::Cli do
       the_source_file = output_file 'explicit-conflict.md'
       the_output_file = the_source_file
       IO.write the_source_file, 'No can do.'
-      expected = %(kramdoc: input and output file cannot be the same: #{the_source_file})
+      expected = %(kramdoc: input and output cannot be the same file: #{the_source_file})
       (expect subject.run %W(-o #{the_output_file} #{the_source_file})).to eql 1
       (expect $stderr.string.chomp).to eql expected
     end
@@ -93,15 +94,25 @@ describe Kramdown::AsciiDoc::Cli do
     end
 
     it 'reads input from stdin when argument is -' do
-      old_stdin, $stdin = $stdin, StringIO.new
-      begin
-        $stdin.puts '- list item'
-        $stdin.rewind
-        (expect subject.run %W(-o - -)).to eql 0
-        (expect $stdout.string.chomp).to eql '* list item'
-      ensure
-        $stdin = old_stdin
-      end
+      $stdin.puts '- list item'
+      $stdin.rewind
+      (expect subject.run %w(-o - -)).to eql 0
+      (expect $stdout.string.chomp).to eql '* list item'
+    end
+
+    it 'writes output to stdout when input comes from stdin and -o option is not specified' do
+      $stdin.puts '- list item'
+      $stdin.rewind
+      (expect subject.run '-').to eql 0
+      (expect $stdout.string.chomp).to eql '* list item'
+    end
+
+    it 'writes output to file specified by -o option when input comes from stdin' do
+      the_output_file = output_file 'output-from-stdin.adoc'
+      $stdin.puts '- list item'
+      $stdin.rewind
+      (expect subject.run %W(-o #{the_output_file} -)).to eql 0
+      (expect (IO.read the_output_file).chomp).to eql '* list item'
     end
 
     it 'removes leading blank lines and trailing whitespace from source' do
