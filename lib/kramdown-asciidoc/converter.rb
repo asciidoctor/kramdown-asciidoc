@@ -608,6 +608,8 @@ module Kramdown; module AsciiDoc
       end
     end
 
+    private
+
     def extract_prologue el, opts
       if (child_i = to_element (children = el.children)[0]).type == :xml_comment
         (prologue_el = el.dup).children = children.take_while {|child| child.type == :xml_comment || child.type == :blank }
