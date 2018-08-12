@@ -1,0 +1,5 @@
+:auto_ids: true
+:auto_id_prefix: _
+:lazy_ids: true
+:attributes:
+  idseparator: '-'

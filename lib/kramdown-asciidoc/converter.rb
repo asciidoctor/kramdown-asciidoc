@@ -51,6 +51,7 @@ module Kramdown; module AsciiDoc
     ADMON_TYPE_MAP = ADMON_LABELS.map {|l, _| [l, l.upcase] }.to_h.merge 'Attention' => 'IMPORTANT', 'Hint' => 'TIP'
     BLOCK_TYPES = [:p, :blockquote, :codeblock, :table]
     DLIST_MARKERS = %w(:: ;; ::: ::::)
+    NON_DEFAULT_TABLE_ALIGNMENTS = [:center, :right]
     PUNCTUATION = %w(. ? !)
     # FIXME here we reverse the smart quotes; add option to allow them (needs to be handled carefully)
     SMART_QUOTE_ENTITY_TO_MARKUP = { ldquo: ?", rdquo: ?", lsquo: ?', rsquo: ?' }
@@ -74,18 +75,15 @@ module Kramdown; module AsciiDoc
       laquo_scape: '<< ',
       raquo_space: ' >>',
     }
-    TABLE_ALIGNMENTS = {
-      left: '<',
-      center: '^',
-      right: '>',
-    }
-
-    NON_DEFAULT_TABLE_ALIGNMENTS = [:center, :right]
+    TABLE_ALIGNMENTS = { left: '<', center: '^', right: '>' }
+    # NOTE assumes default Asciidoctor::Compliance.unique_id_start_index value
+    UNIQUE_ID_START_INDEX = 1
 
     CommentPrefixRx = /^ *! ?/m
     CssPropDelimRx = /\s*;\s*/
     FullStopRx = /(?<=\S\.|.\?|.!)\p{Blank}+/
     InadvertentReplacementsRx = /[-=]>|<[-=]|\.\.\.|\{\p{Word}[\p{Word}-]*\}/
+    InvalidIdCharsRx = /[^ \p{Word}\-.]+?/
     MenuRefRx = /^([\p{Word}&].*?)\s>\s([\p{Word}&].*(?:\s>\s|$))+/
     ReplaceableTextRx = /[-=]>|<[-=]| -- |\p{Word}--\p{Word}|\*\*|\.\.\.|&\S+;|\{\p{Word}[\p{Word}-]*\}|(?:https?|ftp):\/\/\p{Word}|\((?:C|R|TM)\)/
     SmartApostropheRx = /\b’\b/
@@ -104,6 +102,31 @@ module Kramdown; module AsciiDoc
     def initialize root, opts
       super
       @attributes = opts[:attributes] || {}
+      @auto_ids = opts[:auto_ids]
+      @lazy_ids = opts[:lazy_ids]
+      if @auto_ids || @lazy_ids
+        if @auto_ids
+          unless (@id_pre = opts[:auto_id_prefix]) == '_'
+            # NOTE only need to set idprefix when lazy_ids is set since otherwise all IDs are explicit
+            @attributes['idprefix'] = @id_pre if @lazy_ids
+          end
+          unless (sep = opts[:auto_id_separator] || '-') == '_'
+            # NOTE only need to set idseparator when lazy_ids is set since otherwise all IDs are explicit
+            @attributes['idseparator'] = sep if @lazy_ids
+          end
+        else
+          @id_pre = @attributes['idprefix'] || '_'
+          sep = @attributes['idseparator']
+        end
+        if sep
+          sep_replace = (sep = sep.chr) == '-' || sep == '.' ? ' .-' : %( #{sep}.-) unless sep.empty?
+        else
+          sep, sep_replace = '_', ' _.-'
+        end
+        @id_sep = sep
+        @id_sep_replace = sep_replace
+      end
+      @ids_seen = {}
       @auto_links = opts.fetch :auto_links, true
       @heading_offset = opts[:heading_offset] || 0
       @imagesdir = opts[:imagesdir] || @attributes['imagesdir']
@@ -145,9 +168,13 @@ module Kramdown; module AsciiDoc
       end
       if (child_i = to_element el.children[0]).type == :html_element && child_i.value == 'a' && (id = child_i.attr['id'])
         el = clone el, children: child_i.children + (el.children.drop 1)
-        style << %(##{id})
+        style << %(##{id}) unless @lazy_ids && id == (generate_unique_id el.options[:raw_text], false)
+        record_id id
       elsif (id = el.attr['id'])
-        style << %(##{id})
+        style << %(##{id}) unless @lazy_ids && id == (generate_unique_id el.options[:raw_text], false)
+        record_id id
+      elsif @auto_ids
+        style << %(##{generate_unique_id el.options[:raw_text]}) unless @lazy_ids
       end
       if (role = el.attr['class'])
         style << %(.#{role.tr ' ', '.'})
@@ -693,6 +720,31 @@ module Kramdown; module AsciiDoc
       else
         result.join LF
       end
+    end
+
+    def generate_id str
+      id = %(#{pre = @id_pre}#{str.downcase.gsub InvalidIdCharsRx, ''})
+      if (sep_replace = @id_sep_replace)
+        id = id.tr_s sep_replace, (sep = @id_sep)
+        id = id.chop if id.end_with? sep
+        id = id.slice 1, id.length if pre.empty? && (id.start_with? sep)
+      else
+        id = id.delete ' '
+      end
+      id
+    end
+
+    def generate_unique_id str, record = true
+      id = generate_id str
+      if (seen_idx = @ids_seen[id])
+        id = %(#{id}#{@id_sep}#{seen_idx += 1})
+      end
+      record_id id, seen_idx if record
+      id
+    end
+
+    def record_id id, idx = nil
+      @ids_seen[id] = idx || UNIQUE_ID_START_INDEX
     end
   end
 end; end

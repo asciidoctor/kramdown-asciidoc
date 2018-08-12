@@ -206,21 +206,24 @@ describe Kramdown::AsciiDoc::Cli do
       (expect $stdout.string).to eql expected
     end
 
-    it 'automatically generates IDs for section titles when --auto-ids is used' do
-      the_source_file = scenario_file 'heading/auto-ids.md'
-      expected = IO.read scenario_file 'heading/auto-ids.adoc'
+    it 'auto generates IDs for section titles when --auto-ids is used' do
+      the_source_file = scenario_file 'heading/auto_ids/no-ids.md'
+      expected = IO.read scenario_file 'heading/auto_ids/no-ids.adoc'
       (expect subject.run %W(-o - --auto-ids #{the_source_file})).to eql 0
       (expect $stdout.string).to eql expected
     end
 
-    it 'adds prefix specified by --auto-id-prefix to any automatically generated section title ID' do
-      the_source_file = scenario_file 'heading/auto-ids.md'
+    it 'adds prefix specified by --auto-id-prefix to any auto-generated section title ID' do
+      the_source_file = scenario_file 'heading/auto_ids/explicit-id.md'
       expected = <<~EOS
       [#_heading-1]
       = Heading 1
 
+      [#_heading]
+      == Heading
+
       [#_heading-2]
-      == Heading 2
+      == Heading
 
       [#explicit-id]
       === Heading 3
@@ -229,6 +232,35 @@ describe Kramdown::AsciiDoc::Cli do
       == Back to Heading 2
       EOS
       (expect subject.run %W(-o - --auto-id-prefix=_ --auto-ids #{the_source_file})).to eql 0
+      (expect $stdout.string).to eql expected
+    end
+
+    it 'uses separator specified by --auto-id-separator to any auto-generated section title ID' do
+      the_source_file = scenario_file 'heading/auto_ids/explicit-id.md'
+      expected = <<~EOS
+      [#_heading_1]
+      = Heading 1
+
+      [#_heading]
+      == Heading
+
+      [#_heading_2]
+      == Heading
+
+      [#explicit-id]
+      === Heading 3
+
+      [#_back_to_heading_2]
+      == Back to Heading 2
+      EOS
+      (expect subject.run %W(-o - --auto-id-prefix=_ --auto-id-separator=_ --auto-ids #{the_source_file})).to eql 0
+      (expect $stdout.string).to eql expected
+    end
+
+    it 'drops ID if matches auto-generated value when --lazy-ids is used' do
+      the_source_file = scenario_file 'heading/lazy_ids/explicit-ids.md'
+      expected = IO.read scenario_file 'heading/lazy_ids/explicit-ids.adoc'
+      (expect subject.run %W(-o - --lazy-ids #{the_source_file})).to eql 0
       (expect $stdout.string).to eql expected
     end
 

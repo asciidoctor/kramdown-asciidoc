@@ -1,0 +1,10 @@
+= Document Title
+:idseparator: -
+:idprefix:
+
+== A Section
+
+== A Section
+
+[#install]
+== Installation
