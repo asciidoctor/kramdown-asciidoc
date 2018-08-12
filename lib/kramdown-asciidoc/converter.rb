@@ -51,6 +51,7 @@ module Kramdown; module AsciiDoc
     ADMON_TYPE_MAP = ADMON_LABELS.map {|l, _| [l, l.upcase] }.to_h.merge 'Attention' => 'IMPORTANT', 'Hint' => 'TIP'
     BLOCK_TYPES = [:p, :blockquote, :codeblock, :table]
     DLIST_MARKERS = %w(:: ;; ::: ::::)
+    PUNCTUATION = %w(. ? !)
     # FIXME here we reverse the smart quotes; add option to allow them (needs to be handled carefully)
     SMART_QUOTE_ENTITY_TO_MARKUP = { ldquo: ?", rdquo: ?", lsquo: ?', rsquo: ?' }
     TYPOGRAPHIC_SYMBOL_TO_MARKUP = {
@@ -83,7 +84,7 @@ module Kramdown; module AsciiDoc
 
     CommentPrefixRx = /^ *! ?/m
     CssPropDelimRx = /\s*;\s*/
-    FullStopRx = /(?<=.\.)\p{Blank}+(?!\Z)/
+    FullStopRx = /(?<=\S\.|.\?|.!)\p{Blank}+/
     InadvertentReplacementsRx = /[-=]>|<[-=]|\.\.\.|\{\p{Word}[\p{Word}-]*\}/
     MenuRefRx = /^([\p{Word}&].*?)\s>\s([\p{Word}&].*(?:\s>\s|$))+/
     ReplaceableTextRx = /[-=]>|<[-=]| -- |\p{Word}--\p{Word}|\*\*|\.\.\.|&\S+;|\{\p{Word}[\p{Word}-]*\}|(?:https?|ftp):\/\/\p{Word}|\((?:C|R|TM)\)/
@@ -686,7 +687,9 @@ module Kramdown; module AsciiDoc
         end
       end
       if ventilate
-        result.map {|line| (line.start_with? '//') ? line : ((line.include? '.') ? (line.gsub FullStopRx, LF) : line) }.join LF
+        result.map {|line|
+          (line.start_with? '//') || !(PUNCTUATION.any? {|punc| line.include? punc }) ? line : (line.gsub FullStopRx, LF)
+        }.join LF
       else
         result.join LF
       end
