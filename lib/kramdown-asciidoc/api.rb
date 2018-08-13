@@ -4,7 +4,7 @@ module Kramdown; module AsciiDoc
   UTF_8 = ::Encoding::UTF_8
 
   def self.convert markdown, opts = {}
-    unless (opts.delete :encode) == false || (markdown.encoding == UTF_8 && !(markdown.include? CR))
+    unless opts[:encode] == false || (markdown.encoding == UTF_8 && !(markdown.include? CR))
       markdown = markdown.encode UTF_8, universal_newline: true
     end
     markdown = markdown.rstrip
@@ -13,7 +13,10 @@ module Kramdown; module AsciiDoc
     attributes = (opts[:attributes] ||= {})
     markdown = ::Kramdown::AsciiDoc.extract_front_matter markdown, attributes
     markdown = ::Kramdown::AsciiDoc.replace_toc markdown, attributes
-    asciidoc = (::Kramdown::Document.new markdown, (::Kramdown::AsciiDoc::DEFAULT_PARSER_OPTS.merge opts)).to_asciidoc
+    asciidoc = (kramdown_doc = ::Kramdown::Document.new markdown, (::Kramdown::AsciiDoc::DEFAULT_PARSER_OPTS.merge opts)).to_asciidoc
+    if (postprocess = opts[:postprocess])
+      asciidoc = (postprocess.arity == 1 ? postprocess[asciidoc] : postprocess[asciidoc, kramdown_doc]) || asciidoc
+    end
     asciidoc += LF unless asciidoc.empty?
     if (to = opts[:to])
       if ::Pathname === to || (!(to.respond_to? :write) && (to = ::Pathname.new to.to_s))
