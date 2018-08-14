@@ -53,8 +53,16 @@ module Kramdown; module AsciiDoc
           options[:auto_ids] = auto_ids
         end
 
-        opts.on '--auto-id-prefix=STRING', 'Set the prefix to add to auto-generated section title IDs' do |string|
+        opts.on '--auto-id-prefix=STRING', 'Set the prefix to use for auto-generated section title IDs' do |string|
           options[:auto_id_prefix] = string
+        end
+
+        opts.on '--auto-id-separator=CHAR', 'Set the separator char to use for auto-generated section title IDs' do |char|
+          options[:auto_id_separator] = char
+        end
+
+        opts.on '--lazy-ids', 'Set whether to drop IDs that match value of auto-generated ID' do |lazy_ids|
+          options[:lazy_ids] = lazy_ids
         end
 
         opts.on '--[no-]auto-links', 'Set whether to automatically convert bare URLs into links (default: true)' do |auto_links|

@@ -1,4 +1,5 @@
 require 'kramdown'
+require_relative 'kramdown-asciidoc/kramdown_ext/parser/base'
 require_relative 'kramdown-asciidoc/kramdown_ext/parser/html'
 require_relative 'kramdown-asciidoc/core_ext/regexp/is_match'
 require_relative 'kramdown-asciidoc/api'

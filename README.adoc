@@ -135,6 +135,31 @@ image::octocat.png[Octocat]
 
 In this scenario, you may need to pass the `imagesdir` attribute to the AsciiDoc processor when converting the output document so the image is resolved, depending on where the image is stored.
 
+== Auto-generate IDs
+
+You can configure kramdoc to automatically generate explicit IDs for each section title (aka heading) that doesn't already have an ID assigned to it (in the Markdown source).
+To do so, simply enable the `--auto-ids` flag:
+
+ $ kramdoc --auto-ids sample.md
+
+By default, kramdoc does not add a prefix to the generated ID and uses `-` as the separator / replacement character.
+You can change these values using the `--auto-id-prefix` and `--auto-id-separator` options, respectively:
+
+ $ kramdoc --auto-ids --auto-id-prefix=_ --auto-id-separator=_ sample.md
+
+Since the AsciiDoc processor generates an ID for any section title that doesn't have one by default, you may decide you want to drop any ID which matches its auto-generated value.
+You can enable this behavior by adding the `--lazy-ids` flag:
+
+ $ kramdoc --lazy-ids sample.md
+
+The catch is that kramdown/kramdoc and AsciiDoc don't use the same prefix and separator when generating IDs.
+So it's necessary to sync them.
+The simplest way is to set the `--auto-id-prefix` and `--auto-id-separator` values to match those used by AsciiDoc.
+
+ $ kramdoc --lazy-ids --auto-id-prefix=_ --auto-id-separator=_ sample.md
+
+If these values do not match the defaults in AsciiDoc, the `idprefix` and/or `idseparator` attributes will be assigned explicitly in the generated document.
+
 == API
 
 In additional to the command-line interface, {project-name} also provides a porcelain API.

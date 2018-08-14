@@ -1,8 +1,11 @@
-[#heading-1]
-= Heading 1
+[#document-title]
+= Document Title
+
+[#heading]
+== Heading
 
 [#heading-2]
-== Heading 2
+== Heading
 
 [#explicit-id]
 === Heading 3

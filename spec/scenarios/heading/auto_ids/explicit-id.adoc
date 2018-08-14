@@ -1,0 +1,14 @@
+[#heading-1]
+= Heading 1
+
+[#heading]
+== Heading
+
+[#heading-2]
+== Heading
+
+[#explicit-id]
+=== Heading 3
+
+[#back-to-heading-2]
+== Back to Heading 2

@@ -1,6 +1,8 @@
 # Heading 1
 
-## Heading 2
+## Heading
+
+## Heading
 
 ### <a id="explicit-id"></a>Heading 3
 

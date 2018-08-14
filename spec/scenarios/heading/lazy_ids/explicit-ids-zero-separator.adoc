@@ -1,0 +1,7 @@
+= Document Title
+:idseparator: 0
+
+== First Section
+
+[#_install]
+== Installation
