@@ -84,6 +84,7 @@ module Kramdown; module AsciiDoc
     FullStopRx = /(?<=\S\.|.\?|.!)\p{Blank}+/
     InadvertentReplacementsRx = /[-=]>|<[-=]|\.\.\.|\{\p{Word}[\p{Word}-]*\}/
     InvalidIdCharsRx = /[^ \p{Word}\-.]+?/
+    ListMarkerRx = /^[ \t]*(?:(?:-|\*\*{0,4}|\.\.{0,4}|\d+\.|[a-zA-Z]\.|[IVXivx]+\))[ \t]|.*?(?::::{0,2}|;;)(?:$|[ \t]))/
     MenuRefRx = /^([\p{Word}&].*?)\s>\s([\p{Word}&].*(?:\s>\s|$))+/
     ReplaceableTextRx = /[-=]>|<[-=]| -- |\p{Word}--\p{Word}|\*\*|\.\.\.|&\S+;|\{\p{Word}[\p{Word}-]*\}|(?:https?|ftp):\/\/\p{Word}|\((?:C|R|TM)\)/
     SmartApostropheRx = /\b’\b/
@@ -268,12 +269,12 @@ module Kramdown; module AsciiDoc
         writer.add_line '----'
         writer.add_lines lines
         writer.add_line '----'
-      elsif !prompt && (lines.include? '')
+      elsif !prompt && ((lines.include? '') || (ListMarkerRx.match? lines[0]))
         writer.add_line '....'
         writer.add_lines lines
         writer.add_line '....'
       else
-        # NOTE clear the list continuation
+        # NOTE clear the list continuation as it isn't required
         writer.clear_line if writer.current_line == '+'
         writer.add_line lines.map {|l| %( #{l}) }
       end
