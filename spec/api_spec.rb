@@ -144,6 +144,30 @@ describe Kramdown::AsciiDoc do
       `#{ruby} -E ISO-8859-1:ISO-8859-1 #{Shellwords.escape script_file}`
       (expect IO.read the_output_file, mode: 'r:UTF-8').to eql %(#{source}\n)
     end
+
+    it 'passes result through postprocess callback if given' do
+      the_output_file = output_file %(convert-file-api-#{object_id}.adoc)
+      postprocess = -> (asciidoc) { asciidoc.gsub 'become', 'become glorious' }
+      (expect subject.convert_file the_source_file, postprocess: postprocess).to be_nil
+      (expect Pathname.new the_output_file).to exist
+      (expect (IO.read the_output_file)).to eql %(Markdown was _here_, but it has become glorious *AsciiDoc*!\n)
+    end
+
+    it 'passes krawdown document to postprocess method if arity is not 1' do
+      the_output_file = output_file %(convert-file-api-#{object_id}.adoc)
+      postprocess = -> (asciidoc, kramdown_doc) { asciidoc.gsub 'Markdown', kramdown_doc.options[:input] }
+      (expect subject.convert_file the_source_file, postprocess: postprocess).to be_nil
+      (expect Pathname.new the_output_file).to exist
+      (expect (IO.read the_output_file)).to eql %(GFM was _here_, but it has become *AsciiDoc*!\n)
+    end
+
+    it 'uses original source if postprocess callback returns falsy' do
+      the_output_file = output_file %(convert-file-api-#{object_id}.adoc)
+      postprocess = -> (asciidoc) { nil }
+      (expect subject.convert_file the_source_file, postprocess: postprocess).to be_nil
+      (expect Pathname.new the_output_file).to exist
+      (expect (IO.read the_output_file)).to eql %(Markdown was _here_, but it has become *AsciiDoc*!\n)
+    end
   end
 end
 
