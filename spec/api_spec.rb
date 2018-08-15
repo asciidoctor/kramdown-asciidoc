@@ -83,6 +83,32 @@ describe Kramdown::AsciiDoc do
     it 'does not add line feed (EOL) to end of output document if empty' do
       (expect subject.convert '').to be_empty
     end
+
+    it 'duplicates value of :attributes option' do
+      input = <<~EOS
+      # Document Title
+      
+      # Part 1
+      
+      ## Chapter A
+
+      so it begins
+      EOS
+
+      expected = <<~EOS
+      = Document Title
+      :doctype: book
+      
+      = Part 1
+      
+      == Chapter A
+
+      so it begins
+      EOS
+
+      (expect subject.convert input, attributes: (attributes = {})).to eql expected
+      (expect attributes).to be_empty
+    end
   end
 
   context '#convert_file' do

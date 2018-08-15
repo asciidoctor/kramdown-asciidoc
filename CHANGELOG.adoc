@@ -11,11 +11,12 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 * drop ID on section title if matches auto-generated value when :lazy_ids API option / --lazy-ids CLI option is set (#16)
 * auto-generate IDs for section titles when :auto_ids option is set and :input is not GFM
-* add :postprocess callback option to `convert` and `convert_file` APIs (#53)
+* add :postprocess callback option to `convert` and `convert_file` API methods (#53)
 
 === Changed
 
 * automatically set idprefix, if necessary, based on value of :auto_id_prefix option when :auto_ids options is set
+* don't modify value of :attributes option passed to `convert` and `convert_file` API methods
 
 == 1.0.0.alpha.12 (2018-08-11) - @mojavelinux
 

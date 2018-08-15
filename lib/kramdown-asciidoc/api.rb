@@ -9,11 +9,11 @@ module Kramdown; module AsciiDoc
     end
     markdown = markdown.rstrip
     markdown = markdown.slice 1, markdown.length while markdown.start_with? LF
-    # QUESTION should we .dup?
-    attributes = (opts[:attributes] ||= {})
+    parser_opts = ::Kramdown::AsciiDoc::DEFAULT_PARSER_OPTS.merge opts
+    attributes = (parser_opts[:attributes] = (parser_opts[:attributes] || {}).dup)
     markdown = ::Kramdown::AsciiDoc.extract_front_matter markdown, attributes
     markdown = ::Kramdown::AsciiDoc.replace_toc markdown, attributes
-    asciidoc = (kramdown_doc = ::Kramdown::Document.new markdown, (::Kramdown::AsciiDoc::DEFAULT_PARSER_OPTS.merge opts)).to_asciidoc
+    asciidoc = (kramdown_doc = ::Kramdown::Document.new markdown, parser_opts).to_asciidoc
     if (postprocess = opts[:postprocess])
       asciidoc = (postprocess.arity == 1 ? postprocess[asciidoc] : postprocess[asciidoc, kramdown_doc]) || asciidoc
     end
