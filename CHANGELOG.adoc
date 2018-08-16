@@ -18,6 +18,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * automatically set idprefix, if necessary, based on value of :auto_id_prefix option when :auto_ids options is set
 * don't modify value of :attributes option passed to `convert` and `convert_file` API methods
 
+=== Fixed
+
+* enclose codeblock content in literal block delimiters if content starts with a list marker (#57)
+
 == 1.0.0.alpha.12 (2018-08-11) - @mojavelinux
 
 === Added
