@@ -156,6 +156,7 @@ module Kramdown; module AsciiDoc
     def convert_heading el, opts
       (writer = opts[:writer]).start_block
       level = el.options[:level] + @heading_offset
+      attrs = []
       style = []
       # Q: should writer track last heading level?
       if (discrete = @current_heading_level && level > @current_heading_level + 1)
@@ -169,19 +170,25 @@ module Kramdown; module AsciiDoc
       end
       if (child_i = to_element el.children[0]).type == :html_element && child_i.value == 'a' && (id = child_i.attr['id'])
         el = clone el, children: child_i.children + (el.children.drop 1)
-        style << %(##{id}) unless @lazy_ids && id == (generate_unique_id el.options[:raw_text], false)
+        unless @lazy_ids && id == (generate_unique_id el.options[:raw_text], false)
+          (id.include? '.') ? (attrs << %(id=#{id})) : (style << %(##{id}))
+        end
         record_id id
       elsif (id = el.attr['id'])
+        # NOTE no need to check for '.' in this case since it's not recognized as a valid ID character by kramdown
         style << %(##{id}) unless @lazy_ids && id == (generate_unique_id el.options[:raw_text], false)
         record_id id
       elsif @auto_ids
-        style << %(##{generate_unique_id el.options[:raw_text]}) unless @lazy_ids
+        unless @lazy_ids
+          ((id = generate_unique_id el.options[:raw_text]).include? '.') ? (attrs << %(id=#{id})) : (style << %(##{id}))
+        end
       end
       if (role = el.attr['class'])
         style << %(.#{role.tr ' ', '.'})
       end
+      attrs.unshift style.join unless style.empty?
       lines = []
-      lines << %([#{style.join}]) unless style.empty?
+      lines << %([#{attrs.join ','}]) unless attrs.empty?
       # NOTE kramdown removes newlines from heading
       lines << %(#{'=' * level} #{compose_text el, strip: true})
       if level == 1 && writer.empty? && @current_heading_level != 1
@@ -282,14 +289,16 @@ module Kramdown; module AsciiDoc
 
     def convert_img el, opts
       if (parent = opts[:parent]).type == :p && parent.children.size == 1
+        attrs = []
         style = []
         if (id = el.attr['id'])
-          style << %(##{id})
+          (id.include? '.') ? (attrs << %(id=#{id})) : (style << %(##{id}))
         end
         if (role = el.attr['class'])
           style << %(.#{role.tr ' ', '.'})
         end
-        block_attributes_line = %([#{style.join}]) unless style.empty?
+        attrs.unshift style.join unless style.empty?
+        block_attributes_line = %([#{attrs.join ','}]) unless attrs.empty?
         block = true
       end
       macro_attrs = [nil]
