@@ -125,7 +125,12 @@ module Kramdown; module AsciiDoc
     end
 
     def to_s
-      (@header.empty? ? @body : (@header + (@body.empty? ? [] : [''] + @body))).join LF
+      if @header.empty?
+        @body.join LF
+      else
+        attrs, others = @header.partition {|it| it.start_with? ':' }
+        (others + attrs.sort + (@body.empty? ? [] : [''] + @body)).join LF
+      end
     end
   end
 end; end

@@ -1,6 +1,6 @@
 = Document Title
-:idseparator: -
 :idprefix:
+:idseparator: -
 
 == A Section
 
