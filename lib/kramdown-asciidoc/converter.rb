@@ -83,7 +83,7 @@ module Kramdown; module AsciiDoc
     CssPropDelimRx = /\s*;\s*/
     FullStopRx = /(?<=\S\.|.\?|.!)\p{Blank}+/
     InadvertentReplacementsRx = /[-=]>|<[-=]|\.\.\.|\{\p{Word}[\p{Word}-]*\}/
-    InvalidIdCharsRx = /[^ \p{Word}\-.]+?/
+    InvalidIdCharsRx = /&(?:[a-z][a-z]+\d{0,2}|#\d\d\d{0,4}|#x[\da-f][\da-f][\da-f]{0,3});|[^ \p{Word}\-.]+?/
     ListMarkerRx = /^[ \t]*(?:(?:-|\*\*{0,4}|\.\.{0,4}|\d+\.|[a-zA-Z]\.|[IVXivx]+\))[ \t]|.*?(?::::{0,2}|;;)(?:$|[ \t]))/
     MenuRefRx = /^([\p{Word}&].*?)\s>\s([\p{Word}&].*(?:\s>\s|$))+/
     ReplaceableTextRx = /[-=]>|<[-=]| -- |\p{Word}--\p{Word}|\*\*|\.\.\.|&\S+;|\{\p{Word}[\p{Word}-]*\}|(?:https?|ftp):\/\/\p{Word}|\((?:C|R|TM)\)/
@@ -170,17 +170,17 @@ module Kramdown; module AsciiDoc
       end
       if (child_i = to_element el.children[0]).type == :html_element && child_i.value == 'a' && (id = child_i.attr['id'])
         el = clone el, children: child_i.children + (el.children.drop 1)
-        unless @lazy_ids && id == (generate_unique_id el.options[:raw_text], false)
+        unless @lazy_ids && id == (generate_unique_id (extract_raw_text el), false)
           (id.include? '.') ? (attrs << %(id=#{id})) : (style << %(##{id}))
         end
         record_id id
       elsif (id = el.attr['id'])
         # NOTE no need to check for '.' in this case since it's not recognized as a valid ID character by kramdown
-        style << %(##{id}) unless @lazy_ids && id == (generate_unique_id el.options[:raw_text], false)
+        style << %(##{id}) unless @lazy_ids && id == (generate_unique_id (extract_raw_text el), false)
         record_id id
       elsif @auto_ids
         unless @lazy_ids
-          ((id = generate_unique_id el.options[:raw_text]).include? '.') ? (attrs << %(id=#{id})) : (style << %(##{id}))
+          ((id = generate_unique_id (extract_raw_text el)).include? '.') ? (attrs << %(id=#{id})) : (style << %(##{id}))
         end
       end
       if (role = el.attr['class'])
@@ -732,6 +732,22 @@ module Kramdown; module AsciiDoc
       else
         result.join LF
       end
+    end
+
+    def extract_raw_text node
+      node.children.reduce([]) {|accum, child| mine_text child, accum }.join
+    end
+
+    def mine_text node, accum
+      case node.type
+      when :text
+        accum << node.value
+      when :entity
+        accum << node.options[:original]
+      else
+        node.children.each {|child| mine_text child, accum }
+      end
+      accum
     end
 
     def generate_id str
