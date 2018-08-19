@@ -19,6 +19,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * don't modify value of :attributes option passed to `convert` and `convert_file` API methods
 * define ID containing a dot using longhand attribute assignment (#59)
 * extract raw text consistently regardless of input flavor (#56)
+* sort attributes in document header (#55)
 
 === Fixed
 
