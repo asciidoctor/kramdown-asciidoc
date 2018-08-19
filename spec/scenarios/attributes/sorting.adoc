@@ -1,0 +1,6 @@
+= Document Title
+:bar: bar
+:experimental:
+:foo: foo
+
+menu:Terminal[Quit]

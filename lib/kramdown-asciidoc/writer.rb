@@ -2,11 +2,13 @@ module Kramdown; module AsciiDoc
   class Writer
     LF = ?\n
 
-    attr_reader :header
+    attr_accessor :doctitle
     attr_reader :body
 
     def initialize
-      @header = []
+      @prologue = []
+      @doctitle = nil
+      @attributes = {}
       @body = []
       @nesting_stack = []
       @block_delimiter = nil
@@ -14,29 +16,16 @@ module Kramdown; module AsciiDoc
       @list_level = { list: 0, dlist: 0 }
     end
 
-    def doctitle
-      if (doctitle_line = @header.find {|l| l.start_with? '= ' })
-        doctitle_line.slice 2, doctitle_line.length
-      end
+    def add_attributes new_attributes
+      @attributes.update new_attributes
     end
 
-    def doctitle= new_doctitle
-      if (doctitle_idx = @header.index {|l| l.start_with? '= ' })
-        @header[doctitle_idx] = %(= #{new_doctitle})
-      else
-        @header.unshift %(= #{new_doctitle})
-      end
-      nil
+    def add_prologue_line line
+      @prologue << line
     end
 
-    def add_attributes attributes
-      attributes.each {|k, v| add_attribute k, v }
-      nil
-    end
-
-    def add_attribute name, value
-      @header << %(:#{name}:#{value.empty? ? '' : ' ' + value.to_s})
-      nil
+    def add_prologue_lines lines
+      @prologue.push(*lines)
     end
 
     def start_block
@@ -125,7 +114,12 @@ module Kramdown; module AsciiDoc
     end
 
     def to_s
-      (@header.empty? ? @body : (@header + (@body.empty? ? [] : [''] + @body))).join LF
+      header = @prologue.dup
+      header << %(= #{@doctitle}) if @doctitle
+      @attributes.sort.each do |name, val|
+        header << (val.empty? ? %(:#{name}:) : %(:#{name}: #{val}))
+      end unless @attributes.empty?
+      (header.empty? ? @body : (header + (@body.empty? ? [] : [''] + @body))).join LF
     end
   end
 end; end
