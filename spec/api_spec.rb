@@ -76,6 +76,15 @@ describe Kramdown::AsciiDoc do
       end
     end
 
+    it 'does not mutate options argument' do
+      the_output_file = Pathname.new output_file 'convert-with-options.adoc'
+      opts = { encode: true, to: the_output_file, attributes: {} }
+      hash = opts.hash
+      (expect subject.convert '**File > Save**', opts).to be_nil
+      (expect the_output_file.read).to eql %(:experimental:\n\nmenu:File[Save]\n)
+      (expect opts.hash).to eql hash
+    end
+
     it 'adds line feed (EOL) to end of output document if non-empty' do
       (expect subject.convert 'paragraph').to end_with ?\n
     end
@@ -169,6 +178,17 @@ describe Kramdown::AsciiDoc do
       # NOTE internal encoding must also be set for test to work on JRuby
       `#{ruby} -E ISO-8859-1:ISO-8859-1 #{Shellwords.escape script_file}`
       (expect IO.read the_output_file, mode: 'r:UTF-8').to eql %(#{source}\n)
+    end
+
+    it 'does not mutate options argument' do
+      another_source_file = Pathname.new output_file 'convert-file-with-options.md'
+      another_source_file.write '**File > Save**'
+      the_output_file = Pathname.new output_file 'convert-file-with-options.adoc'
+      opts = { to: the_output_file, attributes: {} }
+      hash = opts.hash
+      (expect subject.convert_file another_source_file, opts).to be_nil
+      (expect the_output_file.read).to eql %(:experimental:\n\nmenu:File[Save]\n)
+      (expect opts.hash).to eql hash
     end
 
     it 'passes result through postprocess callback if given' do
