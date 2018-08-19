@@ -2,9 +2,7 @@ module Kramdown; module AsciiDoc
   class Writer
     LF = ?\n
 
-    attr_reader :prologue
     attr_accessor :doctitle
-    attr_reader :attributes
     attr_reader :body
 
     def initialize
@@ -16,6 +14,18 @@ module Kramdown; module AsciiDoc
       @block_delimiter = nil
       @block_separator = ['']
       @list_level = { list: 0, dlist: 0 }
+    end
+
+    def add_attributes new_attributes
+      @attributes.update new_attributes
+    end
+
+    def add_prologue_line line
+      @prologue << line
+    end
+
+    def add_prologue_lines lines
+      @prologue.push(*lines)
     end
 
     def start_block

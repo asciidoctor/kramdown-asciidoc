@@ -146,7 +146,7 @@ module Kramdown; module AsciiDoc
       if (fallback_doctitle = @attributes.delete 'title')
         writer.doctitle ||= fallback_doctitle
       end
-      writer.attributes.update @attributes unless @attributes.empty?
+      writer.add_attributes @attributes unless @attributes.empty?
       result = writer.to_s.gsub TrailingSpaceRx, ''
       # QUESTION should we add a preprocessor step to clean the source?
       result = result.tr NBSP, ' ' if result.include? NBSP
@@ -191,7 +191,7 @@ module Kramdown; module AsciiDoc
       # NOTE kramdown has already removed newlines
       title = compose_text el, strip: true
       if level == 1 && writer.empty? && @current_heading_level != 1
-        writer.prologue << attrlist if attrlist
+        writer.add_prologue_line attrlist if attrlist
         writer.doctitle = title
         nil
       else
@@ -653,7 +653,7 @@ module Kramdown; module AsciiDoc
         (prologue_el = el.dup).children = children.take_while {|child| child.type == :xml_comment || child.type == :blank }
         (el = el.dup).children = children.drop prologue_el.children.size
         traverse prologue_el, (opts.merge writer: (prologue_writer = Writer.new))
-        opts[:writer].prologue.push(*prologue_writer.body)
+        opts[:writer].add_prologue_lines prologue_writer.body
       end
       el
     end
