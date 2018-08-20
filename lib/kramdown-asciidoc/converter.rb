@@ -1,5 +1,7 @@
 # encoding: UTF-8
 module Kramdown; module AsciiDoc
+  using CoreExt
+
   DEFAULT_PARSER_OPTS = {
     auto_ids: false,
     hard_wrap: false,
