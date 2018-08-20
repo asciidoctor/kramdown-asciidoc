@@ -43,6 +43,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * break on all terminal punctuation (period, question mark, and exclamation mark) when ventilating prose (#51)
 * consolidated logic in CLI by further delegating to API
 
+=== Details
+
+{uri-repo}/releases/tag/v1.0.0.alpha.12[git tag] | {uri-repo}/compare/v1.0.0.alpha.11\...v1.0.0.alpha.12[full diff]
+
 == 1.0.0.alpha.11 (2018-08-02) - @mojavelinux
 
 === Added
@@ -62,6 +66,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * use unconstrained codespan if bounded on either side by a smart quote
 * ignore auto-generated ID if heading has an explicit inline anchor
 
+=== Details
+
+{uri-repo}/releases/tag/v1.0.0.alpha.11[git tag] | {uri-repo}/compare/v1.0.0.alpha.10\...v1.0.0.alpha.11[full diff]
+
 == 1.0.0.alpha.10 (2018-07-16) - @mojavelinux
 
 === Added
@@ -80,6 +88,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 * insert blank line above list continuation to attach to parent list item (#27)
 
+=== Details
+
+{uri-repo}/releases/tag/v1.0.0.alpha.10[git tag] | {uri-repo}/compare/v1.0.0.alpha.9\...v1.0.0.alpha.10[full diff]
+
 == 1.0.0.alpha.9 (2018-07-10) - @mojavelinux
 
 === Changed
@@ -88,6 +100,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * add specialcharacters replacement to inline pass macro
 * don't add newline after period at start of line when producing ventilated prose
 * use :imagesdir API option or --imagesdir CLI option to set implicit imagesdir instead of attribute
+
+=== Details
+
+{uri-repo}/releases/tag/v1.0.0.alpha.9[git tag] | {uri-repo}/compare/v1.0.0.alpha.8\...v1.0.0.alpha.9[full diff]
 
 == 1.0.0.alpha.8 (2018-07-03) - @mojavelinux
 
@@ -99,6 +115,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 * don't escape double hyphen in codespan unless surrounded by spaces or word chars
 * treat leading specialchar (<, >, or &) as a word character (since it gets converted to a char reference)
+
+=== Details
+
+{uri-repo}/releases/tag/v1.0.0.alpha.8[git tag] | {uri-repo}/compare/v1.0.0.alpha.7\...v1.0.0.alpha.8[full diff]
 
 == 1.0.0.alpha.7 (2018-07-02) - @mojavelinux
 
@@ -120,6 +140,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * replace .md extension with .adoc in text of interdoc xref
 * replace a non-breaking space with a single space instead of \{nbsp}
 
+=== Details
+
+{uri-repo}/releases/tag/v1.0.0.alpha.7[git tag] | {uri-repo}/compare/v1.0.0.alpha.6\...v1.0.0.alpha.7[full diff]
+
 == 1.0.0.alpha.6 (2018-06-26) - @mojavelinux
 
 === Added
@@ -136,6 +160,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * use writer to track list nesting level
 * fix warnings
 
+=== Details
+
+{uri-repo}/releases/tag/v1.0.0.alpha.6[git tag] | {uri-repo}/compare/v1.0.0.alpha.5\...v1.0.0.alpha.6[full diff]
+
 == 1.0.0.alpha.5 (2018-06-19) - @mojavelinux
 
 === Added
@@ -150,6 +178,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * revert \&amp; back to &
 * use separate list level for dl
 * fold description list item to one line if primary text is a single line
+
+=== Details
+
+{uri-repo}/releases/tag/v1.0.0.alpha.5[git tag] | {uri-repo}/compare/v1.0.0.alpha.4\...v1.0.0.alpha.5[full diff]
 
 == 1.0.0.alpha.4 (2018-06-12) - @mojavelinux
 
@@ -176,6 +208,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * upgrade kramdown to 1.17.0
 * use correct casing for kramdown in README and library metadata
 
+=== Details
+
+{uri-repo}/releases/tag/v1.0.0.alpha.4[git tag] | {uri-repo}/compare/v1.0.0.alpha.3\...v1.0.0.alpha.4[full diff]
+
 == 1.0.0.alpha.3 (2018-05-31) - @mojavelinux
 
 === Added
@@ -188,6 +224,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 === Changed
 
 * replace ndash symbol with \-- instead of \&#8211;
+
+=== Details
+
+{uri-repo}/releases/tag/v1.0.0.alpha.3[git tag] | {uri-repo}/compare/v1.0.0.alpha.2\...v1.0.0.alpha.3[full diff]
 
 == 1.0.0.alpha.2 (2018-05-24) - @mojavelinux
 
@@ -215,8 +255,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 === Details
 
-{uri-repo}/releases/tag/v1.0.0.alpha.2[git tag] |
-{uri-repo}/compare/v1.0.0.alpha.1...v1.0.0.alpha.2[full diff]
+{uri-repo}/releases/tag/v1.0.0.alpha.2[git tag] | {uri-repo}/compare/v1.0.0.alpha.1\...v1.0.0.alpha.2[full diff]
 
 == 1.0.0.alpha.1 (2018-05-22) - @mojavelinux
 
