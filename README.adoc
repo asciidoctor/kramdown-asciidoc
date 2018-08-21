@@ -92,7 +92,7 @@ For example, you can inject attributes (key/value pairs) into the header of the 
 
  $ kramdoc -a product-name="ACME Cloud" -a hide-uri-scheme sample.md
 
-Another use for attributes is setting the shared images directory, which is coverd in the next section.
+Another use for attributes is setting the shared images directory, which is covered in the next section.
 
 == Configure shared images directory
 
