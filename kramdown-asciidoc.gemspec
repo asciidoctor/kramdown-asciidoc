@@ -35,6 +35,7 @@ Gem::Specification.new do |s|
   #s.extra_rdoc_files = ['CHANGELOG.adoc', 'LICENSE.adoc']
 
   s.add_runtime_dependency 'kramdown', '~> 1.17.0'
+  s.add_development_dependency 'deep-cover-core', '~> 0.6.3'
   s.add_development_dependency 'rake', '~> 12.3.1'
   s.add_development_dependency 'rspec', '~> 3.8.0'
   s.add_development_dependency 'simplecov', '~> 0.16.1'
