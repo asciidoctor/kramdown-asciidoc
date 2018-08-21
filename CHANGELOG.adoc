@@ -25,6 +25,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 * enclose codeblock content in literal block delimiters if content starts with a list marker (#57)
 
+=== Details
+
+{uri-repo}/releases/tag/v1.0.0.alpha.13[git tag] | {uri-repo}/compare/v1.0.0.alpha.12\...v1.0.0.alpha.13[full diff]
+
 == 1.0.0.alpha.12 (2018-08-11) - @mojavelinux
 
 === Added
