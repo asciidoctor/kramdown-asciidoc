@@ -269,7 +269,7 @@ Then, use the `bundle` command to install the project dependencies under the pro
 
 NOTE: You must invoke `bundle` from the project's root directory so it can locate the [.path]_Gemfile_.
 
-=== Run the Tests
+=== Run the tests
 
 The test suite is located in the [.path]_spec_ directory.
 The tests are all based on RSpec.
@@ -291,7 +291,7 @@ To run all the scenarios, point RSpec at the spec file:
 
  $ bundle exec rspec spec/scenario_spec.rb
 
-==== Run Individual Tests
+==== Run individual tests
 
 If you only want to run a single test, or a group of tests, you can do so by tagging the test cases, then filtering the test run using that tag.
 
@@ -317,6 +317,24 @@ Run RSpec with the example filter:
  $ bundle exec rspec -e wrap
 
 RSpec will only run the specifications that have a description containing the text `wrap`.
+
+=== Generate code coverage
+
+To generate a code coverage report when running tests using simplecov, set the `COVERAGE` environment variable as follows when running the tests:
+
+ $ COVERAGE=true bundle exec rake
+
+You'll see a total coverage score as well as a link to the HTML report in the output.
+The HTML report helps you understand which lines and branches were missed, if any.
+
+Despite being fast, the downside of using simplecov is that it misses branches.
+You can use deep-cover to generate a more thorough report.
+To do so, set the `COVERAGE` environment as follows when running the tests:
+
+ $ COVERAGE=deep bundle exec rake
+
+You'll see a total coverage score, a detailed coverage report, and a link to HTML report in the output.
+The HTML report helps you understand which lines and branches were missed, if any.
 
 === Usage
 
