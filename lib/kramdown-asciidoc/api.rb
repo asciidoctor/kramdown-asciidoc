@@ -44,5 +44,3 @@ module Kramdown; module AsciiDoc
     convert markdown, (opts.merge to: to, encode: false)
   end
 end; end
-
-Kramdoc = Kramdown::AsciiDoc

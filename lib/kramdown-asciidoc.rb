@@ -5,5 +5,9 @@ require_relative 'kramdown-asciidoc/core_ext/regexp/is_match'
 require_relative 'kramdown-asciidoc/api'
 require_relative 'kramdown-asciidoc/converter'
 require_relative 'kramdown-asciidoc/writer'
+# register AsciiDoc converter with kramdown
+Kramdown::Converter::Asciidoc = Kramdown::AsciiDoc::Converter
+# add Kramdoc alias
+Kramdoc = Kramdown::AsciiDoc
 autoload :Pathname, 'pathname'
 autoload :YAML, 'yaml'

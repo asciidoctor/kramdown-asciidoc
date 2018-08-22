@@ -779,5 +779,3 @@ module Kramdown; module AsciiDoc
     end
   end
 end; end
-
-Kramdown::Converter::Asciidoc = Kramdown::AsciiDoc::Converter
