@@ -85,6 +85,27 @@ describe Kramdown::AsciiDoc do
       (expect opts.hash).to eql hash
     end
 
+    it 'removes whitespace in front of leading XML comment' do
+      input = <<~EOS
+       <!--
+      A legal statement
+
+      ...of some sort
+      -->
+      # Document Title
+      EOS
+
+      expected = <<~EOS
+      ////
+      A legal statement
+
+      ...of some sort
+      ////
+      = Document Title
+      EOS
+      (expect subject.convert input).to eql expected
+    end
+
     it 'adds line feed (EOL) to end of output document if non-empty' do
       (expect subject.convert 'paragraph').to end_with ?\n
     end

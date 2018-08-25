@@ -5,6 +5,12 @@
 This document provides a high-level view of the changes to {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
+== Unreleased
+
+=== Changed
+
+* remove whitespace in front of leading XML comment (so a block comment isn't mistaken for an inline comment)
+
 == 1.0.0.alpha.13 (2018-08-21) - @mojavelinux
 
 === Added

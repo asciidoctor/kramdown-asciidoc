@@ -1,6 +1,7 @@
 module Kramdown; module AsciiDoc
   CR = ?\r
   LF = ?\n
+  TAB = ?\t
   UTF_8 = ::Encoding::UTF_8
 
   def self.convert markdown, opts = {}
@@ -13,6 +14,7 @@ module Kramdown; module AsciiDoc
     attributes = (parser_opts[:attributes] = (parser_opts[:attributes] || {}).dup)
     markdown = ::Kramdown::AsciiDoc.extract_front_matter markdown, attributes
     markdown = ::Kramdown::AsciiDoc.replace_toc markdown, attributes
+    markdown = markdown.lstrip if (markdown.start_with? ' ', TAB) && (markdown.lstrip.start_with? '<!--')
     asciidoc = (kramdown_doc = ::Kramdown::Document.new markdown, parser_opts).to_asciidoc
     if (postprocess = opts[:postprocess])
       asciidoc = (postprocess.arity == 1 ? postprocess[asciidoc] : postprocess[asciidoc, kramdown_doc]) || asciidoc
