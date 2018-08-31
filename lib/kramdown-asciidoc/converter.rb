@@ -54,7 +54,7 @@ module Kramdown; module AsciiDoc
     BLOCK_TYPES = [:p, :blockquote, :codeblock, :table]
     DLIST_MARKERS = %w(:: ;; ::: ::::)
     NON_DEFAULT_TABLE_ALIGNMENTS = [:center, :right]
-    PUNCTUATION = %w(. ? !)
+    STOP_PUNCTUATION = %w(. ? ! ;)
     # FIXME here we reverse the smart quotes; add option to allow them (needs to be handled carefully)
     SMART_QUOTE_ENTITY_TO_MARKUP = { ldquo: ?", rdquo: ?", lsquo: ?', rsquo: ?' }
     TYPOGRAPHIC_SYMBOL_TO_MARKUP = {
@@ -83,13 +83,13 @@ module Kramdown; module AsciiDoc
 
     CommentPrefixRx = /^ *! ?/m
     CssPropDelimRx = /\s*;\s*/
-    FullStopRx = /(?<=\S\.|.\?|.!)\p{Blank}+/
     InadvertentReplacementsRx = /[-=]>|<[-=]|\.\.\.|\{\p{Word}[\p{Word}-]*\}/
     InvalidIdCharsRx = /&(?:[a-z][a-z]+\d{0,2}|#\d\d\d{0,4}|#x[\da-f][\da-f][\da-f]{0,3});|[^ \p{Word}\-.]+?/
     ListMarkerRx = /^[ \t]*(?:(?:-|\*\*{0,4}|\.\.{0,4}|\d+\.|[a-zA-Z]\.|[IVXivx]+\))[ \t]|.*?(?::::{0,2}|;;)(?:$|[ \t]))/
     MenuRefRx = /^([\p{Word}&].*?)\s>\s([\p{Word}&].*(?:\s>\s|$))+/
     ReplaceableTextRx = /[-=]>|<[-=]| -- |\p{Word}--\p{Word}|\*\*|\.\.\.|&\S+;|\{\p{Word}[\p{Word}-]*\}|(?:https?|ftp):\/\/\p{Word}|\((?:C|R|TM)\)/
     SmartApostropheRx = /\b’\b/
+    StopPunctRx = /(?<=\S[.;]|.\?|.!)\p{Blank}+/
     TrailingSpaceRx = / +$/
     TypographicSymbolRx = /[“”‘’—–…]/
     UriSchemeRx = /(?:https?|ftp):\/\/\p{Word}/
@@ -730,7 +730,7 @@ module Kramdown; module AsciiDoc
       end
       if ventilate
         result.map {|line|
-          (line.start_with? '//') || !(PUNCTUATION.any? {|punc| line.include? punc }) ? line : (line.gsub FullStopRx, LF)
+          (line.start_with? '//') || !(STOP_PUNCTUATION.any? {|punc| line.include? punc }) ? line : (line.gsub StopPunctRx, LF)
         }.join LF
       else
         result.join LF

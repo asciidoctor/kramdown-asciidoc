@@ -1,0 +1,1 @@
+In August 1991, there was only one website online; 3 years later, over 10,000.

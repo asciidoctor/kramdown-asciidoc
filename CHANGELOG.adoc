@@ -7,6 +7,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == Unreleased
 
+=== Added
+
+* ventilate prose on semi-colon following non-space character
+
 === Changed
 
 * remove whitespace in front of leading XML comment (so a block comment isn't mistaken for an inline comment)
