@@ -14,6 +14,7 @@ module Kramdown; module AsciiDoc
       @block_delimiter = nil
       @block_separator = ['']
       @list_level = { list: 0, dlist: 0 }
+      @follows_list = false
     end
 
     def add_attributes new_attributes
@@ -29,11 +30,13 @@ module Kramdown; module AsciiDoc
     end
 
     def start_block
+      @follows_list = false
       @body << @block_separator[-1] unless empty?
       nil
     end
 
     def start_delimited_block delimiter
+      @follows_list = false
       @body << (@block_delimiter = delimiter.length == 1 ? delimiter * 4 : delimiter)
       @nesting_stack << [(@body.pop @body.length), @block_delimiter, @block_separator, @list_level]
       @block_separator = ['']
@@ -58,6 +61,7 @@ module Kramdown; module AsciiDoc
     end
 
     def end_list kin
+      @follows_list = true
       @block_separator.pop
       @list_level[kin] -= 1
       nil
@@ -69,6 +73,10 @@ module Kramdown; module AsciiDoc
 
     def in_list?
       @block_separator[-1] == '+'
+    end
+
+    def follows_list?
+      @follows_list
     end
 
     def add_blank_line
