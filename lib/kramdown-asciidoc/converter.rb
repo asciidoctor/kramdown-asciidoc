@@ -617,8 +617,13 @@ module Kramdown; module AsciiDoc
 
     def convert_xml_comment el, opts
       writer = opts[:writer]
-      XmlCommentRx =~ el.value
-      lines = (($1.include? ' !') ? ($1.gsub CommentPrefixRx, '').strip : $1.strip).split LF
+      if (val = (XmlCommentRx.match el.value)[1]).include? ' !'
+        lines = (val.gsub CommentPrefixRx, '').strip.split LF
+      elsif (val = val.strip).empty? && !writer.follows_list?
+        return
+      else
+        lines = val.split LF
+      end
       #siblings = (parent = opts[:parent]) ? parent.children : []
       if (el.options[:category] == :block)# || (!opts[:result][-1] && siblings[-1] == el)
         writer.start_block
