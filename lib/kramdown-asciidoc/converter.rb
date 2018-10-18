@@ -44,6 +44,16 @@ module Kramdown; module AsciiDoc
     end
   end
 
+  def self.snap_leading_comment markdown, attributes
+    (markdown.start_with? ' ', TAB) && (markdown.lstrip.start_with? '<!--') ? markdown.lstrip : markdown
+  end
+
+  DEFAULT_PREPROCESSORS = [
+    (method :extract_front_matter),
+    (method :replace_toc),
+    (method :snap_leading_comment),
+  ]
+
   class Converter < ::Kramdown::Converter::Base
     RESOLVE_ENTITY_TABLE = { 38 => '&', 60 => '<', 62 => '>', 124 => '|' }
     ADMON_LABELS = %w(Note Tip Caution Warning Important Attention Hint).map {|l| [l, l] }.to_h

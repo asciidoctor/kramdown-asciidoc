@@ -139,6 +139,29 @@ describe Kramdown::AsciiDoc do
       (expect subject.convert input, attributes: (attributes = {})).to eql expected
       (expect attributes).to be_empty
     end
+
+    it 'applies preprocessors specified by :preprocessors option' do
+      input = <<~EOS
+      # Document Title
+      EOS
+
+      expected = <<~EOS
+      = You Have Been Replaced!
+      EOS
+
+      preprocessors = [-> markdown, attributes { '# You Have Been Replaced!' }]
+      (expect subject.convert input, preprocessors: preprocessors).to eql expected
+    end
+
+    it 'does not apply preprocessors if :preprocessors option is falsy' do
+      input = <<~EOS
+      ---
+      front: matter
+      ---
+      EOS
+
+      (expect subject.convert input, preprocessors: nil).to start_with %(''')
+    end
   end
 
   context '#convert_file' do

@@ -12,9 +12,9 @@ module Kramdown; module AsciiDoc
     markdown = markdown.slice 1, markdown.length while markdown.start_with? LF
     parser_opts = ::Kramdown::AsciiDoc::DEFAULT_PARSER_OPTS.merge opts
     attributes = (parser_opts[:attributes] = (parser_opts[:attributes] || {}).dup)
-    markdown = ::Kramdown::AsciiDoc.extract_front_matter markdown, attributes
-    markdown = ::Kramdown::AsciiDoc.replace_toc markdown, attributes
-    markdown = markdown.lstrip if (markdown.start_with? ' ', TAB) && (markdown.lstrip.start_with? '<!--')
+    ((opts.fetch :preprocessors, ::Kramdown::AsciiDoc::DEFAULT_PREPROCESSORS) || []).each do |preprocessor|
+      markdown = preprocessor[markdown, attributes]
+    end
     asciidoc = (kramdown_doc = ::Kramdown::Document.new markdown, parser_opts).to_asciidoc
     if (postprocess = opts[:postprocess])
       asciidoc = (postprocess.arity == 1 ? postprocess[asciidoc] : postprocess[asciidoc, kramdown_doc]) || asciidoc
