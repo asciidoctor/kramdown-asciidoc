@@ -24,18 +24,18 @@ endif::[]
 :uri-kramdown: https://kramdown.gettalong.org
 :uri-rvm: https://rvm.io
 :uri-rvm-install: https://rvm.io/rvm/install
-:uri-docs-api: https://www.rubydoc.info/github/asciidoctor/kramdown-asciidoc/master
+:uri-api-docs: https://www.rubydoc.info/github/asciidoctor/kramdown-asciidoc/master
 :uri-ci-appveyor: https://ci.appveyor.com/project/asciidoctor/kramdown-asciidoc
-:img-ci-appveyor: https://ci.appveyor.com/api/projects/status/2pwvdbcoeux1ifb5/branch/master?svg=true
+:img-uri-ci-appveyor: https://ci.appveyor.com/api/projects/status/2pwvdbcoeux1ifb5/branch/master?svg=true
 :uri-ci-travis: https://travis-ci.org/asciidoctor/kramdown-asciidoc
-:uri-ci-travis-img: https://img.shields.io/travis/asciidoctor/kramdown-asciidoc/master.svg
+:img-uri-ci-travis: https://img.shields.io/travis/asciidoctor/kramdown-asciidoc/master.svg
 :uri-gem: https://rubygems.org/gems/kramdown-asciidoc
-:uri-gem-img: https://img.shields.io/gem/v/kramdown-asciidoc.svg?label=gem
+:img-uri-gem: https://img.shields.io/gem/v/kramdown-asciidoc.svg?label=gem
 
 ifdef::status[]
-image:{uri-gem-img}[Gem Version,link={uri-gem}]
-image:{uri-ci-travis-img}[Build Status (Travis CI),link={uri-ci-travis}]
-image:{img-ci-appveyor}[Build Status (AppVeyor),link={uri-ci-appveyor}]
+image:{img-uri-gem}[Gem Version,link={uri-gem}]
+image:{img-uri-ci-travis}[Build Status (Travis CI),link={uri-ci-travis}]
+image:{img-uri-ci-appveyor}[Build Status (AppVeyor),link={uri-ci-appveyor}]
 endif::[]
 
 {uri-repo}[{project-name}] (gem: *{project-handle}*) is a {uri-kramdown}[kramdown] extension for converting Markdown documents to {uri-asciidoc}[AsciiDoc].
@@ -163,7 +163,7 @@ If these values do not match the defaults in AsciiDoc, the `idprefix` and/or `id
 
 == API
 
-In additional to the command-line interface, {project-name} also provides a porcelain API (see {uri-docs-api}[API docs]).
+In additional to the command-line interface, {project-name} also provides a porcelain API (see {uri-api-docs}[API docs]).
 We use the term "`porcelain`" because the API hides the details of registering the converter, preprocessing the Markdown document, parsing the document with kramdown, and calling the converter method to transform the parse tree to AsciiDoc.
 
 The API consists of two static methods:
@@ -219,7 +219,7 @@ Kramdoc.convert markdown, to: 'result.adoc'
 
 The input string is automatically converted to UTF-8.
 
-For more information about the API, refer to the {uri-docs-api}[API documentation].
+For more information about the API, refer to the {uri-api-docs}[API documentation].
 
 == Development
 

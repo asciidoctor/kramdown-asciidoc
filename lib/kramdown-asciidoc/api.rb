@@ -1,9 +1,23 @@
 module Kramdown; module AsciiDoc
-  CR = ?\r
-  LF = ?\n
-  TAB = ?\t
-  UTF_8 = ::Encoding::UTF_8
-
+  # Converts a Markdown string to an AsciiDoc string and either returns the result or writes it to a file.
+  #
+  # @param markdown [String] the Markdown source to convert to AsciiDoc.
+  # @param opts [Hash] additional options to configure the behavior of the converter.
+  # @option opts [Boolean] :auto_ids (false) controls whether converter automatically generates an explicit ID for any
+  #   section title (aka heading) that doesn't already have an ID assigned to it.
+  # @option opts [String] :auto_id_prefix (nil) the prefix to add to an auto-generated ID.
+  # @option opts [String] :auto_id_separator ('-') the separator to use in auto-generated IDs.
+  # @option opts [Boolean] :lazy_ids (false) controls whether to drop the ID if it matches the auto-generated ID value.
+  # @option opts [Symbol] :wrap (:preserve) the line wrapping behavior to apply (:preserve, :ventilate, or :none).
+  # @option opts [Integer] :heading_offset (0) the heading offset to apply to heading levels.
+  # @option opts [Boolean] :auto_links (true) whether to allow raw URLs to be recognized as links.
+  # @option opts [Hash] :attributes ({}) AsciiDoc attributes to add to the document header of the output document.
+  # @option opts [Symbol] :encode (true) whether to reencode the source to UTF-8.
+  # @option opts [Array<Proc>] :preprocessors ([]) a list of preprocessors functions to execute on the cleaned Markdown source.
+  # @option opts [Proc] :postprocess ([]) a function through which to run the output document.
+  # @option opts [String, Pathname] :to (nil) the path to which to write the output document.
+  #
+  # @return [String, nil] the converted AsciiDoc or nil if the :to option is specified.
   def self.convert markdown, opts = {}
     unless opts[:encode] == false || (markdown.encoding == UTF_8 && !(markdown.include? CR))
       markdown = markdown.encode UTF_8, universal_newline: true
@@ -33,16 +47,39 @@ module Kramdown; module AsciiDoc
     end
   end
 
+  # Converts a Markdown file to AsciiDoc and writes the result to a file or the specified destination.
+  #
+  # @param markdown_file [String] the Markdown file path to convert to AsciiDoc.
+  # @param opts [Hash] additional options to configure the behavior of the converter.
+  # @option opts [Boolean] :auto_ids (false) controls whether converter automatically generates an explicit ID for any
+  #   section title (aka heading) that doesn't already have an ID assigned to it.
+  # @option opts [String] :auto_id_prefix (nil) the prefix to add to an auto-generated ID.
+  # @option opts [String] :auto_id_separator ('-') the separator to use in auto-generated IDs.
+  # @option opts [Boolean] :lazy_ids (false) controls whether to drop the ID if it matches the auto-generated ID value.
+  # @option opts [Symbol] :wrap (:preserve) the line wrapping behavior to apply (:preserve, :ventilate, or :none).
+  # @option opts [Integer] :heading_offset (0) the heading offset to apply to heading levels.
+  # @option opts [Boolean] :auto_links (true) whether to allow raw URLs to be recognized as links.
+  # @option opts [Hash] :attributes ({}) AsciiDoc attributes to add to the document header of the output document.
+  # @option opts [Array<Proc>] :preprocessors ([]) a list of preprocessors functions to execute on the cleaned Markdown source.
+  # @option opts [Proc] :postprocess ([]) a function through which to run the output document.
+  # @option opts [String, Pathname] :to (nil) the path to which to write the output document.
+  #
+  # @return [nil, String] the converted document if the :to option is specified and falsy, otherwise nil.
   def self.convert_file markdown_file, opts = {}
     markdown = ::IO.read markdown_file, mode: 'r:UTF-8', newline: :universal
     if (to = opts[:to])
       to = ::Pathname.new to.to_s unless ::Pathname === to || (to.respond_to? :write)
-    else
-      unless opts.key? :to
-        to = (::Pathname.new markdown_file).sub_ext '.adoc'
-        raise ::IOError, %(input and output cannot be the same file: #{markdown_file}) if to.to_s == markdown_file.to_s
-      end
+    elsif !(opts.key? :to)
+      to = (::Pathname.new markdown_file).sub_ext '.adoc'
+      raise ::IOError, %(input and output cannot be the same file: #{markdown_file}) if to.to_s == markdown_file.to_s
     end
     convert markdown, (opts.merge to: to, encode: false)
   end
+
+  private
+
+  CR = ?\r
+  LF = ?\n
+  TAB = ?\t
+  UTF_8 = ::Encoding::UTF_8
 end; end

@@ -1,8 +1,10 @@
 --charset UTF-8
 --readme README.adoc
+--no-private
 --hide-api private
 --title "Kramdown AsciiDoc API Docs"
 --output-dir apidoc
+--exclude /(?:core|kramdown)_ext/
 lib/**/*.rb
 -
 CHANGELOG.adoc
