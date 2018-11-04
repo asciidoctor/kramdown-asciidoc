@@ -1,6 +1,8 @@
 /.bundle/
 /.sass-cache/
+/.yardoc/
 /Gemfile.lock
+/apidoc/
 /coverage/
 /deep_cover/
 /pkg/

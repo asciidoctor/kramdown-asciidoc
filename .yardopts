@@ -1,0 +1,9 @@
+--charset UTF-8
+--readme README.adoc
+--hide-api private
+--title "Kramdown AsciiDoc API Docs"
+--output-dir apidoc
+lib/**/*.rb
+-
+CHANGELOG.adoc
+LICENSE.adoc
