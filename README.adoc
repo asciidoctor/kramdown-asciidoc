@@ -38,7 +38,7 @@ image:{img-uri-ci-travis}[Build Status (Travis CI),link={uri-ci-travis}]
 image:{img-uri-ci-appveyor}[Build Status (AppVeyor),link={uri-ci-appveyor}]
 endif::[]
 
-{uri-repo}[{project-name}] (gem: *{project-handle}*) is a {uri-kramdown}[kramdown] extension for converting Markdown documents to {uri-asciidoc}[AsciiDoc].
+{uri-repo}[{project-name}] (gem: *{project-handle}*, command: `kramdoc`) is a {uri-kramdown}[kramdown] extension for converting Markdown documents to {uri-asciidoc}[AsciiDoc].
 Notably, the converter generates modern AsciiDoc syntax suitable for use with {uri-asciidoctor}[Asciidoctor].
 
 == Prerequisites
@@ -166,12 +166,12 @@ If these values do not match the defaults in AsciiDoc, the `idprefix` and/or `id
 In additional to the command-line interface, {project-name} also provides a porcelain API (see {uri-api-docs}[API docs]).
 We use the term "`porcelain`" because the API hides the details of registering the converter, preprocessing the Markdown document, parsing the document with kramdown, and calling the converter method to transform the parse tree to AsciiDoc.
 
-The API consists of two static methods:
+The API consists of two static methods in the Kramdoc module:
 
-* `Kramdoc.convert(source, opts)` - convert a Markdown string to AsciiDoc
-* `Kramdoc.convert_file(file, opts)` - convert a Markdown file to AsciiDoc
+* `Kramdoc.convert(source, opts)` - convert a Markdown string or IO object to AsciiDoc
+* `Kramdoc.convert_file(file, opts)` - convert a Markdown file object or path to AsciiDoc
 
-NOTE: `Kramdoc` is shorthand for `Kramdown::AsciiDoc` to align with the name of the CLI.
+NOTE: `Kramdoc` is a shorthand for `Kramdown::AsciiDoc` to align with the name of the CLI.
 
 Both API methods accept the source as the first argument and an options hash as the second.
 
