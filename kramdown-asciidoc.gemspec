@@ -17,7 +17,8 @@ Gem::Specification.new do |s|
     'mailing_list_uri' => 'http://discuss.asciidoctor.org',
     'source_code_uri' => 'https://github.com/asciidoctor/kramdown-asciidoc'
   }
-  #s.required_ruby_version = '>= 2.4.0'
+  # NOTE required ruby version is informational only; it's not enforced since it can't be overridden and can cause builds to break
+  #s.required_ruby_version = '>= 2.3.0'
 
   files = begin
     (result = Open3.popen3('git ls-files -z') {|_, out| out.read }.split ?\0).empty? ? Dir['**/*'] : result
