@@ -31,10 +31,6 @@ Gem::Specification.new do |s|
 
   s.require_paths = ['lib']
 
-  #s.has_rdoc = true
-  #s.rdoc_options = ['--charset=UTF-8']
-  #s.extra_rdoc_files = ['CHANGELOG.adoc', 'LICENSE.adoc']
-
   s.add_runtime_dependency 'kramdown', '~> 1.17.0'
   s.add_development_dependency 'deep-cover-core', '~> 0.6.3'
   s.add_development_dependency 'rake', '~> 12.3.1'
