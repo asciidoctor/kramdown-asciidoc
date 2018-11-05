@@ -11,6 +11,8 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 * ventilate prose on semi-colon following non-space character
 * add :preprocessors option to convert API; apply default preprocessors if not set; apply none if falsy (#23)
+* accept IO object as input to convert method (#49)
+* accept File object as input to convert_file method (#49)
 
 === Changed
 

@@ -1,8 +1,9 @@
 require_relative 'spec_helper'
+require 'stringio'
 
 describe Kramdown::AsciiDoc do
   context '#convert' do
-    it 'converts Markdown to AsciiDoc' do
+    it 'converts Markdown string to AsciiDoc string' do
       input = <<~EOS
       ---
       title: Document Title
@@ -18,6 +19,24 @@ describe Kramdown::AsciiDoc do
       EOS
 
       (expect subject.convert input).to eql expected
+    end
+
+    it 'converts Markdown IO to AsciiDoc string' do
+      input = <<~EOS.encode 'ISO-8859-1'
+      ---
+      title: Document Title
+      ---
+
+      Très bien.
+      EOS
+
+      expected = <<~EOS
+      = Document Title
+
+      Très bien.
+      EOS
+
+      (expect subject.convert StringIO.new input).to eql expected
     end
 
     it 'encodes Markdown source to UTF-8' do
@@ -174,6 +193,15 @@ describe Kramdown::AsciiDoc do
       (expect subject.convert_file the_source_file).to be_nil
       (expect Pathname.new the_output_file).to exist
       (expect (IO.read the_output_file)).to eql expected_output
+    end
+
+    it 'converts Markdown file object to AsciiDoc file' do
+      the_output_file = output_file %(convert-file-api-#{object_id}.adoc)
+      File.open the_source_file do |the_source_file_object|
+        (expect subject.convert_file the_source_file_object).to be_nil
+        (expect Pathname.new the_output_file).to exist
+        (expect (IO.read the_output_file)).to eql expected_output
+      end
     end
 
     it 'writes output file to string path specified by :to option' do

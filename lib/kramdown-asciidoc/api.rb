@@ -1,7 +1,7 @@
 module Kramdown; module AsciiDoc
   # Converts a Markdown string to an AsciiDoc string and either returns the result or writes it to a file.
   #
-  # @param markdown [String] the Markdown source to convert to AsciiDoc.
+  # @param markdown [String, IO] the Markdown source to convert to AsciiDoc.
   # @param opts [Hash] additional options to configure the behavior of the converter.
   # @option opts [Boolean] :auto_ids (false) controls whether converter automatically generates an explicit ID for any
   #   section title (aka heading) that doesn't already have an ID assigned to it.
@@ -19,7 +19,13 @@ module Kramdown; module AsciiDoc
   #
   # @return [String, nil] the converted AsciiDoc or nil if the :to option is specified.
   def self.convert markdown, opts = {}
-    unless opts[:encode] == false || (markdown.encoding == UTF_8 && !(markdown.include? CR))
+    if markdown.respond_to? :read
+      markdown = markdown.read
+      encode = true
+    else
+      encode = opts[:encode]
+    end
+    unless encode == false || (markdown.encoding == UTF_8 && !(markdown.include? CR))
       markdown = markdown.encode UTF_8, universal_newline: true
     end
     markdown = markdown.rstrip
@@ -49,7 +55,7 @@ module Kramdown; module AsciiDoc
 
   # Converts a Markdown file to AsciiDoc and writes the result to a file or the specified destination.
   #
-  # @param markdown_file [String] the Markdown file path to convert to AsciiDoc.
+  # @param markdown_file [String, File] the Markdown file or file path to convert to AsciiDoc.
   # @param opts [Hash] additional options to configure the behavior of the converter.
   # @option opts [Boolean] :auto_ids (false) controls whether converter automatically generates an explicit ID for any
   #   section title (aka heading) that doesn't already have an ID assigned to it.
@@ -66,14 +72,21 @@ module Kramdown; module AsciiDoc
   #
   # @return [nil, String] the converted document if the :to option is specified and falsy, otherwise nil.
   def self.convert_file markdown_file, opts = {}
-    markdown = ::IO.read markdown_file, mode: 'r:UTF-8', newline: :universal
+    if ::File === markdown_file
+      markdown = markdown_file.read
+      markdown_file = markdown_file.path
+      encode = true
+    else
+      markdown = ::IO.read markdown_file, mode: 'r:UTF-8', newline: :universal
+      encode = false
+    end
     if (to = opts[:to])
       to = ::Pathname.new to.to_s unless ::Pathname === to || (to.respond_to? :write)
     elsif !(opts.key? :to)
       to = (::Pathname.new markdown_file).sub_ext '.adoc'
       raise ::IOError, %(input and output cannot be the same file: #{markdown_file}) if to.to_s == markdown_file.to_s
     end
-    convert markdown, (opts.merge to: to, encode: false)
+    convert markdown, (opts.merge to: to, encode: encode)
   end
 
   private
