@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
-== Unreleased
+== 1.0.0.rc.1 (2018-11-06) - @mojavelinux
 
 === Added
 
@@ -20,6 +20,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 * remove whitespace in front of leading XML comment (so a block comment isn't mistaken for an inline comment)
 * drop empty XML comment unless it comes after a list
+
+=== Details
+
+{uri-repo}/releases/tag/v1.0.0.rc.1[git tag] | {uri-repo}/compare/v1.0.0.alpha.13\...v1.0.0.rc.1[full diff]
 
 == 1.0.0.alpha.13 (2018-08-21) - @mojavelinux
 
