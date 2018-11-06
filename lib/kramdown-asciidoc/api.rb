@@ -14,7 +14,8 @@ module Kramdown; module AsciiDoc
   # @option opts [Hash] :attributes ({}) AsciiDoc attributes to add to the document header of the output document.
   # @option opts [Symbol] :encode (true) whether to reencode the source to UTF-8.
   # @option opts [Array<Proc>] :preprocessors ([]) a list of preprocessors functions to execute on the cleaned Markdown source.
-  # @option opts [Proc] :postprocess ([]) a function through which to run the output document.
+  # @option opts [Array<Proc>] :postprocessors ([]) a list of functions through which to run the output document.
+  # @option opts [Proc] :postprocess (nil) a function through which to run the output document (if :postprocessors is falsy).
   # @option opts [String, Pathname] :to (nil) the path to which to write the output document.
   #
   # @return [String, nil] the converted AsciiDoc or nil if the :to option is specified.
@@ -36,8 +37,8 @@ module Kramdown; module AsciiDoc
       markdown = preprocessor[markdown, attributes]
     end
     asciidoc = (kramdown_doc = ::Kramdown::Document.new markdown, parser_opts).to_asciidoc
-    if (postprocess = opts[:postprocess])
-      asciidoc = (postprocess.arity == 1 ? postprocess[asciidoc] : postprocess[asciidoc, kramdown_doc]) || asciidoc
+    (opts[:postprocessors] || Array(opts[:postprocess])).each do |postprocessor|
+      asciidoc = (postprocessor.arity == 1 ? postprocessor[asciidoc] : postprocessor[asciidoc, kramdown_doc]) || asciidoc
     end
     asciidoc += LF unless asciidoc.empty?
     if (to = opts[:to])
@@ -67,7 +68,8 @@ module Kramdown; module AsciiDoc
   # @option opts [Boolean] :auto_links (true) whether to allow raw URLs to be recognized as links.
   # @option opts [Hash] :attributes ({}) AsciiDoc attributes to add to the document header of the output document.
   # @option opts [Array<Proc>] :preprocessors ([]) a list of preprocessors functions to execute on the cleaned Markdown source.
-  # @option opts [Proc] :postprocess ([]) a function through which to run the output document.
+  # @option opts [Array<Proc>] :postprocessors ([]) a list of functions through which to run the output document.
+  # @option opts [Proc] :postprocess (nil) a function through which to run the output document (if :postprocessors is falsy).
   # @option opts [String, Pathname] :to (nil) the path to which to write the output document.
   #
   # @return [nil, String] the converted document if the :to option is specified and falsy, otherwise nil.
