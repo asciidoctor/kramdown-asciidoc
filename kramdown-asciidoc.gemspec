@@ -25,8 +25,9 @@ Gem::Specification.new do |s|
   rescue
     Dir['**/*']
   end
-  s.files = files.grep %r/^(?:lib\/.+|Gemfile|Rakefile|(?:CHANGELOG|CONTRIBUTING|LICENSE|README)\.adoc|#{s.name}\.gemspec)$/
-  s.test_files = files.grep %r/^(?:spec\/.+)$/
+  #s.files = files.grep %r/^(?:lib\/.+|Gemfile|Rakefile|(?:CHANGELOG|CONTRIBUTING|LICENSE|README)\.adoc|#{s.name}\.gemspec)$/
+  #s.test_files = files.grep %r/^(?:spec\/.+)$/
+  s.files = files.grep %r/^(?:lib\/.+|Gemfile|(?:CHANGELOG|LICENSE|README)\.adoc|#{s.name}\.gemspec)$/
   s.executables = ['kramdoc']
 
   s.require_paths = ['lib']
