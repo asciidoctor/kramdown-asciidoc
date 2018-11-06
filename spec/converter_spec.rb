@@ -43,7 +43,7 @@ describe Kramdown::AsciiDoc::Converter do
     end
   end
 
-  context '.replace_toc' do
+  context 'Preprocessors.replace_toc' do
     it 'does not modify source if TOC directive not detected' do
       input = <<~EOS
       # Database Guide
@@ -51,7 +51,7 @@ describe Kramdown::AsciiDoc::Converter do
       ...
       EOS
 
-      (expect Kramdown::AsciiDoc.replace_toc input, (attributes = {})).to be input
+      (expect Kramdown::AsciiDoc::Preprocessors.replace_toc input, (attributes = {})).to be input
       (expect attributes).to be_empty
     end
 
@@ -86,12 +86,12 @@ describe Kramdown::AsciiDoc::Converter do
       ...
       EOS
 
-      (expect Kramdown::AsciiDoc.replace_toc input, (attributes = {})).to eql expected
+      (expect Kramdown::AsciiDoc::Preprocessors.replace_toc input, (attributes = {})).to eql expected
       (expect attributes['toc']).to eql 'macro'
     end
   end
 
-  context '.extract_front_matter' do
+  context 'Preprocessors.extract_front_matter' do
     it 'does not modify source if front matter not detected' do
       input = <<~EOS
       # Introduction
@@ -103,14 +103,14 @@ describe Kramdown::AsciiDoc::Converter do
       more content
       EOS
 
-      (expect Kramdown::AsciiDoc.extract_front_matter input, (attributes = {})).to be input
+      (expect Kramdown::AsciiDoc::Preprocessors.extract_front_matter input, (attributes = {})).to be input
       (expect attributes).to be_empty
     end
 
     it 'does not modify source if source is empty' do
       input = ''
 
-      (expect Kramdown::AsciiDoc.extract_front_matter input, (attributes = {})).to be input
+      (expect Kramdown::AsciiDoc::Preprocessors.extract_front_matter input, (attributes = {})).to be input
       (expect attributes).to be_empty
     end
 
@@ -139,7 +139,7 @@ describe Kramdown::AsciiDoc::Converter do
         'keywords' => 'buzz, transformative',
       }
 
-      (expect Kramdown::AsciiDoc.extract_front_matter input, (attributes = {})).to eql expected
+      (expect Kramdown::AsciiDoc::Preprocessors.extract_front_matter input, (attributes = {})).to eql expected
       (expect attributes).to eql expected_attributes
     end
 
@@ -162,7 +162,7 @@ describe Kramdown::AsciiDoc::Converter do
       EOS
 
       # FIXME can we reuse our lets to handle this test?
-      input = Kramdown::AsciiDoc.extract_front_matter input, (attributes = {})
+      input = Kramdown::AsciiDoc::Preprocessors.extract_front_matter input, (attributes = {})
       doc = Kramdown::Document.new input, (opts.merge attributes: attributes)
       (expect doc.to_asciidoc).to eql expected
     end
@@ -185,7 +185,7 @@ describe Kramdown::AsciiDoc::Converter do
       EOS
 
       # FIXME can we reuse our lets to handle this test?
-      input = Kramdown::AsciiDoc.extract_front_matter input, (attributes = {})
+      input = Kramdown::AsciiDoc::Preprocessors.extract_front_matter input, (attributes = {})
       doc = Kramdown::Document.new input, (opts.merge attributes: attributes)
       (expect doc.to_asciidoc).to eql expected
     end
@@ -206,7 +206,7 @@ describe Kramdown::AsciiDoc::Converter do
         'page-layout' => 'home'
       }
 
-      (expect Kramdown::AsciiDoc.extract_front_matter input, (attributes = {})).to eql expected
+      (expect Kramdown::AsciiDoc::Preprocessors.extract_front_matter input, (attributes = {})).to eql expected
       (expect attributes).to eql expected_attributes
     end
 
@@ -221,7 +221,7 @@ describe Kramdown::AsciiDoc::Converter do
         'description' => 'This page is intentionally left blank.'
       }
 
-      (expect Kramdown::AsciiDoc.extract_front_matter input, (attributes = {})).to be_empty
+      (expect Kramdown::AsciiDoc::Preprocessors.extract_front_matter input, (attributes = {})).to be_empty
       (expect attributes).to eql expected_attributes
     end
 
@@ -236,14 +236,14 @@ describe Kramdown::AsciiDoc::Converter do
       Move along. There's no front matter to see here.
       EOS
 
-      (expect Kramdown::AsciiDoc.extract_front_matter input, (attributes = {})).to eql expected
+      (expect Kramdown::AsciiDoc::Preprocessors.extract_front_matter input, (attributes = {})).to eql expected
       (expect attributes).to be_empty
     end
 
     it 'does not remove leading hr' do
       input = '---'
 
-      (expect Kramdown::AsciiDoc.extract_front_matter input, (attributes = {})).to eql input
+      (expect Kramdown::AsciiDoc::Preprocessors.extract_front_matter input, (attributes = {})).to eql input
       (expect attributes).to be_empty
     end
 
@@ -264,7 +264,7 @@ describe Kramdown::AsciiDoc::Converter do
         'description' => 'Just another page.'
       }
 
-      (expect Kramdown::AsciiDoc.extract_front_matter input, (attributes = {})).to eql expected
+      (expect Kramdown::AsciiDoc::Preprocessors.extract_front_matter input, (attributes = {})).to eql expected
       (expect attributes).to eql expected_attributes
     end
   end
