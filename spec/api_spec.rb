@@ -286,6 +286,15 @@ describe Kramdown::AsciiDoc do
       (expect Pathname.new the_output_file).to exist
       (expect (IO.read the_output_file)).to eql %(Markdown was _here_, but it has become *AsciiDoc*!\n)
     end
+
+    it 'passes result through all postprocessors if list of callbacks is given' do
+      the_output_file = output_file %(convert-file-api-#{object_id}.adoc)
+      postprocess_1 = -> (asciidoc) { asciidoc.sub 'become', 'become glorious' }
+      postprocess_2 = -> (asciidoc) { asciidoc.sub 'glorious', 'marvelous' }
+      (expect subject.convert_file the_source_file, postprocessors: [postprocess_1, postprocess_2]).to be_nil
+      (expect Pathname.new the_output_file).to exist
+      (expect (IO.read the_output_file)).to eql %(Markdown was _here_, but it has become marvelous *AsciiDoc*!\n)
+    end
   end
 end
 
