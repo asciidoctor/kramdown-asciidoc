@@ -72,7 +72,7 @@ module Kramdown; module AsciiDoc
   # @option opts [Proc] :postprocess (nil) a function through which to run the output document (if :postprocessors is falsy).
   # @option opts [String, Pathname] :to (nil) the path to which to write the output document.
   #
-  # @return [nil, String] the converted document if the :to option is specified and falsy, otherwise nil.
+  # @return [String, nil] the converted document if the :to option is specified and is falsy, otherwise nil.
   def self.convert_file markdown_file, opts = {}
     if ::File === markdown_file
       markdown = markdown_file.read
