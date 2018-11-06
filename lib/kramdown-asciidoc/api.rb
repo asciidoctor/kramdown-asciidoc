@@ -1,4 +1,17 @@
 module Kramdown; module AsciiDoc
+  DEFAULT_PARSER_OPTS = {
+    auto_ids: false,
+    hard_wrap: false,
+    html_to_native: true,
+    input: 'GFM',
+  }
+
+  DEFAULT_PREPROCESSORS = [
+    (Preprocessors.method :extract_front_matter),
+    (Preprocessors.method :replace_toc),
+    (Preprocessors.method :snap_leading_comment),
+  ]
+
   # Converts a Markdown string to an AsciiDoc string and either returns the result or writes it to a file.
   #
   # @param markdown [String, IO] the Markdown source to convert to AsciiDoc.
@@ -31,9 +44,9 @@ module Kramdown; module AsciiDoc
     end
     markdown = markdown.rstrip
     markdown = markdown.slice 1, markdown.length while markdown.start_with? LF
-    parser_opts = ::Kramdown::AsciiDoc::DEFAULT_PARSER_OPTS.merge opts
+    parser_opts = DEFAULT_PARSER_OPTS.merge opts
     attributes = (parser_opts[:attributes] = (parser_opts[:attributes] || {}).dup)
-    ((opts.fetch :preprocessors, ::Kramdown::AsciiDoc::DEFAULT_PREPROCESSORS) || []).each do |preprocessor|
+    ((opts.fetch :preprocessors, DEFAULT_PREPROCESSORS) || []).each do |preprocessor|
       markdown = preprocessor[markdown, attributes]
     end
     asciidoc = (kramdown_doc = ::Kramdown::Document.new markdown, parser_opts).to_asciidoc
