@@ -109,7 +109,7 @@ module Kramdown; module AsciiDoc
       pipe_out = (output_file = options.delete :output_file) == '-'
       if pipe_in
         options[:to] = pipe_out || !output_file ? $stdout : output_file
-        ::Kramdoc.convert $stdin.read, options
+        ::Kramdoc.convert $stdin, options
       elsif output_file && !pipe_out && (::File.expand_path input_file) == (::File.expand_path output_file)
         $stderr.write %(kramdoc: input and output cannot be the same file: #{input_file}\n)
         return 1
