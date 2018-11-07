@@ -7,6 +7,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == Unreleased
 
+=== Changed
+
+* change CLI to use default options from API
+
 === Fixed
 
 * automatically require version file so -v CLI flag reports correct version

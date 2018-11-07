@@ -6,9 +6,7 @@ module Kramdown; module AsciiDoc
   class Cli
     def parse args
       options = {
-        attributes: {},
-        input: 'GFM',
-        html_to_native: true,
+        attributes: {}
       }
 
       opt_parser = ::OptionParser.new do |opts|
