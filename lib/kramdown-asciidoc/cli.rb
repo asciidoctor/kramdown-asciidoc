@@ -27,7 +27,7 @@ module Kramdown; module AsciiDoc
           options[:input] = format
         end
 
-        opts.on '-a KEY[=VALUE]', '--attribute=KEY[=VALUE]', 'Set an attribute in the document header (accepts: key, key!, or key=value' do |attr|
+        opts.on '-a KEY[=VALUE]', '--attribute=KEY[=VALUE]', 'Set an attribute in the AsciiDoc document header (accepts: key, key!, or key=value)' do |attr|
           key, val = attr.split '=', 2
           val = '' unless val
           options[:attributes][key] = val
