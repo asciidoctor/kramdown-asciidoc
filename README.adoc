@@ -44,7 +44,7 @@ Notably, the converter generates modern AsciiDoc syntax suitable for use with {u
 == Prerequisites
 
 To install and run {project-name}, you need Ruby 2.3 or better installed and a few RubyGems (aka gems).
-We'll explain how to install the gems in the next section.
+The instructions for installing the gems is covered in the next section.
 
 To check whether you have Ruby installed, and which version, run the following command:
 
@@ -55,11 +55,11 @@ We generally recommend using RVM because it allows you to install gems without r
 
 == Installation
 
-{project-name} is published to RubyGems.org as a pre-release gem named *{project-handle}*.
+{project-name} is published to RubyGems.org as a gem named *{project-handle}*.
 
-You can install the pre-release version using the following command:
+You can install the latest version of the gem using the following command:
 
- $ gem install kramdown-asciidoc --pre
+ $ gem install kramdown-asciidoc
 
 Installing this gem makes the `kramdoc` command available on your $PATH.
 
