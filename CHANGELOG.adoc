@@ -5,6 +5,12 @@
 This document provides a high-level view of the changes to {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
+== Unreleased
+
+=== Fixed
+
+* automatically require version file so -v CLI flag reports correct version
+
 == 1.0.0.rc.1 (2018-11-06) - @mojavelinux
 
 === Added

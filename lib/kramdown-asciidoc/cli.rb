@@ -2,6 +2,7 @@ require 'optparse'
 require 'pathname'
 
 module Kramdown; module AsciiDoc
+  autoload :VERSION, (::File.join __dir__, 'version.rb')
   class Cli
     def parse args
       options = {
@@ -75,7 +76,7 @@ module Kramdown; module AsciiDoc
         end
 
         opts.on '-v', '--version', %(Display version information and exit) do
-          $stdout.write %(#{opts.program_name} #{VERSION}\n)
+          $stdout.write %(#{opts.program_name} #{::Kramdown::AsciiDoc::VERSION}\n)
           return 0
         end
       end
