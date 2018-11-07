@@ -36,7 +36,7 @@ module Kramdown; module AsciiDoc
           options[:wrap] = wrap
         end
 
-        opts.on '--imagesdir=DIR', 'Set the leading directory to remove from image references' do |dir|
+        opts.on '--imagesdir=DIR', 'Set the imagesdir attribute in the AsciiDoc document header (also remove the value from the start of image paths)' do |dir|
           options[:imagesdir] = dir
         end
 
