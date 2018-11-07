@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
-== Unreleased
+== 1.0.0 (2018-11-07) - @mojavelinux
 
 === Changed
 
@@ -14,6 +14,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 === Fixed
 
 * automatically require version file so -v CLI flag reports correct version
+
+=== Details
+
+{uri-repo}/releases/tag/v1.0.0[git tag] | {uri-repo}/compare/v1.0.0.rc.1\...v1.0.0[full diff]
 
 == 1.0.0.rc.1 (2018-11-06) - @mojavelinux
 
