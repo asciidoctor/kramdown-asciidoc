@@ -5,6 +5,12 @@
 This document provides a high-level view of the changes to {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
+== Unreleased
+
+=== Fixed
+
+* Fixed bin script on Ruby 2.3 (#70)
+
 == 1.0.0 (2018-11-07) - @mojavelinux
 
 === Changed
