@@ -5,11 +5,15 @@
 This document provides a high-level view of the changes to {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
-== Unreleased
+== 1.0.1 (2018-11-28) - @mojavelinux
 
 === Fixed
 
 * Fixed bin script on Ruby 2.3 (#70)
+
+=== Details
+
+{uri-repo}/releases/tag/v1.0.1[git tag] | {uri-repo}/compare/v1.0.0\...v1.0.1[full diff]
 
 == 1.0.0 (2018-11-07) - @mojavelinux
 
