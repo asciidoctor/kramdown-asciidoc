@@ -25,16 +25,16 @@ Gem::Specification.new do |s|
   rescue
     Dir['**/*']
   end
-  #s.files = files.grep %r/^(?:lib\/.+|Gemfile|Rakefile|(?:CHANGELOG|CONTRIBUTING|LICENSE|README)\.adoc|#{s.name}\.gemspec)$/
-  #s.test_files = files.grep %r/^(?:spec\/.+)$/
   s.files = files.grep %r/^(?:lib\/.+|Gemfile|(?:CHANGELOG|LICENSE|README)\.adoc|#{s.name}\.gemspec)$/
+  #s.test_files = files.grep %r/^spec\/./
   s.executables = ['kramdoc']
 
   s.require_paths = ['lib']
 
   s.add_runtime_dependency 'kramdown', '~> 1.17.0'
-  s.add_development_dependency 'deep-cover-core', '~> 0.6.3'
-  s.add_development_dependency 'rake', '~> 12.3.1'
+
+  s.add_development_dependency 'deep-cover-core', '~> 0.7.0'
+  s.add_development_dependency 'rake', '~> 12.3.2'
   s.add_development_dependency 'rspec', '~> 3.8.0'
   s.add_development_dependency 'simplecov', '~> 0.16.1'
 end
