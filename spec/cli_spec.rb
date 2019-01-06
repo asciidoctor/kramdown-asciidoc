@@ -49,30 +49,30 @@ describe Kramdown::AsciiDoc::Cli do
     it 'computes output file from input file' do
       the_source_file = output_file 'implicit-output.md'
       the_output_file = output_file 'implicit-output.adoc'
-      IO.write the_source_file, 'This is just a test.'
+      File.write the_source_file, 'This is just a test.'
       (expect subject.run the_source_file).to eql 0
-      (expect (IO.read the_output_file).chomp).to eql 'This is just a test.'
+      (expect (File.read the_output_file).chomp).to eql 'This is just a test.'
     end
 
     it 'writes output to file specified by the -o option' do
       the_source_file = output_file 'explicit-output.md'
       the_output_file = output_file 'my-explicit-output.adoc'
-      IO.write the_source_file, 'This is only a test.'
+      File.write the_source_file, 'This is only a test.'
       (expect subject.run %W(-o #{the_output_file} #{the_source_file})).to eql 0
-      (expect (IO.read the_output_file).chomp).to eql 'This is only a test.'
+      (expect (File.read the_output_file).chomp).to eql 'This is only a test.'
     end
 
     it 'ensures directory of explicit output file exists before writing' do
       the_source_file = output_file 'ensure-output-dir.md'
       the_output_file = output_file 'path/to/output/file.adoc'
-      IO.write the_source_file, 'Everything is going to be fine.'
+      File.write the_source_file, 'Everything is going to be fine.'
       (expect subject.run %W(-o #{the_output_file} #{the_source_file})).to eql 0
-      (expect (IO.read the_output_file).chomp).to eql 'Everything is going to be fine.'
+      (expect (File.read the_output_file).chomp).to eql 'Everything is going to be fine.'
     end
 
     it 'prevents computed output file from overwriting input file' do
       the_source_file = output_file 'implicit-conflict.adoc'
-      IO.write the_source_file, 'No can do.'
+      File.write the_source_file, 'No can do.'
       expected = %(kramdoc: input and output cannot be the same file: #{the_source_file})
       (expect subject.run the_source_file).to eql 1
       (expect $stderr.string.chomp).to eql expected
@@ -81,7 +81,7 @@ describe Kramdown::AsciiDoc::Cli do
     it 'prevents explicit output file from overwriting input file' do
       the_source_file = output_file 'explicit-conflict.md'
       the_output_file = the_source_file
-      IO.write the_source_file, 'No can do.'
+      File.write the_source_file, 'No can do.'
       expected = %(kramdoc: input and output cannot be the same file: #{the_source_file})
       (expect subject.run %W(-o #{the_output_file} #{the_source_file})).to eql 1
       (expect $stderr.string.chomp).to eql expected
@@ -112,12 +112,12 @@ describe Kramdown::AsciiDoc::Cli do
       $stdin.puts '- list item'
       $stdin.rewind
       (expect subject.run %W(-o #{the_output_file} -)).to eql 0
-      (expect (IO.read the_output_file).chomp).to eql '* list item'
+      (expect (File.read the_output_file).chomp).to eql '* list item'
     end
 
     it 'removes leading blank lines and trailing whitespace from source' do
       the_source_file = output_file 'leading-trailing-space.md'
-      IO.write the_source_file, <<~EOS
+      File.write the_source_file, <<~EOS
       \n\n\n\n
       # Heading
 
@@ -130,14 +130,14 @@ describe Kramdown::AsciiDoc::Cli do
 
     it 'converts all newlines to line feed characters' do
       the_source_file = output_file 'newlines.md'
-      IO.write the_source_file, %(\r\n\r\n# Document Title\r\n\r\nFirst paragraph.\r\n\r\nSecond paragraph.\r\n)
+      File.write the_source_file, %(\r\n\r\n# Document Title\r\n\r\nFirst paragraph.\r\n\r\nSecond paragraph.\r\n)
       (expect subject.run %W(-o - #{the_source_file})).to eql 0
       (expect $stdout.string.chomp).to eql %(= Document Title\n\nFirst paragraph.\n\nSecond paragraph.)
     end
 
     it 'processes front matter in source' do
       the_source_file = output_file 'front-matter.md'
-      IO.write the_source_file, <<~EOS
+      File.write the_source_file, <<~EOS
       ---
       title: Document Title
       ---
@@ -149,7 +149,7 @@ describe Kramdown::AsciiDoc::Cli do
 
     it 'replaces explicit toc in source' do
       the_source_file = output_file 'toc.md'
-      IO.write the_source_file, <<~EOS
+      File.write the_source_file, <<~EOS
       # Guide
 
       <!-- TOC depthFrom:2 depthTo:6 -->
@@ -166,49 +166,49 @@ describe Kramdown::AsciiDoc::Cli do
 
     it 'reads Markdown source using specified format' do
       the_source_file = output_file 'format-markdown.md'
-      IO.write the_source_file, '#Heading'
+      File.write the_source_file, '#Heading'
       (expect subject.run %W(-o - --format=markdown #{the_source_file})).to eql 0
       (expect $stdout.string.chomp).to eql '= Heading'
     end
 
     it 'removes directory prefix from image references specified by the --imagesdir option' do
       the_source_file = scenario_file 'img/implicit-imagesdir.md'
-      expected = IO.read scenario_file 'img/implicit-imagesdir.adoc'
+      expected = File.read scenario_file 'img/implicit-imagesdir.adoc'
       (expect subject.run %W(-o - --imagesdir=images #{the_source_file})).to eql 0
       (expect $stdout.string).to eql expected
     end
 
     it 'wraps output as specified by the --wrap option' do
       the_source_file = scenario_file 'wrap/ventilate.md'
-      expected = IO.read scenario_file 'wrap/ventilate.adoc'
+      expected = File.read scenario_file 'wrap/ventilate.adoc'
       (expect subject.run %W(-o - --wrap=ventilate #{the_source_file})).to eql 0
       (expect $stdout.string).to eql expected
     end
 
     it 'does not escape bare URLs when --auto-links is used' do
       the_source_file = scenario_file 'a/bare-url.md'
-      expected = IO.read scenario_file 'a/bare-url.adoc'
+      expected = File.read scenario_file 'a/bare-url.adoc'
       (expect subject.run %W(-o - --auto-links #{the_source_file})).to eql 0
       (expect $stdout.string).to eql expected
     end
 
     it 'escapes bare URLs when --no-auto-links is used' do
       the_source_file = scenario_file 'a/no-auto-links.md'
-      expected = IO.read scenario_file 'a/no-auto-links.adoc'
+      expected = File.read scenario_file 'a/no-auto-links.adoc'
       (expect subject.run %W(-o - --no-auto-links #{the_source_file})).to eql 0
       (expect $stdout.string).to eql expected
     end
 
     it 'shifts headings by offset when --heading-offset is used' do
       the_source_file = scenario_file 'heading/offset.md'
-      expected = IO.read scenario_file 'heading/offset.adoc'
+      expected = File.read scenario_file 'heading/offset.adoc'
       (expect subject.run %W(-o - --heading-offset=-1 #{the_source_file})).to eql 0
       (expect $stdout.string).to eql expected
     end
 
     it 'auto generates IDs for section titles when --auto-ids is used' do
       the_source_file = scenario_file 'heading/auto_ids/no-ids.md'
-      expected = IO.read scenario_file 'heading/auto_ids/no-ids.adoc'
+      expected = File.read scenario_file 'heading/auto_ids/no-ids.adoc'
       (expect subject.run %W(-o - --auto-ids #{the_source_file})).to eql 0
       (expect $stdout.string).to eql expected
     end
@@ -259,7 +259,7 @@ describe Kramdown::AsciiDoc::Cli do
 
     it 'drops ID if matches auto-generated value when --lazy-ids is used' do
       the_source_file = scenario_file 'heading/lazy_ids/explicit-ids.md'
-      expected = IO.read scenario_file 'heading/lazy_ids/explicit-ids.adoc'
+      expected = File.read scenario_file 'heading/lazy_ids/explicit-ids.adoc'
       (expect subject.run %W(-o - --lazy-ids #{the_source_file})).to eql 0
       (expect $stdout.string).to eql expected
     end

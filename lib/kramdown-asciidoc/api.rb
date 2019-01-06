@@ -92,7 +92,7 @@ module Kramdown; module AsciiDoc
       markdown_file = markdown_file.path
       encode = true
     else
-      markdown = ::IO.read markdown_file, mode: 'r:UTF-8', newline: :universal
+      markdown = ::File.read markdown_file, mode: 'r:UTF-8', newline: :universal
       encode = false
     end
     if (to = opts[:to])

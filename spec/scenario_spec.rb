@@ -13,9 +13,9 @@ describe 'scenario' do
       input_filename = File.absolute_path input_filename
       output_filename = File.absolute_path %(#{input_stem}.adoc)
       context %(for #{scenario_name}) do
-        let(:input) { IO.read input_filename, mode: 'r:UTF-8', newline: :universal }
+        let(:input) { File.read input_filename, mode: 'r:UTF-8', newline: :universal }
         let(:extra_options) { options }
-        let(:expected) { (IO.read output_filename, mode: 'r:UTF-8', newline: :universal).chomp }
+        let(:expected) { (File.read output_filename, mode: 'r:UTF-8', newline: :universal).chomp }
         it 'converts Markdown to AsciiDoc' do
           (expect doc.to_asciidoc).to eql expected
         end
