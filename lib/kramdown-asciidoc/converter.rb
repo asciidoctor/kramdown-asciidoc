@@ -1,4 +1,3 @@
-# encoding: UTF-8
 module Kramdown; module AsciiDoc
   class Converter < ::Kramdown::Converter::Base
     using CoreExt
