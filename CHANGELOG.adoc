@@ -7,6 +7,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == Unreleased
 
+=== Fixed
+
+* Use File.read instead of IO.read to suppress magic subprocess behavior
+
 == 1.0.1 (2018-11-28) - @mojavelinux
 
 === Fixed
