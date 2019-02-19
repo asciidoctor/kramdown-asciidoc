@@ -292,7 +292,7 @@ module Kramdown; module AsciiDoc
       end
     end
 
-    def convert_ul el, opts
+    def _convert_list el, opts
       kin = el.type == :dl ? :dlist : :list
       (writer = opts[:writer]).start_list (parent = opts[:parent]).type == :dd || parent.options[:compound], kin
       traverse el, opts
@@ -300,8 +300,9 @@ module Kramdown; module AsciiDoc
       writer.add_blank_line if writer.in_list? && opts[:next]
     end
 
-    alias convert_ol convert_ul
-    alias convert_dl convert_ul
+    alias convert_ul _convert_list
+    alias convert_ol _convert_list
+    alias convert_dl _convert_list
 
     def convert_li el, opts
       writer = opts[:writer]
