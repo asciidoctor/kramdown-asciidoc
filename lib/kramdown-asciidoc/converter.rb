@@ -46,7 +46,7 @@ module Kramdown; module AsciiDoc
     MenuRefRx = /^([\p{Word}&].*?)\s>\s([\p{Word}&].*(?:\s>\s|$))+/
     ReplaceableTextRx = /[-=]>|<[-=]| -- |\p{Word}--\p{Word}|\*\*|\.\.\.|&\S+;|\{\p{Word}[\p{Word}-]*\}|(?:https?|ftp):\/\/\p{Word}|\((?:C|R|TM)\)/
     SmartApostropheRx = /\b’\b/
-    StopPunctRx = /(?<=\S[.;]|.\?|.!)\p{Blank}+/
+    StopPunctRx = /(?<=\S[.;]|.[?!])\p{Blank}+/
     TrailingSpaceRx = / +$/
     TypographicSymbolRx = /[“”‘’—–…]/
     UriSchemeRx = /(?:https?|ftp):\/\/\p{Word}/
