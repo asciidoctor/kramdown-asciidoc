@@ -371,7 +371,7 @@ To avoid having to do this, or make the `kramdoc` command available from anywher
 
 == Copyright
 
-Copyright (C) 2016-2018 OpenDevise Inc. (on behalf of the Asciidoctor Project).
+Copyright (C) 2016-2019 OpenDevise Inc. (on behalf of the Asciidoctor Project).
 Free use of this software is granted under the terms of the MIT License.
 
 See the link:LICENSE.adoc[LICENSE] file for details.
