@@ -48,7 +48,6 @@ module Kramdown; module AsciiDoc
       parent_body, @block_delimiter, @block_separator, @list_level = @nesting_stack.pop
       @body = (parent_body + @body) << @block_delimiter
       @block_delimiter = nil
-      nil
     end
 
     # Q: perhaps do_in_list that takes a block?
