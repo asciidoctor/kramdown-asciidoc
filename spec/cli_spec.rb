@@ -3,7 +3,7 @@ require 'kramdown-asciidoc/cli'
 
 describe Kramdown::AsciiDoc::Cli do
   # NOTE override subject to return class object; RSpec returns instance of class by default
-  subject { Kramdown::AsciiDoc::Cli }
+  subject { described_class }
 
   before :each do
     @old_stdin, $stdin = $stdin, StringIO.new
