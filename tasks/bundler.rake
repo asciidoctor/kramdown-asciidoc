@@ -1,5 +1,5 @@
 begin
   require 'bundler/gem_tasks'
-rescue LoadError => e
-  warn e.message
+rescue LoadError
+  warn $!.message
 end
