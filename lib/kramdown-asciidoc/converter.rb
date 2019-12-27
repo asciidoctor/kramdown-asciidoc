@@ -238,7 +238,7 @@ module Kramdown; module AsciiDoc
       elsif (prompt = lines[0].start_with? '$ ')
         writer.add_line %([source,#{lang = 'console'}]) if lines.include? ''
       end
-      if lang && DIAGRAM_LABELS.include? lang
+      if lang && (DIAGRAM_LABELS.include? lang)
         writer.add_line '....'
         writer.add_lines lines
         writer.add_line '....'
