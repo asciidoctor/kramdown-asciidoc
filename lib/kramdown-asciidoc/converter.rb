@@ -1,3 +1,4 @@
+# encoding: UTF-8
 module Kramdown; module AsciiDoc
   class Converter < ::Kramdown::Converter::Base
     using CoreExt
@@ -9,6 +10,7 @@ module Kramdown; module AsciiDoc
     ADMON_FORMATTED_MARKERS = ADMON_LABELS.map {|l, _| [%(#{l}:), l] }.to_h
     ADMON_TYPE_MAP = ADMON_LABELS.map {|l, _| [l, l.upcase] }.to_h.merge 'Attention' => 'IMPORTANT', 'Hint' => 'TIP'
     BLOCK_TYPES = [:p, :blockquote, :codeblock, :table]
+    DIAGRAM_LABELS = %w(a2s actdiag blockdiag ditaa erd graphviz meme mermaid msc nwdiag packetdiag plantuml rackdiag seqdiagshaape svgbob syntrax umlet vega vegalite wavedrom)
     DLIST_MARKERS = %w(:: ;; ::: ::::)
     NON_DEFAULT_TABLE_ALIGNMENTS = [:center, :right]
     STOP_PUNCTUATION = %w(. ? ! ;)
@@ -228,7 +230,11 @@ module Kramdown; module AsciiDoc
       if (lang = el.attr['class'])
         # NOTE Kramdown always prefixes class with language-
         # TODO remap lang if requested
-        writer.add_line %([source,#{lang = lang.slice 9, lang.length}])
+        lang = lang.slice 9, lang.length
+        if DIAGRAM_LABELS.include? lang
+          writer.add_line %([#{lang}])
+        else     
+          writer.add_line %([source,#{lang}])
       elsif (prompt = lines[0].start_with? '$ ')
         writer.add_line %([source,#{lang = 'console'}]) if lines.include? ''
       end
