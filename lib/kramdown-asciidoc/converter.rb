@@ -10,7 +10,7 @@ module Kramdown; module AsciiDoc
     ADMON_FORMATTED_MARKERS = ADMON_LABELS.map {|l, _| [%(#{l}:), l] }.to_h
     ADMON_TYPE_MAP = ADMON_LABELS.map {|l, _| [l, l.upcase] }.to_h.merge 'Attention' => 'IMPORTANT', 'Hint' => 'TIP'
     BLOCK_TYPES = [:p, :blockquote, :codeblock, :table]
-    DIAGRAM_LABELS = %w(a2s actdiag blockdiag ditaa erd graphviz meme mermaid msc nwdiag packetdiag plantuml rackdiag seqdiagshaape svgbob syntrax umlet vega vegalite wavedrom)
+    DIAGRAM_LABELS = %w(a2s actdiag blockdiag ditaa erd graphviz meme mermaid msc nwdiag packetdiag plantuml rackdiag seqdiag shaape svgbob syntrax umlet vega vegalite wavedrom)
     DLIST_MARKERS = %w(:: ;; ::: ::::)
     NON_DEFAULT_TABLE_ALIGNMENTS = [:center, :right]
     STOP_PUNCTUATION = %w(. ? ! ;)
