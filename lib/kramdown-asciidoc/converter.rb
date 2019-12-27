@@ -235,6 +235,7 @@ module Kramdown; module AsciiDoc
           writer.add_line %([#{lang}])
         else     
           writer.add_line %([source,#{lang}])
+        end
       elsif (prompt = lines[0].start_with? '$ ')
         writer.add_line %([source,#{lang = 'console'}]) if lines.include? ''
       end
