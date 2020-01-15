@@ -463,8 +463,8 @@ module Kramdown; module AsciiDoc
 
     def convert_math el, opts
       composed_text = el.value
-      mark_left = "\n[latexmath]\n++++\n"
-      mark_right = "\n++++\n"
+      mark_left = "\n[latexmath]\n++++\n\\(\n"
+      mark_right = "\n\\)\n++++\n"
       opts[:writer].append %(#{mark_left}#{composed_text}#{mark_right})
     end
 
