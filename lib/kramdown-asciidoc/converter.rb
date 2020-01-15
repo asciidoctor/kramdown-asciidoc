@@ -461,6 +461,13 @@ module Kramdown; module AsciiDoc
       opts[:writer].append %(#{mark}#{composed_text}#{mark})
     end
 
+    def convert_math el, opts
+      composed_text = el.value
+      mark_left = "\n[latexmath]\n++++\n"
+      mark_right = "\n++++\n"
+      opts[:writer].append %(#{mark_left}#{composed_text}#{mark_right})
+    end
+
     def convert_strong el, opts
       if ((composed_text = compose_text el).include? ' > ') && MenuRefRx =~ composed_text
         @attributes['experimental'] = ''
