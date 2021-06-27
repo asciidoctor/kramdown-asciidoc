@@ -32,7 +32,7 @@ jobs:
           primary: primary
     runs-on: ${{ matrix.os }}
     env:
-      BUNDLE_WITHOUT: docs
+      BUNDLE_WITHOUT: docs coverage
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -43,6 +43,10 @@ jobs:
         bundler-cache: ${{ github.event_name != 'schedule' }}
     - name: Enable coverage
       if: matrix.primary
-      run: echo 'COVERAGE=deep' >> $GITHUB_ENV
+      run: |
+        bundle config unset --local without
+        bundle config --local without docs
+        bundle --jobs 3 --retry 3
+        echo 'COVERAGE=deep' >> $GITHUB_ENV
     - name: Run tests
       run: bundle exec ruby -w $(bundle exec ruby -e 'print File.join Gem.bindir, %q(rake)') spec
