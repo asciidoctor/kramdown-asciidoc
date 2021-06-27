@@ -10,6 +10,11 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 === Fixed
 
 * Use File.read instead of IO.read to suppress magic subprocess behavior
+* Enable compatibility with Ruby 3 by declaring rexml as a runtime dependency (#84)
+
+=== Changed
+
+* Upgrade kramdown to 2.3.x and declare kramdown-parser-gfm as runtime dependency (#85)
 
 == 1.0.1 (2018-11-28) - @mojavelinux
 
