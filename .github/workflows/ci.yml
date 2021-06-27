@@ -1,0 +1,48 @@
+name: CI
+on:
+  push:
+    branches: ['**']
+    tags-ignore: ['**']
+  pull_request:
+  schedule:
+  - cron: '0 2 * * *'
+jobs:
+  activate:
+    if: "!endsWith(github.event.head_commit.message, '[skip ci]')"
+    runs-on: ubuntu-latest
+    steps:
+    - name: Proceed
+      run: echo ok go
+  build:
+    needs: activate
+    strategy:
+      matrix:
+        #os: [ubuntu-latest, windows-latest]
+        #ruby: [jruby-9.1, jruby-9.2, '2.3', '2.4', '2.5', '2.6', '2.7', '3.0']
+        os: [ubuntu-latest]
+        ruby: ['2.3', '3.0']
+        exclude:
+        - os: ubuntu-latest
+          ruby: '3.0'
+        include:
+        #- os: macos-latest
+        #  ruby: '3.0'
+        - os: ubuntu-latest
+          ruby: '3.0'
+          primary: primary
+    runs-on: ${{ matrix.os }}
+    env:
+      BUNDLE_WITHOUT: docs
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Install Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+        bundler-cache: ${{ github.event_name != 'schedule' }}
+    - name: Enable coverage
+      if: matrix.primary
+      run: echo 'COVERAGE=deep' >> $GITHUB_ENV
+    - name: Run tests
+      run: bundle exec ruby -w $(bundle exec ruby -e 'print File.join Gem.bindir, %q(rake)') spec

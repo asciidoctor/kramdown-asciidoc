@@ -25,17 +25,12 @@ endif::[]
 :uri-rvm: https://rvm.io
 :uri-rvm-install: https://rvm.io/rvm/install
 :uri-api-docs: https://www.rubydoc.info/github/asciidoctor/kramdown-asciidoc/master
-:uri-ci-appveyor: https://ci.appveyor.com/project/asciidoctor/kramdown-asciidoc
-:img-uri-ci-appveyor: https://ci.appveyor.com/api/projects/status/2pwvdbcoeux1ifb5/branch/master?svg=true
-:uri-ci-travis: https://travis-ci.org/asciidoctor/kramdown-asciidoc
-:img-uri-ci-travis: https://img.shields.io/travis/asciidoctor/kramdown-asciidoc/master.svg
 :uri-gem: https://rubygems.org/gems/kramdown-asciidoc
 :img-uri-gem: https://img.shields.io/gem/v/kramdown-asciidoc.svg?label=gem
 
 ifdef::status[]
 image:{img-uri-gem}[Gem Version,link={uri-gem}]
-image:{img-uri-ci-travis}[Build Status (Travis CI),link={uri-ci-travis}]
-image:{img-uri-ci-appveyor}[Build Status (AppVeyor),link={uri-ci-appveyor}]
+image:{uri-repo}/workflows/CI/badge.svg[Build Status (GitHub Actions),link={uri-repo}/actions?query=workflow%3ACI+branch%3Amain]
 endif::[]
 
 {uri-repo}[{project-name}] (gem: *{project-handle}*, command: `kramdoc`) is a {uri-kramdown}[kramdown] extension for converting Markdown documents to {uri-asciidoc}[AsciiDoc].
