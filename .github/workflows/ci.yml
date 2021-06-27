@@ -41,6 +41,7 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby }}
         bundler-cache: ${{ github.event_name != 'schedule' }}
+        cache-version: ${{ secrets.CACHE_VERSION }}
     - name: Enable coverage
       if: matrix.primary
       run: |
