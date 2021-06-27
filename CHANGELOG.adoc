@@ -11,6 +11,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 * Use File.read instead of IO.read to suppress magic subprocess behavior
 * Enable compatibility with Ruby 3 by declaring rexml as a runtime dependency (#84)
+* Don't crash when converting list item that only contains spaces (#83)
 
 === Changed
 
