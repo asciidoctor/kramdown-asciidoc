@@ -17,16 +17,18 @@ jobs:
     needs: activate
     strategy:
       matrix:
-        #os: [ubuntu-latest, windows-latest]
-        #ruby: [jruby-9.1, jruby-9.2, '2.3', '2.4', '2.5', '2.6', '2.7', '3.0']
-        os: [ubuntu-latest]
-        ruby: ['2.3', '3.0']
+        os: [ubuntu-latest, windows-latest]
+        ruby: [jruby-9.2, '2.3', '2.4', '2.5', '2.6', '2.7', '3.0']
         exclude:
+        # remove to mark as primary
         - os: ubuntu-latest
           ruby: '3.0'
+        # remove since JRuby on Windows gets newlines wrong in test suite
+        - os: windows-latest
+          ruby: jruby-9.2
         include:
-        #- os: macos-latest
-        #  ruby: '3.0'
+        - os: macos-latest
+          ruby: '3.0'
         - os: ubuntu-latest
           ruby: '3.0'
           primary: primary
