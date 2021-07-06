@@ -309,7 +309,7 @@ module Kramdown; module AsciiDoc
       writer.add_blank_line if (prev = opts[:prev]) && prev.options[:compound]
       marker = opts[:parent].type == :ol ? '.' : '*'
       indent = (level = writer.list_level) - 1
-      if (children = el.children)[0].type == :p
+      if !(children = el.children).empty? && children[0].type == :p
         primary, remaining = [(children = children.dup).shift, children]
         primary_lines = compose_text [primary], parent: el, strip: true, split: true, wrap: @wrap
       else
