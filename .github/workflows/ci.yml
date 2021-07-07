@@ -27,6 +27,8 @@ jobs:
         - os: windows-latest
           ruby: jruby-9.2
         include:
+        - os: ubuntu-latest
+          ruby: truffleruby-21.1.0
         - os: macos-latest
           ruby: '3.0'
         - os: ubuntu-latest
