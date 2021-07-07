@@ -18,6 +18,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * Upgrade kramdown to 2.3.x and declare kramdown-parser-gfm as runtime dependency (#85)
 * Switch CI to GitHub Actions
 * Run test suite in CI environment on Windows and macOS
+* Apply style rules to source code
 
 == 1.0.1 (2018-11-28) - @mojavelinux
 

@@ -1,4 +1,7 @@
-module Kramdown; module AsciiDoc
+# frozen_string_literal: true
+
+module Kramdown
+module AsciiDoc
   DEFAULT_PARSER_OPTS = {
     auto_ids: false,
     hard_wrap: false,
@@ -104,10 +107,11 @@ module Kramdown; module AsciiDoc
     convert markdown, (opts.merge to: to, encode: encode)
   end
 
-  private
-
   CR = ?\r
   LF = ?\n
   TAB = ?\t
   UTF_8 = ::Encoding::UTF_8
-end; end
+
+  private_constant :CR, :LF, :TAB, :UTF_8
+end
+end

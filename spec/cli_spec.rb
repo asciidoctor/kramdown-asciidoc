@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'spec_helper'
 require 'kramdown-asciidoc/cli'
 
@@ -5,14 +7,14 @@ describe Kramdown::AsciiDoc::Cli do
   # NOTE override subject to return class object; RSpec returns instance of class by default
   subject { described_class }
 
-  before :each do
+  before do
     @old_stdin, $stdin = $stdin, StringIO.new
     @old_stdout, $stdout = $stdout, StringIO.new
     @old_stderr, $stderr = $stderr, StringIO.new
   end
 
-  after :each do
-    $stdin, $stdout, $stderr = @old_stdin, @old_stdout, @old_stderr
+  after do
+    $stdin, $stdout, $stderr = @old_stdin, @old_stdout, @old_stderr # rubocop:disable RSpec/InstanceVariable
   end
 
   context 'option flags' do
@@ -287,13 +289,13 @@ describe Kramdown::AsciiDoc::Cli do
     end
 
     it 'reads arguments from ARGV by default' do
-      old_ARGV = ARGV.dup
+      old_argv = ARGV.dup
       ARGV.replace %w(-v)
       begin
         (expect subject.run).to eql 0
         (expect $stdout.string.chomp).to eql %(kramdoc #{Kramdown::AsciiDoc::VERSION})
       ensure
-        ARGV.replace old_ARGV
+        ARGV.replace old_argv
       end
     end
   end

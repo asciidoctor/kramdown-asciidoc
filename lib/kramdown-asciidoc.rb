@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'kramdown'
 require_relative 'kramdown-asciidoc/kramdown_ext/parser/base'
 require_relative 'kramdown-asciidoc/kramdown_ext/parser/html'

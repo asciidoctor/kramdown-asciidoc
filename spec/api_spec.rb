@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 require_relative 'spec_helper'
 require 'stringio'
 
 describe Kramdown::AsciiDoc do
-  context '#convert' do
+  describe '#convert' do
     it 'converts Markdown string to AsciiDoc string' do
       input = <<~EOS
       ---
@@ -136,9 +138,9 @@ describe Kramdown::AsciiDoc do
     it 'duplicates value of :attributes option' do
       input = <<~EOS
       # Document Title
-      
+
       # Part 1
-      
+
       ## Chapter A
 
       so it begins
@@ -147,9 +149,9 @@ describe Kramdown::AsciiDoc do
       expected = <<~EOS
       = Document Title
       :doctype: book
-      
+
       = Part 1
-      
+
       == Chapter A
 
       so it begins
@@ -168,7 +170,7 @@ describe Kramdown::AsciiDoc do
       = You Have Been Replaced!
       EOS
 
-      preprocessors = [-> markdown, attributes { '# You Have Been Replaced!' }]
+      preprocessors = [-> _markdown, _attributes { '# You Have Been Replaced!' }]
       (expect subject.convert input, preprocessors: preprocessors).to eql expected
     end
 
@@ -183,7 +185,7 @@ describe Kramdown::AsciiDoc do
     end
   end
 
-  context '#convert_file' do
+  describe '#convert_file' do
     let(:source) { 'Markdown was *here*, but it has become **AsciiDoc**!' }
     let(:expected_output) { %(Markdown was _here_, but it has become *AsciiDoc*!\n) }
     let!(:the_source_file) { (output_file %(convert-file-api-#{object_id}.md)).tap {|file| File.write file, source } }
@@ -248,7 +250,7 @@ describe Kramdown::AsciiDoc do
       Kramdoc.convert '#{source}', to: '#{the_output_file}'
       EOS
       # NOTE internal encoding must also be set for test to work on JRuby
-      `#{ruby} -E ISO-8859-1:ISO-8859-1 #{Shellwords.escape script_file}`
+      %x(#{ruby} -E ISO-8859-1:ISO-8859-1 #{Shellwords.escape script_file})
       (expect File.read the_output_file, mode: 'r:UTF-8').to eql %(#{source}\n)
     end
 
@@ -265,7 +267,7 @@ describe Kramdown::AsciiDoc do
 
     it 'passes result through postprocess callback if given' do
       the_output_file = output_file %(convert-file-api-#{object_id}.adoc)
-      postprocess = -> (asciidoc) { asciidoc.gsub 'become', 'become glorious' }
+      postprocess = -> asciidoc { asciidoc.gsub 'become', 'become glorious' }
       (expect subject.convert_file the_source_file, postprocess: postprocess).to be_nil
       (expect Pathname.new the_output_file).to exist
       (expect (File.read the_output_file)).to eql %(Markdown was _here_, but it has become glorious *AsciiDoc*!\n)
@@ -273,7 +275,7 @@ describe Kramdown::AsciiDoc do
 
     it 'passes krawdown document to postprocess method if arity is not 1' do
       the_output_file = output_file %(convert-file-api-#{object_id}.adoc)
-      postprocess = -> (asciidoc, kramdown_doc) { asciidoc.gsub 'Markdown', kramdown_doc.options[:input] }
+      postprocess = -> asciidoc, kramdown_doc { asciidoc.gsub 'Markdown', kramdown_doc.options[:input] }
       (expect subject.convert_file the_source_file, postprocess: postprocess).to be_nil
       (expect Pathname.new the_output_file).to exist
       (expect (File.read the_output_file)).to eql %(GFM was _here_, but it has become *AsciiDoc*!\n)
@@ -281,7 +283,7 @@ describe Kramdown::AsciiDoc do
 
     it 'uses original source if postprocess callback returns falsy' do
       the_output_file = output_file %(convert-file-api-#{object_id}.adoc)
-      postprocess = -> (asciidoc) { nil }
+      postprocess = -> _asciidoc {}
       (expect subject.convert_file the_source_file, postprocess: postprocess).to be_nil
       (expect Pathname.new the_output_file).to exist
       (expect (File.read the_output_file)).to eql %(Markdown was _here_, but it has become *AsciiDoc*!\n)
@@ -289,21 +291,21 @@ describe Kramdown::AsciiDoc do
 
     it 'passes result through all postprocessors if list of callbacks is given' do
       the_output_file = output_file %(convert-file-api-#{object_id}.adoc)
-      postprocess_1 = -> (asciidoc) { asciidoc.sub 'become', 'become glorious' }
-      postprocess_2 = -> (asciidoc) { asciidoc.sub 'glorious', 'marvelous' }
+      postprocess_1 = -> asciidoc { asciidoc.sub 'become', 'become glorious' }
+      postprocess_2 = -> asciidoc { asciidoc.sub 'glorious', 'marvelous' }
       (expect subject.convert_file the_source_file, postprocessors: [postprocess_1, postprocess_2]).to be_nil
       (expect Pathname.new the_output_file).to exist
       (expect (File.read the_output_file)).to eql %(Markdown was _here_, but it has become marvelous *AsciiDoc*!\n)
     end
   end
-end
 
-describe Kramdoc do
-  it 'supports Kramdoc as an alias for Kramdown::AsciiDoc' do
-    (expect Kramdoc).to eql Kramdown::AsciiDoc
-  end
+  describe Kramdoc do
+    it 'supports Kramdoc as an alias for Kramdown::AsciiDoc' do
+      (expect described_class).to eql Kramdown::AsciiDoc
+    end
 
-  it 'can be required using the alias kramdoc' do
-    require 'kramdoc'
+    it 'can be required using the alias kramdoc' do
+      require 'kramdoc'
+    end
   end
 end

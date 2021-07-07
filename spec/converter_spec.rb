@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'spec_helper'
 
 describe Kramdown::AsciiDoc::Converter do
@@ -6,7 +8,7 @@ describe Kramdown::AsciiDoc::Converter do
   let(:root) { doc.root }
   let(:converter) { described_class.send :new, root, {} }
 
-  context '#convert' do
+  describe '#convert' do
     let (:input) { %(# Document Title\n\nBody text.) }
 
     it 'does not add line feed (EOL) to end of output document' do
@@ -20,7 +22,7 @@ describe Kramdown::AsciiDoc::Converter do
     end
   end
 
-  context '#clone' do
+  describe '#clone' do
     let :input do
       <<~EOS
       ## <a id="anchor-name">Heading Title</a>
@@ -203,7 +205,7 @@ describe Kramdown::AsciiDoc::Converter do
       EOS
 
       expected_attributes = {
-        'page-layout' => 'home'
+        'page-layout' => 'home',
       }
 
       (expect Kramdown::AsciiDoc::Preprocessors.extract_front_matter input, (attributes = {})).to eql expected
@@ -218,7 +220,7 @@ describe Kramdown::AsciiDoc::Converter do
       EOS
 
       expected_attributes = {
-        'description' => 'This page is intentionally left blank.'
+        'description' => 'This page is intentionally left blank.',
       }
 
       (expect Kramdown::AsciiDoc::Preprocessors.extract_front_matter input, (attributes = {})).to be_empty
@@ -261,7 +263,7 @@ describe Kramdown::AsciiDoc::Converter do
       EOS
 
       expected_attributes = {
-        'description' => 'Just another page.'
+        'description' => 'Just another page.',
       }
 
       (expect Kramdown::AsciiDoc::Preprocessors.extract_front_matter input, (attributes = {})).to eql expected

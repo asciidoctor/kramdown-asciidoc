@@ -1,4 +1,7 @@
-module Kramdown; module AsciiDoc
+# frozen_string_literal: true
+
+module Kramdown
+module AsciiDoc
   class Writer
     LF = ?\n
 
@@ -129,4 +132,5 @@ module Kramdown; module AsciiDoc
       (header.empty? ? @body : (header + (@body.empty? ? [] : [''] + @body))).join LF
     end
   end
-end; end
+end
+end

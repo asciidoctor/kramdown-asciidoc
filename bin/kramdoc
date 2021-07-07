@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 kramdown_asciidoc = File.absolute_path '../lib/kramdown-asciidoc', __dir__
 if File.exist? kramdown_asciidoc

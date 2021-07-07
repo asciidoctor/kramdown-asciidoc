@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 case ENV['COVERAGE']
 when 'deep'
   ENV['DEEP_COVER'] = 'true'
@@ -27,7 +29,7 @@ RSpec.configure do |config|
     File.join output_dir, path
   end
 
-  def scenarios_dir 
+  def scenarios_dir
     File.join __dir__, 'scenarios'
   end
 
