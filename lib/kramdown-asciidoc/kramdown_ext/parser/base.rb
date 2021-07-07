@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Kramdown::Parser::Base
   # Overload the parse method to force value of the :auto_ids option to false.
   #

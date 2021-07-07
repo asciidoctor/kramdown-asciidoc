@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Kramdown::Parser::Html::ElementConverter
   # Overload the convert_br method to add the :html_tag option to indicate this element originates from an HTML tag.
   #

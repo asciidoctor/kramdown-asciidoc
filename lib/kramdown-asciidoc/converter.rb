@@ -1,4 +1,7 @@
-module Kramdown; module AsciiDoc
+# frozen_string_literal: true
+
+module Kramdown
+module AsciiDoc
   class Converter < ::Kramdown::Converter::Base
     using CoreExt
 
@@ -44,12 +47,12 @@ module Kramdown; module AsciiDoc
     InvalidIdCharsRx = /&(?:[a-z][a-z]+\d{0,2}|#\d\d\d{0,4}|#x[\da-f][\da-f][\da-f]{0,3});|[^ \p{Word}\-.]+?/
     ListMarkerRx = /^[ \t]*(?:(?:-|\*\*{0,4}|\.\.{0,4}|\d+\.|[a-zA-Z]\.|[IVXivx]+\))[ \t]|.*?(?::::{0,2}|;;)(?:$|[ \t]))/
     MenuRefRx = /^([\p{Word}&].*?)\s>\s([\p{Word}&].*(?:\s>\s|$))+/
-    ReplaceableTextRx = /[-=]>|<[-=]| -- |\p{Word}--\p{Word}|\*\*|\.\.\.|&\S+;|\{\p{Word}[\p{Word}-]*\}|(?:https?|ftp):\/\/\p{Word}|\((?:C|R|TM)\)/
+    ReplaceableTextRx = %r([-=]>|<[-=]| -- |\p{Word}--\p{Word}|\*\*|\.\.\.|&\S+;|\{\p{Word}[\p{Word}-]*\}|(?:https?|ftp)://\p{Word}|\((?:C|R|TM)\))
     SmartApostropheRx = /\b’\b/
     StopPunctRx = /(?<=\S[.;]|.[?!])\p{Blank}+/
     TrailingSpaceRx = / +$/
     TypographicSymbolRx = /[“”‘’—–…]/
-    UriSchemeRx = /(?:https?|ftp):\/\/\p{Word}/
+    UriSchemeRx = %r((?:https?|ftp)://\p{Word})
     WordishRx = /[\p{Word};:<>&]/
     WordRx = /\p{Word}/
     XmlCommentRx = /\A<!--(.*)-->\Z/m
@@ -66,13 +69,13 @@ module Kramdown; module AsciiDoc
       @lazy_ids = opts[:lazy_ids]
       if @auto_ids || @lazy_ids
         if @auto_ids
-          unless (@id_pre = opts[:auto_id_prefix]) == '_'
+          @id_pre = opts[:auto_id_prefix]
+          sep = opts[:auto_id_separator] || '-'
+          if @lazy_ids
             # NOTE only need to set idprefix when lazy_ids is set since otherwise all IDs are explicit
-            @attributes['idprefix'] = @id_pre if @lazy_ids
-          end
-          unless (sep = opts[:auto_id_separator] || '-') == '_'
+            @attributes['idprefix'] = @id_pre unless @id_pre == '_'
             # NOTE only need to set idseparator when lazy_ids is set since otherwise all IDs are explicit
-            @attributes['idseparator'] = sep if @lazy_ids
+            @attributes['idseparator'] = sep unless sep == '_'
           end
         else
           @id_pre = @attributes['idprefix'] || '_'
@@ -165,8 +168,7 @@ module Kramdown; module AsciiDoc
     # Kramdown incorrectly uses the term header for headings
     alias convert_header convert_heading
 
-    def convert_blank el, opts
-    end
+    def convert_blank el, opts; end
 
     def convert_p el, opts
       (writer = opts[:writer]).start_block
@@ -243,7 +245,7 @@ module Kramdown; module AsciiDoc
       else
         # NOTE clear the list continuation as it isn't required
         writer.clear_line if writer.current_line == '+'
-        writer.add_line lines.map {|l| %( #{l}) }
+        writer.add_line(lines.map {|l| %( #{l}) })
       end
     end
 
@@ -262,8 +264,8 @@ module Kramdown; module AsciiDoc
         block = true
       end
       macro_attrs = [nil]
-      if (alt_text = el.attr['alt'])
-        macro_attrs[0] = alt_text unless alt_text.empty?
+      if (alt_text = el.attr['alt']) && !alt_text.empty?
+        macro_attrs[0] = alt_text
       end
       if (width = el.attr['width'])
         macro_attrs << width
@@ -320,7 +322,7 @@ module Kramdown; module AsciiDoc
       writer.add_lines primary_lines
       unless remaining.empty?
         if remaining.find {|n| (type = n.type) == :blank ? nil : ((BLOCK_TYPES.include? type) ? true : break) }
-          el.options[:compound] = true 
+          el.options[:compound] = true
         end
         traverse remaining, (opts.merge parent: el)
       end
@@ -402,7 +404,7 @@ module Kramdown; module AsciiDoc
       opts[:writer].add_lines table_buffer
     end
 
-    def convert_hr el, opts
+    def convert_hr _el, opts
       (writer = opts[:writer]).start_block
       writer.add_line '\'\'\''
     end
@@ -411,11 +413,11 @@ module Kramdown; module AsciiDoc
       if (url = el.attr['href']).start_with? '#'
         opts[:writer].append %(<<#{url.slice 1, url.length},#{compose_text el, strip: true}>>)
       elsif url.start_with? 'https://', 'http://'
-        if (children = el.children).size == 1 && (child_i = el.children[0]).type == :img
+        if (children = el.children).size == 1 && (child_i = children[0]).type == :img
           convert_img child_i, parent: opts[:parent], index: 0, url: url, writer: opts[:writer]
         else
           bare = ((text = compose_text el, strip: true).chomp '/') == (url.chomp '/')
-          url = url.gsub '__', '%5F%5F' if (url.include? '__')
+          url = url.gsub '__', '%5F%5F' if url.include? '__'
           opts[:writer].append bare ? url : %(#{url}[#{text.gsub ']', '\]'}])
         end
       elsif url.end_with? '.md'
@@ -425,7 +427,7 @@ module Kramdown; module AsciiDoc
       else
         opts[:writer].append %(link:#{url}[#{(compose_text el, strip: true).gsub ']', '\]'}])
       end
-    end 
+    end
 
     def convert_codespan el, opts
       attrlist, mark = '', '`'
@@ -446,9 +448,10 @@ module Kramdown; module AsciiDoc
       text = el.value
       pass = (replaceable? text) ? :shorthand : nil
       pass = :macro if text.include? '++'
-      if pass == :shorthand
+      case pass
+      when :shorthand
         opts[:writer].append %(#{mark}+#{text}+#{mark})
-      elsif pass == :macro
+      when :macro
         opts[:writer].append %(#{mark}pass:c[#{text}]#{mark})
       else
         opts[:writer].append %(#{attrlist}#{mark}#{text}#{mark})
@@ -489,7 +492,7 @@ module Kramdown; module AsciiDoc
         @attributes['pp'] = '{plus}{plus}'
         text = text.gsub '++', '{pp}'
       end
-      if (current_line = (writer = opts[:writer]).current_line).to_s.empty?
+      if (writer = opts[:writer]).current_line.to_s.empty?
         writer.append text.lstrip
       else
         writer.append text
@@ -519,9 +522,7 @@ module Kramdown; module AsciiDoc
       else
         writer.append %(#{(writer.current_line.end_with? ' ') ? '' : ' '}+)
       end
-      if el.options[:html_tag]
-        writer.add_blank_line unless (next_el = to_element opts[:next]).type == :text && (next_el.value.start_with? LF)
-      end
+      writer.add_blank_line if el.options[:html_tag] && ((next_el = to_element opts[:next]).type != :text || !(next_el.value.start_with? LF))
     end
 
     def convert_entity el, opts
@@ -583,7 +584,7 @@ module Kramdown; module AsciiDoc
         lines = val.split LF
       end
       #siblings = (parent = opts[:parent]) ? parent.children : []
-      if (el.options[:category] == :block)# || (!opts[:result][-1] && siblings[-1] == el)
+      if el.options[:category] == :block # || (!opts[:result][-1] && siblings[-1] == el)
         writer.start_block
         if lines.empty?
           writer.add_line '//'
@@ -614,7 +615,7 @@ module Kramdown; module AsciiDoc
     private
 
     def extract_prologue el, opts
-      if (child_i = to_element (children = el.children)[0]).type == :xml_comment
+      if (to_element (children = el.children)[0]).type == :xml_comment
         (prologue_el = el.dup).children = children.take_while {|child| child.type == :xml_comment || child.type == :blank }
         (el = el.dup).children = children.drop prologue_el.children.size
         traverse prologue_el, (opts.merge writer: (prologue_writer = Writer.new))
@@ -692,9 +693,9 @@ module Kramdown; module AsciiDoc
         end
       end
       if ventilate
-        result.map {|line|
-          (line.start_with? '//') || !(STOP_PUNCTUATION.any? {|punc| line.include? punc }) ? line : (line.gsub StopPunctRx, LF)
-        }.join LF
+        result.map do |l|
+          (l.start_with? '//') || !(STOP_PUNCTUATION.any? {|punc| l.include? punc }) ? l : (l.gsub StopPunctRx, LF)
+        end.join LF
       else
         result.join LF
       end
@@ -741,4 +742,5 @@ module Kramdown; module AsciiDoc
       @ids_seen[id] = idx || UNIQUE_ID_START_INDEX
     end
   end
-end; end
+end
+end

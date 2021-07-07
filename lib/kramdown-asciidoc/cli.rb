@@ -1,12 +1,15 @@
+# frozen_string_literal: true
+
 require 'optparse'
 require 'pathname'
 
-module Kramdown; module AsciiDoc
+module Kramdown
+module AsciiDoc
   autoload :VERSION, (::File.join __dir__, 'version.rb')
   class Cli
     def parse args
       options = {
-        attributes: {}
+        attributes: {},
       }
 
       opt_parser = ::OptionParser.new do |opts|
@@ -28,7 +31,7 @@ module Kramdown; module AsciiDoc
 
         opts.on '-a KEY[=VALUE]', '--attribute=KEY[=VALUE]', 'Set an attribute in the AsciiDoc document header (accepts: key, key!, or key=value)' do |attr|
           key, val = attr.split '=', 2
-          val = '' unless val
+          val ||= ''
           options[:attributes][key] = val
         end
 
@@ -122,4 +125,5 @@ module Kramdown; module AsciiDoc
       1
     end
   end
-end; end
+end
+end

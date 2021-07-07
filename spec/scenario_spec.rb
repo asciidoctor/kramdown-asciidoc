@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'spec_helper'
 require 'yaml'
 
@@ -16,6 +18,7 @@ describe 'scenario' do
         let(:input) { File.read input_filename, mode: 'r:UTF-8', newline: :universal }
         let(:extra_options) { options }
         let(:expected) { (File.read output_filename, mode: 'r:UTF-8', newline: :universal).chomp }
+
         it 'converts Markdown to AsciiDoc' do
           (expect doc.to_asciidoc).to eql expected
         end

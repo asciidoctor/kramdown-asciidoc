@@ -1,4 +1,7 @@
-module Kramdown; module AsciiDoc
+# frozen_string_literal: true
+
+module Kramdown
+module AsciiDoc
   module Preprocessors
     # Skims off the front matter from the top of the Markdown source and store the data in the provided attributes Hash.
     #
@@ -15,7 +18,7 @@ module Kramdown; module AsciiDoc
         end
         return source unless line && line.chomp == '---' && !(front_matter.include? ?\n)
         lines.shift while (line = lines[0]) && line == ?\n
-        (::YAML.load front_matter.join).each do |key, val|
+        (::YAML.safe_load front_matter.join).each do |key, val|
           if key == 'layout'
             attributes['page-layout'] = val unless val == 'default'
           else
@@ -49,16 +52,15 @@ module Kramdown; module AsciiDoc
     # @param attributes [Hash] a map of AsciiDoc attributes to set on the output document.
     #
     # @return [String] the Markdown source with whitespace the precedes a leading XML comment removed.
-    def self.snap_leading_comment markdown, attributes
+    def self.snap_leading_comment markdown, _attributes
       (markdown.start_with? ' ', TAB) && (markdown.lstrip.start_with? '<!--') ? markdown.lstrip : markdown
     end
 
-    private
-
     TAB = ?\t
-
     TocDirectiveTip = '<!-- TOC '
+    TocDirectiveRx = %r(^<!-- TOC .*<!-- /TOC -->)m
 
-    TocDirectiveRx = /^<!-- TOC .*<!-- \/TOC -->/m
+    private_constant :TAB, :TocDirectiveTip, :TocDirectiveRx
   end
-end; end
+end
+end
