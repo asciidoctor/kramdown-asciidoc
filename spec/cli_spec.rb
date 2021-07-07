@@ -9,12 +9,12 @@ describe Kramdown::AsciiDoc::Cli do
 
   before do
     @old_stdin, $stdin = $stdin, StringIO.new
-    @old_stdout, $stdout = $stdout, StringIO.new
-    @old_stderr, $stderr = $stderr, StringIO.new
+    @old_stdout, $stdout = $stdout, StringIO.new # rubocop:disable RSpec/ExpectOutput
+    @old_stderr, $stderr = $stderr, StringIO.new # rubocop:disable RSpec/ExpectOutput
   end
 
   after do
-    $stdin, $stdout, $stderr = @old_stdin, @old_stdout, @old_stderr # rubocop:disable RSpec/InstanceVariable
+    $stdin, $stdout, $stderr = @old_stdin, @old_stdout, @old_stderr # rubocop:disable RSpec/InstanceVariable,RSpec/ExpectOutput
   end
 
   context 'option flags' do

@@ -197,7 +197,7 @@ RSpec/ExampleLength:
 RSpec/ExampleWording:
   Enabled: false
 RSpec/ExpectOutput:
-  Enabled: false # FIXME: reenable!
+  Enabled: true
 RSpec/ExpectInHook:
   Enabled: true
 RSpec/FilePath:

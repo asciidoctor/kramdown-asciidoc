@@ -88,13 +88,9 @@ describe Kramdown::AsciiDoc do
     end
 
     it 'writes AsciiDoc to IO object specified by :to option' do
-      old_stdout, $stdout = $stdout, StringIO.new
-      begin
+      expect do
         (expect subject.convert 'text', to: $stdout).to be_nil
-        (expect $stdout.string).to eql %(text\n)
-      ensure
-        $stdout = old_stdout
-      end
+      end.to (output %(text\n)).to_stdout
     end
 
     it 'does not mutate options argument' do
