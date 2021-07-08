@@ -612,6 +612,20 @@ module AsciiDoc
       end
     end
 
+    def convert_math el, opts
+      writer = opts[:writer]
+      @attributes['stem'] = 'latexmath'
+      if el.options[:category] == :span
+        opts[:writer].append %(stem:[#{el.value.gsub ']', '\]'}])
+      else
+        writer.start_block
+        writer.add_line '[stem]'
+        writer.add_line '++++'
+        writer.add_lines el.value.rstrip.split LF
+        writer.add_line '++++'
+      end
+    end
+
     private
 
     def extract_prologue el, opts

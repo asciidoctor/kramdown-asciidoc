@@ -1,0 +1,3 @@
+:stem: latexmath
+
+The slope is defined as stem:[slope=\frac{rise}{run}=\frac{change\: in \: y}{change \: in\: x}].
