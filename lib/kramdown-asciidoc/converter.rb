@@ -90,6 +90,7 @@ module AsciiDoc
         @id_sep_replace = sep_replace
       end
       @ids_seen = {}
+      @footnote_ids = ::Set.new
       @auto_links = opts.fetch :auto_links, true
       @heading_offset = opts[:heading_offset] || 0
       @imagesdir = opts[:imagesdir] || @attributes['imagesdir']
@@ -530,7 +531,9 @@ module AsciiDoc
     end
 
     def convert_footnote el, opts
-      opts[:writer].append %(footnote:#{el.options[:name]}[#{(compose_text el.value).gsub ']', '\]'}])
+      id = el.options[:name]
+      composed_text = (@footnote_ids.add? id) ? ((compose_text el.value).gsub ']', '\]') : ''
+      opts[:writer].append %(footnote:#{id}[#{composed_text}])
     end
 
     def convert_smart_quote el, opts
