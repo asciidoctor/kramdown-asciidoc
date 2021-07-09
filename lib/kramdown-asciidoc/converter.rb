@@ -616,7 +616,7 @@ module AsciiDoc
       writer = opts[:writer]
       @attributes['stem'] = 'latexmath'
       if el.options[:category] == :span
-        opts[:writer].append %(stem:[#{el.value.gsub ']', '\]'}])
+        writer.append %(stem:[#{el.value.gsub ']', '\]'}])
       else
         writer.start_block
         writer.add_line '[stem]'
