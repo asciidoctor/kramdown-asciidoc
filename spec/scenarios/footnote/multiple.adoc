@@ -1,0 +1,3 @@
+A paragraph with afootnote:1[Text of footnote.] footnote.
+
+Another paragraph.footnote:2[Another footnote.]
