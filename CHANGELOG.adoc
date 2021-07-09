@@ -7,6 +7,11 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == Unreleased
 
+=== Added
+
+* Add support for converting block LaTeX math to stem block
+* Add support for converting span LaTeX math to inline stem macro
+
 === Fixed
 
 * Use File.read instead of IO.read to suppress magic subprocess behavior
