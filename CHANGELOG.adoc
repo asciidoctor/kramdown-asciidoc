@@ -11,6 +11,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 * Add support for converting block LaTeX math to stem block
 * Add support for converting span LaTeX math to inline stem macro
+* Add basic support for footnotes (#74)
 
 === Fixed
 

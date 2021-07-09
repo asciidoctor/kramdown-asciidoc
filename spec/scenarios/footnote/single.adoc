@@ -1,0 +1,2 @@
+By default, `HashMap` uses a hashing function called SipHashfootnote:siphash[https://en.wikipedia.org/wiki/SipHash] that can provide
+resistance to Denial of Service (DoS) attacks involving hash tables.

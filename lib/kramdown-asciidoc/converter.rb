@@ -529,6 +529,10 @@ module AsciiDoc
       opts[:writer].append RESOLVE_ENTITY_TABLE[el.value.code_point] || el.options[:original]
     end
 
+    def convert_footnote el, opts
+      opts[:writer].append %(footnote:#{el.options[:name]}[#{(compose_text el.value).gsub ']', '\]'}])
+    end
+
     def convert_smart_quote el, opts
       opts[:writer].append SMART_QUOTE_ENTITY_TO_MARKUP[el.value]
     end
