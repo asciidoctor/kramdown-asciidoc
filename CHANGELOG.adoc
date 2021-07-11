@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
-== Unreleased
+== 2.0.0 (2021-07-11) - @mojavelinux
 
 === Added
 
@@ -26,6 +26,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * Switch CI to GitHub Actions
 * Run test suite in CI environment on Windows and macOS
 * Apply style rules to source code
+
+=== Details
+
+{uri-repo}/releases/tag/v2.0.0[git tag] | {uri-repo}/compare/v1.0.1\...v2.0.0[full diff]
 
 == 1.0.1 (2018-11-28) - @mojavelinux
 

@@ -1,5 +1,6 @@
 = {project-name} (Markdown to AsciiDoc)
 Dan Allen <https://github.com/mojavelinux>
+v2.0.0, 2021-07-11
 // Aliases:
 :project-name: Kramdown AsciiDoc
 :project-handle: kramdown-asciidoc
