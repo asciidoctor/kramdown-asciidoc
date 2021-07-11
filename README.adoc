@@ -18,23 +18,23 @@ ifdef::env-github[]
 :tip-caption: :bulb:
 endif::[]
 // URIs:
-:uri-repo: https://github.com/asciidoctor/kramdown-asciidoc
-:uri-asciidoc: https://asciidoctor.org/docs/what-is-asciidoc/#what-is-asciidoc
-:uri-asciidoctor: https://asciidoctor.org
-:uri-kramdown: https://kramdown.gettalong.org
-:uri-rvm: https://rvm.io
-:uri-rvm-install: https://rvm.io/rvm/install
-:uri-api-docs: https://www.rubydoc.info/github/asciidoctor/kramdown-asciidoc/master
-:uri-gem: https://rubygems.org/gems/kramdown-asciidoc
-:img-uri-gem: https://img.shields.io/gem/v/kramdown-asciidoc.svg?label=gem
+:url-repo: https://github.com/asciidoctor/kramdown-asciidoc
+:url-asciidoc: https://asciidoctor.org/docs/what-is-asciidoc/#what-is-asciidoc
+:url-asciidoctor: https://asciidoctor.org
+:url-kramdown: https://kramdown.gettalong.org
+:url-rvm: https://rvm.io
+:url-rvm-install: https://rvm.io/rvm/install
+:url-api-docs: https://www.rubydoc.info/github/asciidoctor/kramdown-asciidoc/master
+:url-gem: https://rubygems.org/gems/kramdown-asciidoc
+:img-url-gem: https://img.shields.io/gem/v/kramdown-asciidoc.svg?label=gem
 
 ifdef::status[]
-image:{img-uri-gem}[Gem Version,link={uri-gem}]
-image:{uri-repo}/workflows/CI/badge.svg[Build Status (GitHub Actions),link={uri-repo}/actions?query=workflow%3ACI+branch%3Amain]
+image:{img-url-gem}[Gem Version,link={url-gem}]
+image:{url-repo}/workflows/CI/badge.svg[Build Status (GitHub Actions),link={url-repo}/actions?query=workflow%3ACI+branch%3Amain]
 endif::[]
 
-{uri-repo}[{project-name}] (gem: *{project-handle}*, command: `kramdoc`) is a {uri-kramdown}[kramdown] extension for converting Markdown documents to {uri-asciidoc}[AsciiDoc].
-Notably, the converter generates modern AsciiDoc syntax suitable for use with {uri-asciidoctor}[Asciidoctor].
+{url-repo}[{project-name}] (gem: *{project-handle}*, command: `kramdoc`) is a {url-kramdown}[kramdown] extension for converting Markdown documents to {url-asciidoc}[AsciiDoc].
+Notably, the converter generates modern AsciiDoc syntax suitable for use with {url-asciidoctor}[Asciidoctor].
 
 == Prerequisites
 
@@ -45,7 +45,7 @@ To check whether you have Ruby installed, and which version, run the following c
 
  $ ruby -v
 
-If Ruby is not installed, you can install it using {uri-rvm}[RVM] (or, if you prefer, the package manager for your system).
+If Ruby is not installed, you can install it using {url-rvm}[RVM] (or, if you prefer, the package manager for your system).
 We generally recommend using RVM because it allows you to install gems without requiring elevated privileges or messing with system libraries.
 
 == Installation
@@ -85,7 +85,7 @@ To see all the options the `kramdoc` command accepts, pass the `-h` option to th
 
 For example, you can inject attributes (key/value pairs) into the header of the AsciiDoc output document using the `-a` option.
 
- $ kramdoc -a product-name="ACME Cloud" -a hide-uri-scheme sample.md
+ $ kramdoc -a product-name="ACME Cloud" -a hide-url-scheme sample.md
 
 Another use for attributes is setting the shared images directory, which is covered in the next section.
 
@@ -158,7 +158,7 @@ If these values do not match the defaults in AsciiDoc, the `idprefix` and/or `id
 
 == API
 
-In additional to the command-line interface, {project-name} also provides a porcelain API (see {uri-api-docs}[API docs]).
+In additional to the command-line interface, {project-name} also provides a porcelain API (see {url-api-docs}[API docs]).
 We use the term "`porcelain`" because the API hides the details of registering the converter, preprocessing the Markdown document, parsing the document with kramdown, and calling the converter method to transform the parse tree to AsciiDoc.
 
 The API consists of two static methods in the Kramdoc module:
@@ -214,7 +214,7 @@ Kramdoc.convert markdown, to: 'result.adoc'
 
 The input string is automatically converted to UTF-8.
 
-For more information about the API, refer to the {uri-api-docs}[API documentation].
+For more information about the API, refer to the {url-api-docs}[API documentation].
 
 == Development
 
@@ -223,10 +223,10 @@ Follow the instructions below to learn how to clone the source and run the appli
 
 === Retrieve the source code
 
-Simply copy the {uri-repo}[GitHub repository URL] and pass it to the `git clone` command:
+Simply copy the {url-repo}[GitHub repository URL] and pass it to the `git clone` command:
 
 [subs=attributes+]
- $ git clone {uri-repo}
+ $ git clone {url-repo}
 
 Next, switch to the project directory:
 
@@ -235,9 +235,9 @@ Next, switch to the project directory:
 
 === Prepare RVM (optional)
 
-We recommend using {uri-rvm}[RVM] when developing applications with Ruby.
+We recommend using {url-rvm}[RVM] when developing applications with Ruby.
 We like RVM because it keeps the dependencies required by the project isolated from the rest of your system.
-Follow the {uri-rvm-install}[installation instructions] on the RVM site to setup RVM and install Ruby.
+Follow the {url-rvm-install}[installation instructions] on the RVM site to setup RVM and install Ruby.
 
 Once you have RVM setup, switch to the RVM-managed version of Ruby recommended by the project using this command:
 
