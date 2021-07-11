@@ -12,7 +12,7 @@ module AsciiDoc
   DEFAULT_PREPROCESSORS = [
     (Preprocessors.method :extract_front_matter),
     (Preprocessors.method :replace_toc),
-    (Preprocessors.method :snap_leading_comment),
+    (Preprocessors.method :trim_before_leading_comment),
   ]
 
   # Converts a Markdown string to an AsciiDoc string and either returns the result or writes it to a file.

@@ -46,13 +46,13 @@ module AsciiDoc
       end
     end
 
-    # Snaps the leading XML comment to the start of the Markdown source.
+    # Trims space characters that precede a leading XML comment in the Markdown source.
     #
     # @param markdown [String] the Markdown source to process.
     # @param attributes [Hash] a map of AsciiDoc attributes to set on the output document.
     #
-    # @return [String] the Markdown source with whitespace the precedes a leading XML comment removed.
-    def self.snap_leading_comment markdown, _attributes
+    # @return [String] the Markdown source with the space characters preceding a leading XML comment removed.
+    def self.trim_before_leading_comment markdown, _attributes
       (markdown.start_with? ' ', TAB) && (markdown.lstrip.start_with? '<!--') ? markdown.lstrip : markdown
     end
 
