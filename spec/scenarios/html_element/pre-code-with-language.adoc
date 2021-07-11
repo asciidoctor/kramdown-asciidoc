@@ -1,4 +1,4 @@
-[source,ruby]
+[,ruby]
 ----
 def meaning_of_life?
   42

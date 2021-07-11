@@ -1,6 +1,6 @@
 . Make a new project folder
 +
-[source,js]
+[,js]
 ----
 const fs = require('fs')
 fs.mkdirSync('project')
@@ -8,7 +8,7 @@ fs.mkdirSync('project')
 
 . Initialize a new repository
 +
-[source,js]
+[,js]
 ----
 const git = require('isomorphic-git')
 const repo = { fs, dir: 'project' }

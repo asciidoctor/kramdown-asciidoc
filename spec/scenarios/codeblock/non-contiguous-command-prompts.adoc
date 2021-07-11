@@ -1,4 +1,4 @@
-[source,console]
+[,console]
 ----
 $ cd project
 

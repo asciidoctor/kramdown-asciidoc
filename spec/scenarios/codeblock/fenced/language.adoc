@@ -1,4 +1,4 @@
-[source,java]
+[,java]
 ----
 public class AllYourCode {
   public String getBelongsTo() {

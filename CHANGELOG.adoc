@@ -22,6 +22,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 === Changed
 
 * Upgrade kramdown to 2.3.x and declare kramdown-parser-gfm as runtime dependency (#85)
+* Don't add source style to listing block when language is specified
 * Switch CI to GitHub Actions
 * Run test suite in CI environment on Windows and macOS
 * Apply style rules to source code
