@@ -27,7 +27,8 @@ module AsciiDoc
   # @option opts [Symbol] :wrap (:preserve) the line wrapping behavior to apply (:preserve, :ventilate, or :none).
   # @option opts [Integer] :heading_offset (0) the heading offset to apply to heading levels.
   # @option opts [Boolean] :auto_links (true) whether to allow raw URLs to be recognized as links.
-  # @option opts [Hash] :attributes ({}) AsciiDoc attributes to add to the document header of the output document.
+  # @option opts [Hash] :attributes ({}) additional AsciiDoc attributes to add to header of output document; reserved
+  #   attributes, like stem, may be overridden; some attributes may impact conversion, such as idprefix and idseparator
   # @option opts [Symbol] :encode (true) whether to reencode the source to UTF-8.
   # @option opts [Array<Proc>] :preprocessors ([]) a list of preprocessors functions to execute on the cleaned Markdown source.
   # @option opts [Array<Proc>] :postprocessors ([]) a list of functions through which to run the output document.
@@ -82,7 +83,8 @@ module AsciiDoc
   # @option opts [Symbol] :wrap (:preserve) the line wrapping behavior to apply (:preserve, :ventilate, or :none).
   # @option opts [Integer] :heading_offset (0) the heading offset to apply to heading levels.
   # @option opts [Boolean] :auto_links (true) whether to allow raw URLs to be recognized as links.
-  # @option opts [Hash] :attributes ({}) AsciiDoc attributes to add to the document header of the output document.
+  # @option opts [Hash] :attributes ({}) additional AsciiDoc attributes to add to header of output document; reserved
+  #   attributes, like stem, may be overridden; some attributes may impact conversion, such as idprefix and idseparator
   # @option opts [Array<Proc>] :preprocessors ([]) a list of preprocessors functions to execute on the cleaned Markdown source.
   # @option opts [Array<Proc>] :postprocessors ([]) a list of functions through which to run the output document.
   # @option opts [Proc] :postprocess (nil) a function through which to run the output document (if :postprocessors is falsy).
