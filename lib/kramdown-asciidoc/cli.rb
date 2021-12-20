@@ -87,10 +87,8 @@ module AsciiDoc
       if args.empty?
         opt_parser.warn 'Please specify a Markdown file to convert.'
         $stdout.write opt_parser.help
-        return 1
-      end
-
-      if args.size == 1
+        1
+      elsif args.size == 1
         options[:input_file] = args[0]
         [0, options]
       else
