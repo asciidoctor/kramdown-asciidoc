@@ -118,8 +118,8 @@ module AsciiDoc
         ::Kramdoc.convert_file input_file, options
       end
       0
-    rescue ::IOError => e
-      $stderr.write %(kramdoc: #{e.message}\n)
+    rescue ::IOError
+      $stderr.write %(kramdoc: #{$!.message}\n)
       1
     end
   end
