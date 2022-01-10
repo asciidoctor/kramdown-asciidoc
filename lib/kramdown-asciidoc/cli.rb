@@ -15,7 +15,7 @@ module AsciiDoc
       opt_parser = ::OptionParser.new do |opts|
         opts.program_name = 'kramdoc'
         opts.banner = <<~EOS
-        Usage: #{opts.program_name} [OPTION]... FILE...
+        Usage: #{opts.program_name} [OPTION]... FILE
 
         Converts Markdown to AsciiDoc.
 
