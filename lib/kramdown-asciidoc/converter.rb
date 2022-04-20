@@ -575,6 +575,14 @@ module AsciiDoc
         opts[:writer].append %(^#{contents}^)
       when 'sub'
         opts[:writer].append %(~#{contents}~)
+      when 'input'                                                              
+        if el.attr['type'] == 'checkbox'                                        
+          if el.attr['checked']                                                 
+            opts[:writer].append '[x] '                                         
+          else                                                                  
+            opts[:writer].append '[ ] '                                                                                                                                                                        
+          end                                                                   
+        end  
       else
         attrs = (attrs = el.attr).empty? ? '' : attrs.map {|k, v| %( #{k}="#{v}") }.join
         opts[:writer].append %(+++<#{tag}#{attrs}>+++#{contents}+++</#{tag}>+++)
