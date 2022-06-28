@@ -10,6 +10,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 === Fixed
 
 * Fix crash when fenced code block is empty and does not specify a language (#93)
+* Handle front matter value that is parsed as a date or datetime (#95)
 
 == 2.0.0 (2021-07-11) - @mojavelinux
 

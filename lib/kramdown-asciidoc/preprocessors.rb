@@ -18,7 +18,7 @@ module AsciiDoc
         end
         return source unless line && line.chomp == '---' && !(front_matter.include? ?\n)
         lines.shift while (line = lines[0]) && line == ?\n
-        (::YAML.safe_load front_matter.join).each do |key, val|
+        (::YAML.safe_load front_matter.join, permitted_classes: [::Date, ::Time]).each do |key, val|
           if key == 'layout'
             attributes['page-layout'] = val unless val == 'default'
           else
