@@ -3,7 +3,7 @@
 begin
   require 'rubocop/rake_task'
   RuboCop::RakeTask.new :lint do |t|
-    t.patterns = %w(bin/* lib/**/*.rb spec/*.rb Rakefile Gemfile tasks/*.rake)
+    t.patterns = %w(Gemfile Rakefile bin/* lib/**/*.rb spec/**/*.rb tasks/*.rake)
   end
 rescue LoadError => e
   task :lint do
