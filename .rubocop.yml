@@ -1,10 +1,12 @@
 require:
-- rubocop-rspec
 - rubocop-rake
+- rubocop-rspec
 AllCops:
   TargetRubyVersion: 2.5
 Gemspec/DateAssignment:
   Enabled: true
+Gemspec/RequireMFA:
+  Enabled: false
 Layout/ArgumentAlignment:
   EnforcedStyle: with_fixed_indentation
 Layout/BeginEndAlignment:
@@ -25,7 +27,7 @@ Layout/HeredocIndentation:
   Enabled: false # reason: makes it harder to understand what indentation is significant
 Layout/IndentationWidth:
   Enabled: true
-  IgnoredPatterns: ['^module Kramdown$']
+  AllowedPatterns: ['^module Kramdown$']
 Layout/LeadingCommentSpace:
   Enabled: false # reason: this is just nitpicky
 Layout/LineEndStringConcatenationIndentation:
@@ -58,6 +60,10 @@ Lint/AmbiguousAssignment:
 Lint/AmbiguousBlockAssociation:
   Enabled: true # NOTE this is pedantic when using braces for single-line blocks
   Exclude: [ spec/*.rb ]
+Lint/AmbiguousOperatorPrecedence:
+  Enabled: false
+Lint/AmbiguousRange:
+  Enabled: true
 Lint/BinaryOperatorWithIdenticalOperands:
   Enabled: true
 Lint/ConstantDefinitionInBlock:
@@ -94,6 +100,8 @@ Lint/FloatComparison:
   Exclude: [ spec/*.rb ]
 Lint/IdentityComparison:
   Enabled: true
+Lint/IncompatibleIoSelectWithFiberScheduler:
+  Enabled: true
 Lint/LambdaWithoutLiteralBlock:
   Enabled: true
 Lint/MissingSuper:
@@ -113,6 +121,10 @@ Lint/ParenthesesAsGroupedExpression:
 Lint/RaiseException:
   Enabled: true
 Lint/RedundantDirGlobSort:
+  Enabled: true
+Lint/RefinementImportMethods:
+  Enabled: true
+Lint/RequireRelativeSelfPath:
   Enabled: true
 Lint/SelfAssignment:
   Enabled: true
@@ -140,6 +152,8 @@ Lint/UnusedMethodArgument:
   Enabled: true
 Lint/UselessMethodDefinition:
   Enabled: true
+Lint/UselessRuby2Keywords:
+  Enabled: true
 Lint/UselessTimes:
   Enabled: true
 Metrics/AbcSize:
@@ -163,6 +177,8 @@ Metrics/PerceivedComplexity:
   Enabled: false
 Naming/AccessorMethodName:
   Enabled: true
+Naming/BlockForwarding:
+  Enabled: true
 Naming/ConstantName:
   Enabled: false
 Naming/FileName:
@@ -182,8 +198,12 @@ Naming/PredicateName:
   Enabled: true
 Naming/VariableNumber:
   Enabled: false # reason: this is just nitpicky
+RSpec/BeEq:
+  Enabled: true
 RSpec/BeEql:
-  Enabled: false # NOTE can lead to cryptic error messages
+  Enabled: false # NOTE can lead to cryptic error messages when comparing integers
+RSpec/BeNil:
+  Enabled: true
 RSpec/BeforeAfterAll:
   Enabled: true
 RSpec/ContextWording:
@@ -196,9 +216,13 @@ RSpec/ExampleLength:
   Enabled: false
 RSpec/ExampleWording:
   Enabled: false
+RSpec/ExcessiveDocstringSpacing:
+  Enabled: true
 RSpec/ExpectOutput:
   Enabled: true
 RSpec/ExpectInHook:
+  Enabled: true
+RSpec/FactoryBot/SyntaxMethods:
   Enabled: true
 RSpec/FilePath:
   Enabled: false
@@ -213,8 +237,16 @@ RSpec/Pending:
   Enabled: true
 RSpec/Rails/AvoidSetupHook:
   Enabled: false
+RSpec/SubjectDeclaration:
+  Enabled: true
+RSpec/VerifiedDoubleReference:
+  Enabled: true
 RSpec/VoidExpect:
   Enabled: false
+Security/CompoundHash:
+  Enabled: true
+Security/IoMethods:
+  Enabled: true
 Security/Open:
   Enabled: true
 Style/AccessorGrouping:
@@ -279,6 +311,12 @@ Style/ExplicitBlockArgument:
   Enabled: false # reason: yield is fine
 Style/ExponentialNotation:
   Enabled: true
+Style/FetchEnvVar:
+  Enabled: false # reason: just no
+Style/FileRead:
+  Enabled: true
+Style/FileWrite:
+  Enabled: true
 Style/FormatString:
   EnforcedStyle: sprintf
 Style/FormatStringToken:
@@ -287,7 +325,7 @@ Style/FormatStringToken:
 Style/GlobalStdStream:
   Enabled: true
 Style/GuardClause:
-  Enabled: false # NOTE reenable for some ideas, but we don't agree with all the suggestions, so add ignores
+  Enabled: false # FIXME enable for some ideas, but we don't agree with all the suggestions, so add ignores
 Style/HashConversion:
   Enabled: true
 Style/HashAsLastArrayItem:
@@ -320,6 +358,8 @@ Style/InfiniteLoop:
   Enabled: false # reason: loop is measurably slower than while true
 Style/KeywordParametersOrder:
   Enabled: true
+Style/MapToHash:
+  Enabled: true
 Style/MethodCallWithArgsParentheses:
   Enabled: true
   EnforcedStyle: omit_parentheses
@@ -339,16 +379,26 @@ Style/MutableConstant:
   Enabled: false # reason: freezing constants is pendantic
 Style/NegatedIfElseCondition:
   Enabled: true
+Style/NestedFileDirname:
+  Enabled: true
 Style/NestedParenthesizedCalls:
   Enabled: true
 Style/NestedTernaryOperator:
   Enabled: false # reason: a ternary is a ternary
 Style/NilLambda:
   Enabled: true
+Style/NumberedParameters:
+  Enabled: true
+Style/NumberedParametersLimit:
+  Enabled: true
 Style/NumericLiterals:
   Enabled: false # reason: makes large numbers unreadable and harder to copy
 Style/NumericPredicate:
   EnforcedStyle: comparison
+Style/ObjectThen:
+  Enabled: false # reason: not yet available in minimum JRuby version
+Style/OpenStructUse:
+  Enabled: false # reason: the theming system relies on OpenStruct
 Style/OptionalBooleanParameter:
   Enabled: false # reason: invasive
 Style/ParallelAssignment:
@@ -374,6 +424,8 @@ Style/RedundantFetchBlock:
   Enabled: true
 Style/RedundantFileExtensionInRequire:
   Enabled: true
+Style/RedundantInitialize:
+  Enabled: true
 Style/RedundantPercentQ:
   Enabled: true
 Style/RedundantRegexpCharacterClass:
@@ -382,6 +434,8 @@ Style/RedundantRegexpEscape:
   Enabled: true
 Style/RedundantSelfAssignment:
   Enabled: true
+Style/RedundantSelfAssignmentBranch:
+  Enabled: false
 Style/RegexpLiteral:
   Enabled: true
 Style/RescueModifier:
@@ -391,6 +445,8 @@ Style/RescueStandardError:
 Style/MissingRespondToMissing:
   Enabled: true
 Style/SafeNavigation:
+  Enabled: true
+Style/SelectByRegexp:
   Enabled: true
 Style/SingleArgumentDig:
   Enabled: true

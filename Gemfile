@@ -12,9 +12,9 @@ group :docs do
 end unless without.include? 'docs'
 
 group :lint do
-  gem 'rubocop', '~> 1.18.0', require: false
+  gem 'rubocop', '~> 1.28.0', require: false
   gem 'rubocop-rake', '~> 0.6.0', require: false
-  gem 'rubocop-rspec', '~> 2.4.0', require: false
+  gem 'rubocop-rspec', '~> 2.10.0', require: false
 end unless without.include? 'lint'
 
 group :coverage do
