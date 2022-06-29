@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
-== Unreleased
+== 2.0.1 (2022-06-29) - @mojavelinux
 
 === Fixed
 
@@ -18,6 +18,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 === Changed
 
 * Add JRuby 9.3 to CI matrix
+
+=== Details
+
+{url-repo}/releases/tag/v2.0.1[git tag] | {url-repo}/compare/v2.0.0\...v2.0.1[full diff]
 
 == 2.0.0 (2021-07-11) - @mojavelinux
 
