@@ -228,18 +228,19 @@ module AsciiDoc
         writer.start_block
       end
       lines = el.value.rstrip.split LF
+      first_line = lines[0]
       if (lang = el.attr['class'])
         # NOTE Kramdown always prefixes class with language-
         # TODO remap lang if requested
         writer.add_line %([,#{lang = lang.slice 9, lang.length}])
-      elsif (prompt = lines[0].start_with? '$ ')
+      elsif (prompt = first_line && (first_line.start_with? '$ '))
         writer.add_line %([,#{lang = 'console'}]) if lines.include? ''
       end
       if lang || (el.options[:fenced] && !prompt)
         writer.add_line '----'
         writer.add_lines lines
         writer.add_line '----'
-      elsif !prompt && ((lines.include? '') || (ListMarkerRx.match? lines[0]))
+      elsif !prompt && ((lines.include? '') || (first_line && (ListMarkerRx.match? first_line)))
         writer.add_line '....'
         writer.add_lines lines
         writer.add_line '....'

@@ -5,6 +5,12 @@
 This document provides a high-level view of the changes to {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
+== Unreleased
+
+=== Fixed
+
+* Fix crash when fenced code block is empty and does not specify a language (#93)
+
 == 2.0.0 (2021-07-11) - @mojavelinux
 
 === Added
