@@ -145,6 +145,48 @@ describe Kramdown::AsciiDoc::Converter do
       (expect attributes).to eql expected_attributes
     end
 
+    it 'permits front matter value to be parsed as a date' do
+      input = <<~EOS
+      ---
+      title: Date in Front Matter
+      date: 2020-02-02
+      ---
+      A front matter value can be a date.
+      EOS
+
+      expected = <<~EOS.chomp
+      = Date in Front Matter
+      :date: 2020-02-02
+
+      A front matter value can be a date.
+      EOS
+
+      input = Kramdown::AsciiDoc::Preprocessors.extract_front_matter input, (attributes = {})
+      doc = Kramdown::Document.new input, (opts.merge attributes: attributes)
+      (expect doc.to_asciidoc).to eql expected
+    end
+
+    it 'permits front matter value to be parsed as a datetime' do
+      input = <<~EOS
+      ---
+      title: Date in Front Matter
+      date: 2020-02-02T02:02:20Z
+      ---
+      A front matter value can be a date.
+      EOS
+
+      expected = <<~EOS.chomp
+      = Date in Front Matter
+      :date: 2020-02-02 02:02:20 UTC
+
+      A front matter value can be a date.
+      EOS
+
+      input = Kramdown::AsciiDoc::Preprocessors.extract_front_matter input, (attributes = {})
+      doc = Kramdown::Document.new input, (opts.merge attributes: attributes)
+      (expect doc.to_asciidoc).to eql expected
+    end
+
     it 'ignores title from front matter if explicit document title is present' do
       input = <<~EOS
       ---
