@@ -488,6 +488,10 @@ module AsciiDoc
       next_el && next_el.type == :text && (WordRx.match? next_el.value.chr)
     end
 
+    def convert_abbreviation el, opts
+      opts[:writer].append el.value
+    end
+
     def convert_text el, opts
       text = escape_replacements el.value
       if text.include? '++'
