@@ -10,6 +10,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 === Fixed
 
 * Fix crash when fenced code block is empty and does not specify a language (#93)
+* Fix crash when input contains `<script>` tag (#98)
 * Handle front matter value that is parsed as a date or datetime (#95)
 
 === Changed

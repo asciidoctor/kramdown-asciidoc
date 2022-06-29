@@ -547,7 +547,11 @@ module AsciiDoc
     end
 
     def convert_html_element el, opts
-      if (tag = el.value) == 'div' && (child_i = el.children[0]) && child_i.options[:transparent] && (child_i_i = child_i.children[0])
+      if (tag = el.value) == 'script'
+        opts[:writer].start_block
+        opts[:writer].add_lines ['++++', '<script>', el.children[0].value.strip, '</script>', '++++']
+        return
+      elsif tag == 'div' && (child_i = el.children[0]) && child_i.options[:transparent] && (child_i_i = child_i.children[0])
         if child_i_i.value == 'span' && ((role = el.attr['class'].to_s).start_with? 'note') && child_i_i.attr['class'] == 'notetitle'
           marker = ADMON_FORMATTED_MARKERS[(to_element child_i_i.children[0]).value] || 'Note'
           lines = compose_text (child_i.children.drop 1), parent: child_i, strip: true, split: true, wrap: @wrap
