@@ -206,7 +206,7 @@ module AsciiDoc
       if contents[0].start_with?(*ADMON_MARKERS_ASCIIDOC) && !(contents.include? '')
         writer.add_lines contents
       else
-        if contents.size > 1 && (contents[-1].start_with? '-- ')
+        if contents.size > 1 && ::String === (last_line = contents[-1]) && (last_line.start_with? '-- ')
           attribution = (attribution_line = contents.pop).slice 3, attribution_line.length
           writer.add_line %([,#{attribution}])
           # NOTE there will be at least one non-blank line, but coerce .to_s just to be safe
