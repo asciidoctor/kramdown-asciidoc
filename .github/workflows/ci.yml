@@ -24,20 +24,19 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        ruby: [jruby-9.2, '2.3', '2.7', '3.0', '3.1']
+        ruby: [jruby-9.3, '2.3', '2.7', '3.1']
         exclude:
         # remove 3.1 on ubuntu-latest to mark as primary
         - os: ubuntu-latest
           ruby: '3.1'
-        # remove 3.1 on windows as it's not yet available
-        - os: windows-latest
-          ruby: '3.1'
         # remove since JRuby on Windows gets newlines wrong in test suite
         - os: windows-latest
-          ruby: jruby-9.2
+          ruby: jruby-9.3
         include:
         - os: ubuntu-latest
-          ruby: truffleruby-21.1.0
+          ruby: jruby-9.2
+        - os: ubuntu-latest
+          ruby: truffleruby
         - os: macos-latest
           ruby: '3.1'
         - os: ubuntu-latest
@@ -46,6 +45,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       BUNDLE_WITHOUT: coverage:docs:lint
+      # work around `Permission denied - NUL' error when installing/using the bundler gem on JRuby for Windows
+      JRUBY_OPTS: '-J-Djdk.io.File.enableADS=true'
     steps:
     - name: Checkout
       uses: actions/checkout@v2
