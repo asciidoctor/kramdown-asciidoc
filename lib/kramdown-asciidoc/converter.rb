@@ -585,8 +585,12 @@ module AsciiDoc
       when 'sub'
         opts[:writer].append %(~#{contents}~)
       else
-        attrs = (attrs = el.attr).empty? ? '' : attrs.map {|k, v| %( #{k}="#{v}") }.join
-        opts[:writer].append %(+++<#{tag}#{attrs}>+++#{contents}+++</#{tag}>+++)
+        if tag == 'input' && el.attr['type'] == 'checkbox' && el.attr['class'] == 'task-list-item-checkbox'
+          opts[:writer].append %([#{el.attr['checked'] ? 'x' : ' '}] )
+        else
+          attrs = (attrs = el.attr).empty? ? '' : attrs.map {|k, v| %( #{k}="#{v}") }.join
+          opts[:writer].append %(+++<#{tag}#{attrs}>+++#{contents}+++</#{tag}>+++)
+        end
       end
     end
 
