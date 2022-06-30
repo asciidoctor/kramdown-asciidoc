@@ -31,7 +31,7 @@ Gem::Specification.new do |s|
 
   s.require_paths = ['lib']
 
-  s.add_runtime_dependency 'kramdown', '~> 2.3.0'
+  s.add_runtime_dependency 'kramdown', '~> 2.4.0'
   s.add_runtime_dependency 'rexml', '~> 3.2.0'
   s.add_runtime_dependency 'kramdown-parser-gfm', '~> 1.1.0'
 
