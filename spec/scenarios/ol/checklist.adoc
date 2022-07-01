@@ -1,0 +1,4 @@
+. [x] Clean
+. [x] Prep
+. [ ] Cook
+. [ ] Serve

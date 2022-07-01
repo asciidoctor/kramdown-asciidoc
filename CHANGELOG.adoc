@@ -7,6 +7,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == Unreleased
 
+=== Added
+
+* Convert checkbox at start of items in a checklist (#94)
+
 === Changed
 
 * Upgrade kramdown to 2.4.x
