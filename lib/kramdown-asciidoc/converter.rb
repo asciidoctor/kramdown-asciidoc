@@ -203,8 +203,16 @@ module AsciiDoc
       (writer = opts[:writer]).start_block
       traverse el, (opts.merge writer: (block_writer = Writer.new), blockquote_depth: (depth = opts[:blockquote_depth] || 0) + 1)
       contents = block_writer.body
-      if contents[0].start_with?(*ADMON_MARKERS_ASCIIDOC) && !(contents.include? '')
-        writer.add_lines contents
+      if contents[0].start_with?(*ADMON_MARKERS_ASCIIDOC)
+        if contents.include? ''
+          style, _, contents[0] = contents[0].partition ': '
+          writer.add_line %([#{style}])
+          writer.start_delimited_block '='
+          writer.add_lines contents
+          writer.end_delimited_block
+        else
+          writer.add_lines contents
+        end
       else
         if contents.size > 1 && ::String === (last_line = contents[-1]) && (last_line.start_with? '-- ')
           attribution = (attribution_line = contents.pop).slice 3, attribution_line.length

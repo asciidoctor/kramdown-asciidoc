@@ -1,5 +1,3 @@
 > Tip: Always test your code.
 >
-> * code
-> * test
-> * always
+> You'll thank yourself later.
