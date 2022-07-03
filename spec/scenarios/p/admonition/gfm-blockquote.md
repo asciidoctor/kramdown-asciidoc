@@ -1,0 +1,7 @@
+> **Note**
+> The first line must be exactly as shown below.
+> The first letter is case sensitive.
+> Your content must start on the second line.
+
+> **Warning**
+> At the time of writing, this feature is still in beta.

@@ -185,7 +185,8 @@ module AsciiDoc
       elsif (child_i.type == :strong || child_i.type == :em) &&
           (marker_el = child_i.children[0]) && ((marker = ADMON_FORMATTED_MARKERS[marker_el.value]) ||
           ((marker = ADMON_LABELS[marker_el.value]) && (child_ii = to_element children[1]).type == :text &&
-          ((child_ii_text = child_ii.value).start_with? ': ')))
+          (((child_ii_text = child_ii.value).start_with? ': ') ||
+          (opts[:parent].type == :blockquote && (child_ii_text.start_with? ?\n)))))
         children = children.drop 1
         children[0] = clone child_ii, value: (child_ii_text.slice 1, child_ii_text.length) if child_ii
         # Q: should we only rstrip?
