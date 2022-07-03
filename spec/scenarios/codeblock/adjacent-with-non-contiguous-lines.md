@@ -1,0 +1,9 @@
+    foo
+
+    bar
+
+<!---->
+
+    yin
+
+    yang

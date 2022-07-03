@@ -233,7 +233,8 @@ module AsciiDoc
     def convert_codeblock el, opts
       writer = opts[:writer]
       # NOTE hack to down-convert level-5 heading to block title
-      if (current_line = writer.current_line) && (!(current_line.start_with? '.') || (current_line.start_with? '. '))
+      if (current_line = writer.current_line) &&
+          ((current_line.start_with? '.') ? (current_line == '....' || (current_line.start_with? '. ')) : true)
         writer.start_block
       end
       lines = el.value.rstrip.split LF

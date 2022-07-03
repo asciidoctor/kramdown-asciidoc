@@ -13,6 +13,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * Add support for GFM-style admonitions (#103)
 * Convert checkbox at start of items in a checklist (#94)
 
+=== Fixed
+
+* Separate adjacent delimited literal blocks
+
 === Changed
 
 * Upgrade kramdown to 2.4.x
