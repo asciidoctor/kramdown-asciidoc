@@ -92,6 +92,7 @@ module AsciiDoc
       @ids_seen = {}
       @footnote_ids = ::Set.new
       @auto_links = opts.fetch :auto_links, true
+      @diagram_languages = opts[:diagram_languages] || %w(plantuml mermaid)
       @heading_offset = opts[:heading_offset] || 0
       @imagesdir = opts[:imagesdir] || @attributes['imagesdir']
       @wrap = opts[:wrap] || :preserve
@@ -242,14 +243,21 @@ module AsciiDoc
       if (lang = el.attr['class'])
         # NOTE Kramdown always prefixes class with language-
         # TODO remap lang if requested
-        writer.add_line %([,#{lang = lang.slice 9, lang.length}])
+        lang = lang.slice 9, lang.length
+        if @diagram_languages.include? lang
+          diagram = true
+          writer.add_line %([#{lang}])
+        else
+          writer.add_line %([,#{lang}])
+        end
       elsif (prompt = first_line && (first_line.start_with? '$ '))
         writer.add_line %([,#{lang = 'console'}]) if lines.include? ''
       end
       if lang || (el.options[:fenced] && !prompt)
-        writer.add_line '----'
+        delimiter = diagram ? '....' : '----'
+        writer.add_line delimiter
         writer.add_lines lines
-        writer.add_line '----'
+        writer.add_line delimiter
       elsif !prompt && ((lines.include? '') || (first_line && (ListMarkerRx.match? first_line)))
         writer.add_line '....'
         writer.add_lines lines
