@@ -12,6 +12,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * Add support for multi-paragraph admonitions (#72)
 * Add support for GFM-style admonitions (#103)
 * Convert checkbox at start of items in a checklist (#94)
+* Allow diagram languages to be specified and convert matching fenced code blocks to diagram literal blocks (#76)
 
 === Fixed
 

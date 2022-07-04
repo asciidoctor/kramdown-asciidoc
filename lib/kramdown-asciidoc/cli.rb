@@ -35,6 +35,10 @@ module AsciiDoc
           options[:attributes][key] = val
         end
 
+        opts.on '--diagram-languages=VALUES', 'Specify source languages to treat as diagrams (default: plantuml,mermaid)' do |names|
+          options[:diagram_languages] = names.split ','
+        end
+
         opts.on '--wrap=preserve|none|ventilate', [:none, :preserve, :ventilate], 'Set how lines are wrapped in the AsciiDoc document (default: preserve)' do |wrap|
           options[:wrap] = wrap
         end

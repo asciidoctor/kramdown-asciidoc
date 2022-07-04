@@ -279,6 +279,13 @@ describe Kramdown::AsciiDoc::Cli do
       (expect $stdout.string).to eql expected
     end
 
+    it 'allows diagram languages to be specified by --diagram-languages option' do
+      the_source_file = scenario_file 'codeblock/fenced/custom-diagrams.md'
+      expected = File.read scenario_file 'codeblock/fenced/custom-diagrams.adoc'
+      (expect subject.run %W(-o - --diagram-languages plantuml,nomnoml #{the_source_file})).to eql 0
+      (expect $stdout.string).to eql expected
+    end
+
     it 'passes through HTML when --no-html-to-native flag is used' do
       the_source_file = scenario_file 'html_element/native.md'
       (expect subject.run %W(-o - --no-html-to-native #{the_source_file})).to eql 0
