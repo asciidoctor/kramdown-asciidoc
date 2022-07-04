@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
-== Unreleased
+== 2.1.0 (2022-07-04) - @mojavelinux
 
 === Added
 
@@ -21,6 +21,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 === Changed
 
 * Upgrade kramdown to 2.4.x
+
+=== Details
+
+{url-repo}/releases/tag/v2.1.0[git tag] | {url-repo}/compare/v2.0.1\...v2.1.0[full diff]
 
 == 2.0.1 (2022-06-29) - @mojavelinux
 

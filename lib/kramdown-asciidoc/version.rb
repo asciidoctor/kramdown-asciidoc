@@ -2,6 +2,6 @@
 
 module Kramdown
 module AsciiDoc
-  VERSION = '2.1.0-alpha.0'
+  VERSION = '2.1.0'
 end
 end
