@@ -5,6 +5,12 @@
 This document provides a high-level view of the changes to {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
+== Unreleased
+
+=== Fixed
+
+* Convert language tag on source block to lowercase (#106)
+
 == 2.1.0 (2022-07-04) - @mojavelinux
 
 === Added

@@ -243,7 +243,7 @@ module AsciiDoc
       if (lang = el.attr['class'])
         # NOTE Kramdown always prefixes class with language-
         # TODO remap lang if requested
-        lang = lang.slice 9, lang.length
+        lang = (lang.slice 9, lang.length).downcase
         if @diagram_languages.include? lang
           diagram = true
           writer.add_line %([#{lang}])
