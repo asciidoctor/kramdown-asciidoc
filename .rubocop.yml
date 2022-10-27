@@ -3,7 +3,7 @@ require:
 - rubocop-rspec
 AllCops:
   TargetRubyVersion: 2.5
-Gemspec/DateAssignment:
+Gemspec/DeprecatedAttributeAssignment:
   Enabled: true
 Gemspec/RequireMFA:
   Enabled: false
@@ -30,6 +30,10 @@ Layout/IndentationWidth:
   AllowedPatterns: ['^module Kramdown$']
 Layout/LeadingCommentSpace:
   Enabled: false # reason: this is just nitpicky
+Layout/LineContinuationLeadingSpace:
+  Enabled: true
+Layout/LineContinuationSpacing:
+  Enabled: true
 Layout/LineEndStringConcatenationIndentation:
   Enabled: true
 Layout/LineLength:
@@ -69,6 +73,8 @@ Lint/BinaryOperatorWithIdenticalOperands:
 Lint/ConstantDefinitionInBlock:
   Enabled: true
   Exclude: [ spec/*.rb ]
+Lint/ConstantOverwrittenInRescue:
+  Enabled: true
 Lint/DeprecatedConstants:
   Enabled: true
 Lint/DeprecatedOpenSSLConstant:
@@ -105,10 +111,12 @@ Lint/IncompatibleIoSelectWithFiberScheduler:
 Lint/LambdaWithoutLiteralBlock:
   Enabled: true
 Lint/MissingSuper:
-  Enabled: false
+  Enabled: true
 Lint/MixedRegexpCaptureTypes:
   Enabled: true
 Lint/NoReturnInBeginEndBlocks:
+  Enabled: true
+Lint/NonAtomicFileOperation:
   Enabled: true
 Lint/NumberedParameterAssignment:
   Enabled: true
@@ -123,6 +131,8 @@ Lint/RaiseException:
 Lint/RedundantDirGlobSort:
   Enabled: true
 Lint/RefinementImportMethods:
+  Enabled: true
+Lint/RequireRangeParentheses:
   Enabled: true
 Lint/RequireRelativeSelfPath:
   Enabled: true
@@ -206,6 +216,14 @@ RSpec/BeNil:
   Enabled: true
 RSpec/BeforeAfterAll:
   Enabled: true
+RSpec/Capybara/SpecificFinders:
+  Enabled: false
+RSpec/Capybara/SpecificMatcher:
+  Enabled: false
+RSpec/ChangeByZero:
+  Enabled: true
+RSpec/ClassCheck:
+  Enabled: true
 RSpec/ContextWording:
   Enabled: false
 RSpec/DescribeClass:
@@ -230,12 +248,16 @@ RSpec/IdenticalEqualityAssertion:
   Enabled: true
 RSpec/MultipleExpectations:
   Enabled: true
-  Max: 25 # FIXME get this down to 15
+  Max: 15
 RSpec/NamedSubject:
+  Enabled: false
+RSpec/NoExpectationExample:
   Enabled: false
 RSpec/Pending:
   Enabled: true
 RSpec/Rails/AvoidSetupHook:
+  Enabled: false
+RSpec/Rails/HaveHttpStatus:
   Enabled: false
 RSpec/SubjectDeclaration:
   Enabled: true
@@ -300,12 +322,16 @@ Style/ConditionalAssignment:
 Style/DocumentDynamicEvalDefinition:
   Enabled: true
 Style/Documentation:
-  Enabled: false
+  Enabled: false # FIXME reenable
 Style/DoubleNegation:
+  Enabled: true
+Style/EmptyHeredoc:
   Enabled: true
 Style/EmptyLiteral:
   Enabled: true
 Style/EndlessMethod:
+  Enabled: true
+Style/EnvHome:
   Enabled: true
 Style/ExplicitBlockArgument:
   Enabled: false # reason: yield is fine
@@ -325,7 +351,7 @@ Style/FormatStringToken:
 Style/GlobalStdStream:
   Enabled: true
 Style/GuardClause:
-  Enabled: false # FIXME enable for some ideas, but we don't agree with all the suggestions, so add ignores
+  Enabled: false
 Style/HashConversion:
   Enabled: true
 Style/HashAsLastArrayItem:
@@ -357,6 +383,10 @@ Style/InPatternThen:
 Style/InfiniteLoop:
   Enabled: false # reason: loop is measurably slower than while true
 Style/KeywordParametersOrder:
+  Enabled: true
+Style/MagicCommentFormat:
+  Enabled: true
+Style/MapCompactWithConditionalBlock:
   Enabled: true
 Style/MapToHash:
   Enabled: true
@@ -396,9 +426,9 @@ Style/NumericLiterals:
 Style/NumericPredicate:
   EnforcedStyle: comparison
 Style/ObjectThen:
-  Enabled: false # reason: not yet available in minimum JRuby version
+  Enabled: false # reason: not available in minimum JRuby version (JRuby 9.2)
 Style/OpenStructUse:
-  Enabled: false # reason: the theming system relies on OpenStruct
+  Enabled: true
 Style/OptionalBooleanParameter:
   Enabled: false # reason: invasive
 Style/ParallelAssignment:
@@ -451,7 +481,7 @@ Style/SelectByRegexp:
 Style/SingleArgumentDig:
   Enabled: true
 Style/SlicingWithRange:
-  Enabled: true
+  Enabled: false # reason: not avilable in minimum JRuby version (9.2)
 Style/SoleNestedConditional:
   Enabled: true
 Style/SpecialGlobalVars:
@@ -472,7 +502,7 @@ Style/SymbolArray:
 Style/SymbolProc:
   Enabled: false # reason: using a symbol proc is measurably slower than using a block in Opal and Ruby < 3
 Style/TernaryParentheses:
-  Enabled: true
+  Enabled: false # reason: this rule has become too buggy and gets it wrong most of the time
   EnforcedStyle: require_parentheses_when_complex
 Style/TrailingCommaInArrayLiteral:
   EnforcedStyleForMultiline: consistent_comma
