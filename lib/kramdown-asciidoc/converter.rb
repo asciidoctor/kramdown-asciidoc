@@ -340,12 +340,11 @@ module AsciiDoc
       end
       primary_lines.unshift %(#{indent > 0 ? ' ' * indent : ''}#{marker * level} #{primary_lines.shift})
       writer.add_lines primary_lines
-      unless remaining.empty?
-        if remaining.find {|n| (type = n.type) == :blank ? nil : ((BLOCK_TYPES.include? type) ? true : break) }
-          el.options[:compound] = true
-        end
-        traverse remaining, (opts.merge parent: el)
+      return if remaining.empty?
+      if remaining.find {|n| (type = n.type) == :blank ? nil : ((BLOCK_TYPES.include? type) ? true : break) }
+        el.options[:compound] = true
       end
+      traverse remaining, (opts.merge parent: el)
     end
 
     def convert_dt el, opts
@@ -371,12 +370,11 @@ module AsciiDoc
           opts[:writer].add_lines primary_lines
         end
       end
-      unless remaining.empty?
-        if remaining.find {|n| (type = n.type) == :blank ? nil : ((BLOCK_TYPES.include? type) ? true : break) }
-          el.options[:compound] = true
-        end
-        traverse remaining, (opts.merge parent: el)
+      return if remaining.empty?
+      if remaining.find {|n| (type = n.type) == :blank ? nil : ((BLOCK_TYPES.include? type) ? true : break) }
+        el.options[:compound] = true
       end
+      traverse remaining, (opts.merge parent: el)
     end
 
     def convert_table el, opts
@@ -574,7 +572,7 @@ module AsciiDoc
         opts[:writer].add_lines ['++++', '<script>', el.children[0].value.strip, '</script>', '++++']
         return
       elsif tag == 'div' && (child_i = el.children[0]) && child_i.options[:transparent] && (child_i_i = child_i.children[0])
-        if child_i_i.value == 'span' && ((role = el.attr['class'].to_s).start_with? 'note') && child_i_i.attr['class'] == 'notetitle'
+        if child_i_i.value == 'span' && ((role = el.attr['class'].to_s).start_with? 'note') && child_i_i.attr['class'] == 'notetitle' # rubocop:disable Style/GuardClause
           marker = ADMON_FORMATTED_MARKERS[(to_element child_i_i.children[0]).value] || 'Note'
           lines = compose_text (child_i.children.drop 1), parent: child_i, strip: true, split: true, wrap: @wrap
           lines.unshift %(#{ADMON_TYPE_MAP[marker]}: #{lines.shift})

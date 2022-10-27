@@ -351,7 +351,7 @@ Style/FormatStringToken:
 Style/GlobalStdStream:
   Enabled: true
 Style/GuardClause:
-  Enabled: false
+  Enabled: true
 Style/HashConversion:
   Enabled: true
 Style/HashAsLastArrayItem:
