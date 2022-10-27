@@ -14,12 +14,12 @@ module AsciiDoc
 
       opt_parser = ::OptionParser.new do |opts|
         opts.program_name = 'kramdoc'
-        opts.banner = <<~EOS
+        opts.banner = <<~END
         Usage: #{opts.program_name} [OPTION]... FILE
 
         Converts Markdown to AsciiDoc.
 
-        EOS
+        END
 
         opts.on '-o FILE', '--output=FILE', 'Set the output filename or stream' do |file|
           options[:output_file] = file

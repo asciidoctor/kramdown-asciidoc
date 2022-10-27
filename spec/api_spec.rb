@@ -6,37 +6,37 @@ require 'stringio'
 describe Kramdown::AsciiDoc do
   describe '#convert' do
     it 'converts Markdown string to AsciiDoc string' do
-      input = <<~EOS
+      input = <<~END
       ---
       title: Document Title
       ---
 
       Body content.
-      EOS
+      END
 
-      expected = <<~EOS
+      expected = <<~END
       = Document Title
 
       Body content.
-      EOS
+      END
 
       (expect subject.convert input).to eql expected
     end
 
     it 'converts Markdown IO to AsciiDoc string' do
-      input = <<~EOS.encode 'ISO-8859-1'
+      input = <<~END.encode 'ISO-8859-1'
       ---
       title: Document Title
       ---
 
       Très bien.
-      EOS
+      END
 
-      expected = <<~EOS
+      expected = <<~END
       = Document Title
 
       Très bien.
-      EOS
+      END
 
       (expect subject.convert StringIO.new input).to eql expected
     end
@@ -103,23 +103,23 @@ describe Kramdown::AsciiDoc do
     end
 
     it 'removes whitespace in front of leading XML comment' do
-      input = <<~EOS
+      input = <<~END
        <!--
       A legal statement
 
       ...of some sort
       -->
       # Document Title
-      EOS
+      END
 
-      expected = <<~EOS
+      expected = <<~END
       ////
       A legal statement
 
       ...of some sort
       ////
       = Document Title
-      EOS
+      END
       (expect subject.convert input).to eql expected
     end
 
@@ -132,7 +132,7 @@ describe Kramdown::AsciiDoc do
     end
 
     it 'duplicates value of :attributes option' do
-      input = <<~EOS
+      input = <<~END
       # Document Title
 
       # Part 1
@@ -140,9 +140,9 @@ describe Kramdown::AsciiDoc do
       ## Chapter A
 
       so it begins
-      EOS
+      END
 
-      expected = <<~EOS
+      expected = <<~END
       = Document Title
       :doctype: book
 
@@ -151,31 +151,31 @@ describe Kramdown::AsciiDoc do
       == Chapter A
 
       so it begins
-      EOS
+      END
 
       (expect subject.convert input, attributes: (attributes = {})).to eql expected
       (expect attributes).to be_empty
     end
 
     it 'applies preprocessors specified by :preprocessors option' do
-      input = <<~EOS
+      input = <<~END
       # Document Title
-      EOS
+      END
 
-      expected = <<~EOS
+      expected = <<~END
       = You Have Been Replaced!
-      EOS
+      END
 
       preprocessors = [-> _markdown, _attributes { '# You Have Been Replaced!' }]
       (expect subject.convert input, preprocessors: preprocessors).to eql expected
     end
 
     it 'does not apply preprocessors if :preprocessors option is falsy' do
-      input = <<~EOS
+      input = <<~END
       ---
       front: matter
       ---
-      EOS
+      END
 
       (expect subject.convert input, preprocessors: nil).to start_with %(''')
     end
@@ -241,10 +241,10 @@ describe Kramdown::AsciiDoc do
       source = %(tr\u00e8s bien !)
       the_output_file = output_file 'force-encoding.adoc'
       script_file = output_file 'force-encoding.rb'
-      File.write script_file, <<~EOS
+      File.write script_file, <<~END
       require 'kramdown-asciidoc'
       Kramdoc.convert '#{source}', to: '#{the_output_file}'
-      EOS
+      END
       # NOTE internal encoding must also be set for test to work on JRuby
       %x(#{ruby} -E ISO-8859-1:ISO-8859-1 #{Shellwords.escape script_file})
       (expect File.read the_output_file, mode: 'r:UTF-8').to eql %(#{source}\n)

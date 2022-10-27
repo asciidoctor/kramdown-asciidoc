@@ -119,13 +119,13 @@ describe Kramdown::AsciiDoc::Cli do
 
     it 'removes leading blank lines and trailing whitespace from source' do
       the_source_file = output_file 'leading-trailing-space.md'
-      File.write the_source_file, <<~EOS
+      File.write the_source_file, <<~END
       \n\n\n\n
       # Heading
 
       Body content.#{'  '}
       \n\n\n\n
-      EOS
+      END
       (expect subject.run %W(-o - #{the_source_file})).to eql 0
       (expect $stdout.string.chomp).to eql %(= Heading\n\nBody content.)
     end
@@ -139,19 +139,19 @@ describe Kramdown::AsciiDoc::Cli do
 
     it 'processes front matter in source' do
       the_source_file = output_file 'front-matter.md'
-      File.write the_source_file, <<~EOS
+      File.write the_source_file, <<~END
       ---
       title: Document Title
       ---
       Body content.
-      EOS
+      END
       (expect subject.run %W(-o - #{the_source_file})).to eql 0
       (expect $stdout.string.chomp).to eql %(= Document Title\n\nBody content.)
     end
 
     it 'replaces explicit toc in source' do
       the_source_file = output_file 'toc.md'
-      File.write the_source_file, <<~EOS
+      File.write the_source_file, <<~END
       # Guide
 
       <!-- TOC depthFrom:2 depthTo:6 -->
@@ -161,7 +161,7 @@ describe Kramdown::AsciiDoc::Cli do
       <!-- /TOC -->
 
       ...
-      EOS
+      END
       (expect subject.run %W(-o - #{the_source_file})).to eql 0
       (expect $stdout.string.chomp).to eql %(= Guide\n:toc: macro\n\ntoc::[]\n\n...)
     end
@@ -217,7 +217,7 @@ describe Kramdown::AsciiDoc::Cli do
 
     it 'adds prefix specified by --auto-id-prefix to any auto-generated section title ID' do
       the_source_file = scenario_file 'heading/auto_ids/explicit-id.md'
-      expected = <<~EOS
+      expected = <<~END
       [#_heading-1]
       = Heading 1
 
@@ -232,14 +232,14 @@ describe Kramdown::AsciiDoc::Cli do
 
       [#_back-to-heading-2]
       == Back to Heading 2
-      EOS
+      END
       (expect subject.run %W(-o - --auto-id-prefix=_ --auto-ids #{the_source_file})).to eql 0
       (expect $stdout.string).to eql expected
     end
 
     it 'uses separator specified by --auto-id-separator to any auto-generated section title ID' do
       the_source_file = scenario_file 'heading/auto_ids/explicit-id.md'
-      expected = <<~EOS
+      expected = <<~END
       [#_heading_1]
       = Heading 1
 
@@ -254,7 +254,7 @@ describe Kramdown::AsciiDoc::Cli do
 
       [#_back_to_heading_2]
       == Back to Heading 2
-      EOS
+      END
       (expect subject.run %W(-o - --auto-id-prefix=_ --auto-id-separator=_ --auto-ids #{the_source_file})).to eql 0
       (expect $stdout.string).to eql expected
     end
@@ -269,13 +269,13 @@ describe Kramdown::AsciiDoc::Cli do
     it 'adds specified attributes to document header' do
       the_source_file = scenario_file 'root/header-and-body.md'
       (expect subject.run %W(-o - -a idprefix -a idseparator=- #{the_source_file})).to eql 0
-      expected = <<~EOS
+      expected = <<~END
       = Document Title
       :idprefix:
       :idseparator: -
 
       Body content.
-      EOS
+      END
       (expect $stdout.string).to eql expected
     end
 
@@ -289,9 +289,9 @@ describe Kramdown::AsciiDoc::Cli do
     it 'passes through HTML when --no-html-to-native flag is used' do
       the_source_file = scenario_file 'html_element/native.md'
       (expect subject.run %W(-o - --no-html-to-native #{the_source_file})).to eql 0
-      expected = <<~EOS
+      expected = <<~END
       +++<p>++++++<strong>+++strong emphasis (aka bold)+++</strong>+++ +++<em>+++emphasis (aka italic)+++</em>+++ +++<code>+++monospace+++</code>++++++</p>+++
-      EOS
+      END
       (expect $stdout.string).to eql expected
     end
 

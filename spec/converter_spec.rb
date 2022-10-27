@@ -24,13 +24,13 @@ describe Kramdown::AsciiDoc::Converter do
 
   describe '#clone' do
     let :input do
-      <<~EOS
+      <<~END
       ## <a id="anchor-name">Heading Title</a>
 
       Note: Be mindful.
 
       *Important*: Turn off the lights.
-      EOS
+      END
     end
 
     it 'does not modify the AST when converting' do
@@ -47,18 +47,18 @@ describe Kramdown::AsciiDoc::Converter do
 
   context 'Preprocessors.replace_toc' do
     it 'does not modify source if TOC directive not detected' do
-      input = <<~EOS
+      input = <<~END
       # Database Guide
 
       ...
-      EOS
+      END
 
       (expect Kramdown::AsciiDoc::Preprocessors.replace_toc input, (attributes = {})).to be input
       (expect attributes).to be_empty
     end
 
     it 'replaces TOC directive with a toc block macro' do
-      input = <<~EOS
+      input = <<~END
       # Database Guide
 
       This tutorial walks you through the steps to set up a database instance.
@@ -76,9 +76,9 @@ describe Kramdown::AsciiDoc::Converter do
       <!-- /TOC -->
 
       ...
-      EOS
+      END
 
-      expected = <<~EOS
+      expected = <<~END
       # Database Guide
 
       This tutorial walks you through the steps to set up a database instance.
@@ -86,7 +86,7 @@ describe Kramdown::AsciiDoc::Converter do
       toc::[]
 
       ...
-      EOS
+      END
 
       (expect Kramdown::AsciiDoc::Preprocessors.replace_toc input, (attributes = {})).to eql expected
       (expect attributes['toc']).to eql 'macro'
@@ -95,7 +95,7 @@ describe Kramdown::AsciiDoc::Converter do
 
   context 'Preprocessors.extract_front_matter' do
     it 'does not modify source if front matter not detected' do
-      input = <<~EOS
+      input = <<~END
       # Introduction
 
       content
@@ -103,7 +103,7 @@ describe Kramdown::AsciiDoc::Converter do
       ---
 
       more content
-      EOS
+      END
 
       (expect Kramdown::AsciiDoc::Preprocessors.extract_front_matter input, (attributes = {})).to be input
       (expect attributes).to be_empty
@@ -117,7 +117,7 @@ describe Kramdown::AsciiDoc::Converter do
     end
 
     it 'extracts front matter and assigns entries to attributes' do
-      input = <<~EOS
+      input = <<~END
       ---
       title: Introduction From Front Matter
       description: An introduction to this amazing technology.
@@ -127,13 +127,13 @@ describe Kramdown::AsciiDoc::Converter do
       # Introduction
 
       When using this technology, anything is possible.
-      EOS
+      END
 
-      expected = <<~EOS
+      expected = <<~END
       # Introduction
 
       When using this technology, anything is possible.
-      EOS
+      END
 
       expected_attributes = {
         'title' => 'Introduction From Front Matter',
@@ -146,20 +146,20 @@ describe Kramdown::AsciiDoc::Converter do
     end
 
     it 'permits front matter value to be parsed as a date' do
-      input = <<~EOS
+      input = <<~END
       ---
       title: Date in Front Matter
       date: 2020-02-02
       ---
       A front matter value can be a date.
-      EOS
+      END
 
-      expected = <<~EOS.chomp
+      expected = <<~END.chomp
       = Date in Front Matter
       :date: 2020-02-02
 
       A front matter value can be a date.
-      EOS
+      END
 
       input = Kramdown::AsciiDoc::Preprocessors.extract_front_matter input, (attributes = {})
       doc = Kramdown::Document.new input, (opts.merge attributes: attributes)
@@ -167,20 +167,20 @@ describe Kramdown::AsciiDoc::Converter do
     end
 
     it 'permits front matter value to be parsed as a datetime' do
-      input = <<~EOS
+      input = <<~END
       ---
       title: Date in Front Matter
       date: 2020-02-02T02:02:20Z
       ---
       A front matter value can be a date.
-      EOS
+      END
 
-      expected = <<~EOS.chomp
+      expected = <<~END.chomp
       = Date in Front Matter
       :date: 2020-02-02 02:02:20 UTC
 
       A front matter value can be a date.
-      EOS
+      END
 
       input = Kramdown::AsciiDoc::Preprocessors.extract_front_matter input, (attributes = {})
       doc = Kramdown::Document.new input, (opts.merge attributes: attributes)
@@ -188,7 +188,7 @@ describe Kramdown::AsciiDoc::Converter do
     end
 
     it 'ignores title from front matter if explicit document title is present' do
-      input = <<~EOS
+      input = <<~END
       ---
       title: Document Title From Front Matter
       description: An introduction to this amazing technology.
@@ -196,14 +196,14 @@ describe Kramdown::AsciiDoc::Converter do
       # Introduction
 
       When using this technology, anything is possible.
-      EOS
+      END
 
-      expected = <<~EOS.chomp
+      expected = <<~END.chomp
       = Introduction
       :description: An introduction to this amazing technology.
 
       When using this technology, anything is possible.
-      EOS
+      END
 
       # FIXME can we reuse our lets to handle this test?
       input = Kramdown::AsciiDoc::Preprocessors.extract_front_matter input, (attributes = {})
@@ -212,21 +212,21 @@ describe Kramdown::AsciiDoc::Converter do
     end
 
     it 'uses title from front matter as document title if explicit document title is absent' do
-      input = <<~EOS
+      input = <<~END
       ---
       title: Introduction
       description: An introduction to this amazing technology.
       ---
 
       When using this technology, anything is possible.
-      EOS
+      END
 
-      expected = <<~EOS.chomp
+      expected = <<~END.chomp
       = Introduction
       :description: An introduction to this amazing technology.
 
       When using this technology, anything is possible.
-      EOS
+      END
 
       # FIXME can we reuse our lets to handle this test?
       input = Kramdown::AsciiDoc::Preprocessors.extract_front_matter input, (attributes = {})
@@ -235,16 +235,16 @@ describe Kramdown::AsciiDoc::Converter do
     end
 
     it 'assigns non-default layout in front matter to page-layout attribute' do
-      input = <<~EOS
+      input = <<~END
       ---
       layout: home
       ---
       Welcome home!
-      EOS
+      END
 
-      expected = <<~EOS
+      expected = <<~END
       Welcome home!
-      EOS
+      END
 
       expected_attributes = {
         'page-layout' => 'home',
@@ -255,11 +255,11 @@ describe Kramdown::AsciiDoc::Converter do
     end
 
     it 'returns empty document when it only contains front matter' do
-      input = <<~EOS
+      input = <<~END
       ---
       description: This page is intentionally left blank.
       ---
-      EOS
+      END
 
       expected_attributes = {
         'description' => 'This page is intentionally left blank.',
@@ -270,15 +270,15 @@ describe Kramdown::AsciiDoc::Converter do
     end
 
     it 'removes empty front matter' do
-      input = <<~EOS
+      input = <<~END
       ---
       ---
       Move along. There's no front matter to see here.
-      EOS
+      END
 
-      expected = <<~EOS
+      expected = <<~END
       Move along. There's no front matter to see here.
-      EOS
+      END
 
       (expect Kramdown::AsciiDoc::Preprocessors.extract_front_matter input, (attributes = {})).to eql expected
       (expect attributes).to be_empty
@@ -292,17 +292,17 @@ describe Kramdown::AsciiDoc::Converter do
     end
 
     it 'removes blank lines between front matter and body' do
-      input = <<~EOS
+      input = <<~END
       ---
       description: Just another page.
       ---
 
       Another page.
-      EOS
+      END
 
-      expected = <<~EOS
+      expected = <<~END
       Another page.
-      EOS
+      END
 
       expected_attributes = {
         'description' => 'Just another page.',
