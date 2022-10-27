@@ -1,14 +1,11 @@
 name: Release
+run-name: ${{ github.workflow }} ${{ github.event.inputs.release-version }}
 on:
   workflow_dispatch:
     inputs:
       release-version:
         description: Enter version to release (e.g., 2.0.1).
         required: false
-      #release-beer:
-      #  default: TBD
-      #  description: Enter beer to mark the occasion.
-      #  required: false
 jobs:
   activate:
     runs-on: ubuntu-latest
@@ -21,7 +18,7 @@ jobs:
     environment: releases
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Install Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -39,9 +36,7 @@ jobs:
       run: bundle exec rake lint
     - name: Setup release environment
       run: |
-        #echo ${{ secrets[format('GH_TOKEN_{0}', github.actor)] }} | gh auth login --with-token
         echo RELEASE_VERSION=${{ github.event.inputs.release-version }} >> $GITHUB_ENV
-        #echo RELEASE_BEER=${{ github.event.inputs.release-beer }} >> $GITHUB_ENV
         echo RELEASE_RUBYGEMS_API_KEY=${{ secrets[format('RUBYGEMS_API_KEY_{0}', github.actor)] }} >> $GITHUB_ENV
     - name: Build, tag, and publish gem
       run: ./release.sh

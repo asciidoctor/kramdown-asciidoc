@@ -2,10 +2,12 @@ name: CI
 on:
   push:
     branches: ['**']
-    tags-ignore: ['**']
+    paths-ignore: ['*.adoc', 'docs/**']
   pull_request:
+    branches: [main]
+    paths-ignore: ['*.adoc', 'docs/**']
   schedule:
-  - cron: '0 2 * * *'
+  - cron: '0 3 * * MON'
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -45,12 +47,15 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       BUNDLE_WITHOUT: coverage:docs:lint
-      # work around `Permission denied - NUL' error when installing/using the bundler gem on JRuby for Windows
-      JRUBY_OPTS: '-J-Djdk.io.File.enableADS=true'
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
-    - name: Install Ruby
+      uses: actions/checkout@v3
+    - name: Enable lint and coverage (primary only)
+      if: matrix.primary
+      run: |
+        echo 'BUNDLE_WITHOUT=' >> $GITHUB_ENV
+        echo 'COVERAGE=deep' >> $GITHUB_ENV
+    - name: Install Ruby (uses cached dependencies for non-scheduled build)
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}
@@ -59,15 +64,7 @@ jobs:
       if: github.event_name == 'schedule'
       run: |
         bundle config --local path vendor/bundle
-        bundle config --local without coverage docs lint
         bundle --jobs 3 --retry 3
-    - name: Install lint and coverage dependencies (primary only)
-      if: matrix.primary
-      run: |
-        bundle config unset --local without
-        bundle config --local without docs
-        bundle --jobs 3 --retry 3
-        echo 'COVERAGE=deep' >> $GITHUB_ENV
     - name: Run linter
       if: matrix.primary
       run: bundle exec rake lint
