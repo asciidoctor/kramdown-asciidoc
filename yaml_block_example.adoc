@@ -1,0 +1,25 @@
+This is an example of a procedure with a yaml code block that does not convert correctly.
+
+. blah blah
+. Check each outdated VMI to determine whether it is live-migratable:
++
+[,bash]
+----
+$ kubectl get vmi <vmi> -o yaml
+----
++
+Example output:
+```yaml
+apiVersion: kubevirt.io/v1
+kind: VirtualMachineInstance
+...
+  status:
+ conditions:
+
+ ** lastProbeTime: null
+lastTransitionTime: null
+message: cannot migrate VMI which does not use masquerade to connect to the pod network
+reason: InterfaceNotLiveMigratable
+status: "False"
+type: LiveMigratable
+```
