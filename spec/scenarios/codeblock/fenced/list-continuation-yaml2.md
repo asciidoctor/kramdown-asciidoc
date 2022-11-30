@@ -1,0 +1,27 @@
+1. Identify the outdated VMIs:
+  ```bash
+  $ kubectl get vmi -l kubevirt.io/outdatedLauncherImage --all-namespaces
+  ```
+2. Check the `KubeVirt` custom resource (CR) to determine whether `workloadUpdateMethods` is configured in the `workloadUpdateStrategy` stanza:
+  ```bash
+  $ kubectl get kubevirt kubevirt --all-namespaces -o yaml
+  ```
+3. Check each outdated VMI to determine whether it is live-migratable:
+  ```bash
+  $ kubectl get vmi <vmi> -o yaml
+  ```
+  Example output:
+
+  ```yaml
+  apiVersion: kubevirt.io/v1
+  kind: VirtualMachineInstance
+  ...
+    status:
+      conditions:
+      - lastProbeTime: null
+        lastTransitionTime: null
+        message: cannot migrate VMI which does not use masquerade to connect to the pod network
+        reason: InterfaceNotLiveMigratable
+        status: "False"
+        type: LiveMigratable
+  ```
