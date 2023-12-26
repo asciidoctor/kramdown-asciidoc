@@ -25,7 +25,7 @@ endif::[]
 :url-kramdown: https://kramdown.gettalong.org
 :url-rvm: https://rvm.io
 :url-rvm-install: https://rvm.io/rvm/install
-:url-api-docs: https://www.rubydoc.info/github/asciidoctor/kramdown-asciidoc/master
+:url-api-docs: https://www.rubydoc.info/github/asciidoctor/kramdown-asciidoc
 :url-gem: https://rubygems.org/gems/kramdown-asciidoc
 :img-url-gem: https://img.shields.io/gem/v/kramdown-asciidoc.svg?label=gem
 
