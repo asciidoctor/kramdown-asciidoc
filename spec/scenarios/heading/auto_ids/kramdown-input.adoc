@@ -10,5 +10,8 @@
 [#explicit-id]
 === Heading 3
 
+[#heading-4-1-unrecognized]
+=== Heading 4 {#1-unrecognized}
+
 [#back-to-heading-2]
 == Back to Heading 2
