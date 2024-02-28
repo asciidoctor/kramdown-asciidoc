@@ -65,7 +65,7 @@ describe Kramdown::AsciiDoc do
     it 'writes AsciiDoc to string path specified by :to option' do
       the_output_file = output_file 'convert-to-string-path.adoc'
       (expect subject.convert 'Converted using the API', to: the_output_file).to be_nil
-      (expect (File.read the_output_file)).to eql %(Converted using the API\n)
+      (expect (File.read the_output_file, mode: 'rb')).to eql %(Converted using the API\n)
     end
 
     it 'creates intermediary directories when writing to string path specified by :to option' do
@@ -78,7 +78,7 @@ describe Kramdown::AsciiDoc do
     it 'writes AsciiDoc to pathname specified by :to option' do
       the_output_file = Pathname.new output_file 'convert-to-pathname.adoc'
       (expect subject.convert 'Converted using the API', to: the_output_file).to be_nil
-      (expect the_output_file.read).to eql %(Converted using the API\n)
+      (expect the_output_file.read mode: 'rb').to eql %(Converted using the API\n)
     end
 
     it 'creates intermediary directories when writing to pathname specified by :to option' do
@@ -98,7 +98,7 @@ describe Kramdown::AsciiDoc do
       opts = { encode: true, to: the_output_file, attributes: {} }
       hash = opts.hash
       (expect subject.convert '**File > Save**', opts).to be_nil
-      (expect the_output_file.read).to eql %(:experimental:\n\nmenu:File[Save]\n)
+      (expect the_output_file.read mode: 'rb').to eql %(:experimental:\n\nmenu:File[Save]\n)
       (expect opts.hash).to eql hash
     end
 
@@ -190,7 +190,7 @@ describe Kramdown::AsciiDoc do
       the_output_file = output_file %(convert-file-api-#{object_id}.adoc)
       (expect subject.convert_file the_source_file).to be_nil
       (expect Pathname.new the_output_file).to exist
-      (expect (File.read the_output_file)).to eql expected_output
+      (expect (File.read the_output_file, mode: 'rb')).to eql expected_output
     end
 
     it 'converts Markdown file object to AsciiDoc file' do
@@ -198,14 +198,14 @@ describe Kramdown::AsciiDoc do
       File.open the_source_file do |the_source_file_object|
         (expect subject.convert_file the_source_file_object).to be_nil
         (expect Pathname.new the_output_file).to exist
-        (expect (File.read the_output_file)).to eql expected_output
+        (expect (File.read the_output_file, mode: 'rb')).to eql expected_output
       end
     end
 
     it 'writes output file to string path specified by :to option' do
       the_output_file = output_file 'convert-file-to-string-path.adoc'
       (expect subject.convert_file the_source_file, to: the_output_file).to be_nil
-      (expect (File.read the_output_file)).to eql expected_output
+      (expect (File.read the_output_file, mode: 'rb')).to eql expected_output
     end
 
     it 'creates intermediary directories when writing to string path specified by :to option' do
@@ -218,7 +218,7 @@ describe Kramdown::AsciiDoc do
     it 'writes output file to pathname specified by :to option' do
       the_output_file = Pathname.new output_file 'convert-file-to-pathname.adoc'
       (expect subject.convert_file the_source_file, to: the_output_file).to be_nil
-      (expect (the_output_file.read)).to eql expected_output
+      (expect (the_output_file.read mode: 'rb')).to eql expected_output
     end
 
     it 'creates intermediary directories when writing to pathname specified by :to option' do
@@ -247,7 +247,7 @@ describe Kramdown::AsciiDoc do
       END
       # NOTE internal encoding must also be set for test to work on JRuby
       %x(#{ruby} -E ISO-8859-1:ISO-8859-1 #{Shellwords.escape script_file})
-      (expect File.read the_output_file, mode: 'r:UTF-8').to eql %(#{source}\n)
+      (expect File.read the_output_file, mode: 'rb:UTF-8').to eql %(#{source}\n)
     end
 
     it 'does not mutate options argument' do
@@ -257,7 +257,7 @@ describe Kramdown::AsciiDoc do
       opts = { to: the_output_file, attributes: {} }
       hash = opts.hash
       (expect subject.convert_file another_source_file, opts).to be_nil
-      (expect the_output_file.read).to eql %(:experimental:\n\nmenu:File[Save]\n)
+      (expect the_output_file.read mode: 'rb').to eql %(:experimental:\n\nmenu:File[Save]\n)
       (expect opts.hash).to eql hash
     end
 
@@ -266,7 +266,7 @@ describe Kramdown::AsciiDoc do
       postprocess = -> asciidoc { asciidoc.gsub 'become', 'become glorious' }
       (expect subject.convert_file the_source_file, postprocess: postprocess).to be_nil
       (expect Pathname.new the_output_file).to exist
-      (expect (File.read the_output_file)).to eql %(Markdown was _here_, but it has become glorious *AsciiDoc*!\n)
+      (expect (File.read the_output_file, mode: 'rb')).to eql %(Markdown was _here_, but it has become glorious *AsciiDoc*!\n)
     end
 
     it 'passes krawdown document to postprocess method if arity is not 1' do
@@ -274,7 +274,7 @@ describe Kramdown::AsciiDoc do
       postprocess = -> asciidoc, kramdown_doc { asciidoc.gsub 'Markdown', kramdown_doc.options[:input] }
       (expect subject.convert_file the_source_file, postprocess: postprocess).to be_nil
       (expect Pathname.new the_output_file).to exist
-      (expect (File.read the_output_file)).to eql %(GFM was _here_, but it has become *AsciiDoc*!\n)
+      (expect (File.read the_output_file, mode: 'rb')).to eql %(GFM was _here_, but it has become *AsciiDoc*!\n)
     end
 
     it 'uses original source if postprocess callback returns falsy' do
@@ -282,7 +282,7 @@ describe Kramdown::AsciiDoc do
       postprocess = -> _asciidoc {}
       (expect subject.convert_file the_source_file, postprocess: postprocess).to be_nil
       (expect Pathname.new the_output_file).to exist
-      (expect (File.read the_output_file)).to eql %(Markdown was _here_, but it has become *AsciiDoc*!\n)
+      (expect (File.read the_output_file, mode: 'rb')).to eql %(Markdown was _here_, but it has become *AsciiDoc*!\n)
     end
 
     it 'passes result through all postprocessors if list of callbacks is given' do
@@ -291,7 +291,7 @@ describe Kramdown::AsciiDoc do
       postprocess_2 = -> asciidoc { asciidoc.sub 'glorious', 'marvelous' }
       (expect subject.convert_file the_source_file, postprocessors: [postprocess_1, postprocess_2]).to be_nil
       (expect Pathname.new the_output_file).to exist
-      (expect (File.read the_output_file)).to eql %(Markdown was _here_, but it has become marvelous *AsciiDoc*!\n)
+      (expect (File.read the_output_file, mode: 'rb')).to eql %(Markdown was _here_, but it has become marvelous *AsciiDoc*!\n)
     end
   end
 

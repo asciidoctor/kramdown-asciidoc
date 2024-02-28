@@ -53,7 +53,7 @@ describe Kramdown::AsciiDoc::Cli do
       the_output_file = output_file 'implicit-output.adoc'
       File.write the_source_file, 'This is just a test.'
       (expect subject.run the_source_file).to eql 0
-      (expect (File.read the_output_file).chomp).to eql 'This is just a test.'
+      (expect (File.read the_output_file, mode: 'rb').chomp).to eql 'This is just a test.'
     end
 
     it 'writes output to file specified by the -o option' do
@@ -61,7 +61,7 @@ describe Kramdown::AsciiDoc::Cli do
       the_output_file = output_file 'my-explicit-output.adoc'
       File.write the_source_file, 'This is only a test.'
       (expect subject.run %W(-o #{the_output_file} #{the_source_file})).to eql 0
-      (expect (File.read the_output_file).chomp).to eql 'This is only a test.'
+      (expect (File.read the_output_file, mode: 'rb').chomp).to eql 'This is only a test.'
     end
 
     it 'ensures directory of explicit output file exists before writing' do
@@ -69,7 +69,7 @@ describe Kramdown::AsciiDoc::Cli do
       the_output_file = output_file 'path/to/output/file.adoc'
       File.write the_source_file, 'Everything is going to be fine.'
       (expect subject.run %W(-o #{the_output_file} #{the_source_file})).to eql 0
-      (expect (File.read the_output_file).chomp).to eql 'Everything is going to be fine.'
+      (expect (File.read the_output_file, mode: 'rb').chomp).to eql 'Everything is going to be fine.'
     end
 
     it 'prevents computed output file from overwriting input file' do
@@ -114,7 +114,7 @@ describe Kramdown::AsciiDoc::Cli do
       $stdin.puts '- list item'
       $stdin.rewind
       (expect subject.run %W(-o #{the_output_file} -)).to eql 0
-      (expect (File.read the_output_file).chomp).to eql '* list item'
+      (expect (File.read the_output_file, mode: 'rb').chomp).to eql '* list item'
     end
 
     it 'removes leading blank lines and trailing whitespace from source' do
@@ -132,7 +132,7 @@ describe Kramdown::AsciiDoc::Cli do
 
     it 'converts all newlines to line feed characters' do
       the_source_file = output_file 'newlines.md'
-      File.write the_source_file, %(\r\n\r\n# Document Title\r\n\r\nFirst paragraph.\r\n\r\nSecond paragraph.\r\n)
+      File.write the_source_file, %(\r\n\r\n# Document Title\r\n\r\nFirst paragraph.\r\n\r\nSecond paragraph.\r\n), mode: 'wb'
       (expect subject.run %W(-o - #{the_source_file})).to eql 0
       (expect $stdout.string.chomp).to eql %(= Document Title\n\nFirst paragraph.\n\nSecond paragraph.)
     end
@@ -175,42 +175,42 @@ describe Kramdown::AsciiDoc::Cli do
 
     it 'removes directory prefix from image references specified by the --imagesdir option' do
       the_source_file = scenario_file 'img/implicit-imagesdir.md'
-      expected = File.read scenario_file 'img/implicit-imagesdir.adoc'
+      expected = File.read (scenario_file 'img/implicit-imagesdir.adoc'), mode: 'rb'
       (expect subject.run %W(-o - --imagesdir=images #{the_source_file})).to eql 0
       (expect $stdout.string).to eql expected
     end
 
     it 'wraps output as specified by the --wrap option' do
       the_source_file = scenario_file 'wrap/ventilate.md'
-      expected = File.read scenario_file 'wrap/ventilate.adoc'
+      expected = File.read (scenario_file 'wrap/ventilate.adoc'), mode: 'rb'
       (expect subject.run %W(-o - --wrap=ventilate #{the_source_file})).to eql 0
       (expect $stdout.string).to eql expected
     end
 
     it 'does not escape bare URLs when --auto-links is used' do
       the_source_file = scenario_file 'a/bare-url.md'
-      expected = File.read scenario_file 'a/bare-url.adoc'
+      expected = File.read (scenario_file 'a/bare-url.adoc'), mode: 'rb'
       (expect subject.run %W(-o - --auto-links #{the_source_file})).to eql 0
       (expect $stdout.string).to eql expected
     end
 
     it 'escapes bare URLs when --no-auto-links is used' do
       the_source_file = scenario_file 'a/no-auto-links.md'
-      expected = File.read scenario_file 'a/no-auto-links.adoc'
+      expected = File.read (scenario_file 'a/no-auto-links.adoc'), mode: 'rb'
       (expect subject.run %W(-o - --no-auto-links #{the_source_file})).to eql 0
       (expect $stdout.string).to eql expected
     end
 
     it 'shifts headings by offset when --heading-offset is used' do
       the_source_file = scenario_file 'heading/offset.md'
-      expected = File.read scenario_file 'heading/offset.adoc'
+      expected = File.read (scenario_file 'heading/offset.adoc'), mode: 'rb'
       (expect subject.run %W(-o - --heading-offset=-1 #{the_source_file})).to eql 0
       (expect $stdout.string).to eql expected
     end
 
     it 'auto generates IDs for section titles when --auto-ids is used' do
       the_source_file = scenario_file 'heading/auto_ids/no-ids.md'
-      expected = File.read scenario_file 'heading/auto_ids/no-ids.adoc'
+      expected = File.read (scenario_file 'heading/auto_ids/no-ids.adoc'), mode: 'rb'
       (expect subject.run %W(-o - --auto-ids #{the_source_file})).to eql 0
       (expect $stdout.string).to eql expected
     end
@@ -261,7 +261,7 @@ describe Kramdown::AsciiDoc::Cli do
 
     it 'drops ID if matches auto-generated value when --lazy-ids is used' do
       the_source_file = scenario_file 'heading/lazy_ids/explicit-ids.md'
-      expected = File.read scenario_file 'heading/lazy_ids/explicit-ids.adoc'
+      expected = File.read (scenario_file 'heading/lazy_ids/explicit-ids.adoc'), mode: 'rb'
       (expect subject.run %W(-o - --lazy-ids #{the_source_file})).to eql 0
       (expect $stdout.string).to eql expected
     end
@@ -281,7 +281,7 @@ describe Kramdown::AsciiDoc::Cli do
 
     it 'allows diagram languages to be specified by --diagram-languages option' do
       the_source_file = scenario_file 'codeblock/fenced/custom-diagrams.md'
-      expected = File.read scenario_file 'codeblock/fenced/custom-diagrams.adoc'
+      expected = File.read (scenario_file 'codeblock/fenced/custom-diagrams.adoc'), mode: 'rb'
       (expect subject.run %W(-o - --diagram-languages plantuml,nomnoml #{the_source_file})).to eql 0
       (expect $stdout.string).to eql expected
     end
