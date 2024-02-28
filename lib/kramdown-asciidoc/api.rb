@@ -63,7 +63,7 @@ module AsciiDoc
     if (to = opts[:to])
       if ::Pathname === to || (!(to.respond_to? :write) && (to = ::Pathname.new to.to_s))
         to.dirname.mkpath
-        to.write asciidoc, encoding: UTF_8
+        to.write asciidoc, encoding: UTF_8, newline: :universal
       else
         to.write asciidoc
       end
