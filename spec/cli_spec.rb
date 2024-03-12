@@ -201,6 +201,34 @@ describe Kramdown::AsciiDoc::Cli do
       (expect $stdout.string).to eql expected
     end
 
+    it 'does not indent ul list markers with --nested-list-marker-indent set to 0' do
+      the_source_file = scenario_file 'ul/nested-0-indent.md'
+      expected = File.read (scenario_file 'ul/nested-0-indent.adoc'), mode: 'rb'
+      (expect subject.run %W(-o - --nested-list-marker-indent=0 #{the_source_file})).to eql 0
+      (expect $stdout.string).to eql expected
+    end
+
+    it 'does not indent ol list markers with --nested-list-marker-indent set to 0' do
+      the_source_file = scenario_file 'ol/nested-0-indent.md'
+      expected = File.read (scenario_file 'ol/nested-0-indent.adoc'), mode: 'rb'
+      (expect subject.run %W(-o - --nested-list-marker-indent=0 #{the_source_file})).to eql 0
+      (expect $stdout.string).to eql expected
+    end
+
+    it 'does indent ul list markers according to --nested-list-marker-indent configuration' do
+      the_source_file = scenario_file 'ul/nested-3-indent.md'
+      expected = File.read (scenario_file 'ul/nested-3-indent.adoc'), mode: 'rb'
+      (expect subject.run %W(-o - --nested-list-marker-indent=3 #{the_source_file})).to eql 0
+      (expect $stdout.string).to eql expected
+    end
+
+    it 'does indent ol list markers according to --nested-list-marker-indent configuration' do
+      the_source_file = scenario_file 'ol/nested-3-indent.md'
+      expected = File.read (scenario_file 'ol/nested-3-indent.adoc'), mode: 'rb'
+      (expect subject.run %W(-o - --nested-list-marker-indent=3 #{the_source_file})).to eql 0
+      (expect $stdout.string).to eql expected
+    end
+
     it 'shifts headings by offset when --heading-offset is used' do
       the_source_file = scenario_file 'heading/offset.md'
       expected = File.read (scenario_file 'heading/offset.adoc'), mode: 'rb'

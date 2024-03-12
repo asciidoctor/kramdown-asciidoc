@@ -75,6 +75,10 @@ module AsciiDoc
           options[:auto_links] = auto_links
         end
 
+        opts.on '--nested-list-marker-indent=NUMBER', ::Integer, 'Set how many spaces to indent nested list markers per indent level (default: 1)' do |nested_list_marker_indent|
+          options[:nested_list_marker_indent] = nested_list_marker_indent
+        end
+
         opts.on '-h', '--help', 'Display this help text and exit' do
           $stdout.write opts.help
           return 0
