@@ -8,13 +8,13 @@ on:
         required: false
 jobs:
   activate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: github.repository_owner == 'asciidoctor' && github.event_name == 'workflow_dispatch'
     steps:
     - run: echo ok go
   perform:
     needs: activate
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     environment: releases
     steps:
     - name: Checkout

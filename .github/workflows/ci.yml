@@ -17,7 +17,7 @@ jobs:
       (github.event_name == 'schedule' && github.repository_owner == 'asciidoctor') ||
       (github.event_name == 'push') ||
       (github.event_name == 'pull_request' && !startsWith(github.head_ref, 'docs/'))
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
     - name: Proceed
       run: echo ok go
@@ -25,20 +25,20 @@ jobs:
     needs: activate
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-22.04, windows-latest]
         ruby: [jruby-9.3, '2.3', '2.7', '3.1']
         exclude:
-        # remove 3.1 on ubuntu-latest to mark as primary
-        - os: ubuntu-latest
+        # remove 3.1 on ubuntu-22.04 to mark as primary
+        - os: ubuntu-22.04
           ruby: '3.1'
         include:
-        - os: ubuntu-latest
+        - os: ubuntu-22.04
           ruby: jruby-9.2
-        - os: ubuntu-latest
+        - os: ubuntu-22.04
           ruby: truffleruby
         - os: macos-latest
           ruby: '3.1'
-        - os: ubuntu-latest
+        - os: ubuntu-22.04
           ruby: '3.1'
           primary: primary
     runs-on: ${{ matrix.os }}
