@@ -27,6 +27,7 @@ module AsciiDoc
   # @option opts [Symbol] :wrap (:preserve) the line wrapping behavior to apply (:preserve, :ventilate, or :none).
   # @option opts [Integer] :heading_offset (0) the heading offset to apply to heading levels.
   # @option opts [Boolean] :auto_links (true) whether to allow raw URLs to be recognized as links.
+  # @option opts [Integer] :nested_list_marker_indent (1) how many spaces to indent nested list markers per indent level.
   # @option opts [Hash] :attributes ({}) additional AsciiDoc attributes to add to header of output document; reserved
   #   attributes, like stem, may be overridden; some attributes may impact conversion, such as idprefix and idseparator
   # @option opts [String] :imagesdir (nil) the prefix to remove from image references found in the Markdown document;
@@ -85,6 +86,7 @@ module AsciiDoc
   # @option opts [Symbol] :wrap (:preserve) the line wrapping behavior to apply (:preserve, :ventilate, or :none).
   # @option opts [Integer] :heading_offset (0) the heading offset to apply to heading levels.
   # @option opts [Boolean] :auto_links (true) whether to allow raw URLs to be recognized as links.
+  # @option opts [Integer] :nested_list_marker_indent (1) how many spaces to indent nested list markers per indent level.
   # @option opts [Hash] :attributes ({}) additional AsciiDoc attributes to add to header of output document; reserved
   #   attributes, like stem, may be overridden; some attributes may impact conversion, such as idprefix and idseparator
   # @option opts [String] :imagesdir (nil) the prefix to remove from image references found in the Markdown document;

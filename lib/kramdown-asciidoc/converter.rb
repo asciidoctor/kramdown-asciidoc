@@ -92,6 +92,7 @@ module AsciiDoc
       @ids_seen = {}
       @footnote_ids = ::Set.new
       @auto_links = opts.fetch :auto_links, true
+      @nested_list_marker_indent = [opts[:nested_list_marker_indent] || 1, 0].max
       @diagram_languages = opts[:diagram_languages] || %w(plantuml mermaid)
       @heading_offset = opts[:heading_offset] || 0
       @imagesdir = opts[:imagesdir] || @attributes['imagesdir']
@@ -338,7 +339,7 @@ module AsciiDoc
         remaining = children
         primary_lines = ['{blank}']
       end
-      primary_lines.unshift %(#{indent > 0 ? ' ' * indent : ''}#{marker * level} #{primary_lines.shift})
+      primary_lines.unshift %(#{indent > 0 ? ' ' * (indent * @nested_list_marker_indent) : ''}#{marker * level} #{primary_lines.shift})
       writer.add_lines primary_lines
       return if remaining.empty?
       if remaining.find {|n| (type = n.type) == :blank ? nil : ((BLOCK_TYPES.include? type) ? true : break) }
