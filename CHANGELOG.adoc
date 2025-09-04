@@ -7,6 +7,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == Unreleased
 
+=== Added
+
+* Add :nested_list_marker_indent API option and --nested-list-marker-indent CLI option to control how many spaces to indent nested list markers per indent level
+
 === Fixed
 
 * Convert language tag on source block to lowercase (#106)
