@@ -39,7 +39,7 @@ Notably, the converter generates modern AsciiDoc syntax suitable for use with {u
 
 == Prerequisites
 
-To install and run {project-name}, you need Ruby 2.3 or better installed and a few RubyGems (aka gems).
+To install and run {project-name}, you need Ruby 2.5 or better installed and a few RubyGems (aka gems).
 The instructions for installing the gems is covered in the next section.
 
 To check whether you have Ruby installed, and which version, run the following command:

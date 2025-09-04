@@ -5,6 +5,13 @@
 This document provides a high-level view of the changes to {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
+=== Unreleased
+
+=== Changed
+
+* Declare Ruby 2.5 as minimum required Ruby version
+* Upgrade kramdown to 2.5.x
+
 == 2.1.1 (2025-09-04) - @mojavelinux
 
 === Fixed

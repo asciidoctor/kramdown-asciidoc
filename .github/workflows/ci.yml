@@ -27,20 +27,20 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-22.04, windows-latest]
-        ruby: [jruby-9.3, '2.3', '2.7', '3.1']
+        ruby: [jruby-10.0, '2.5', '3.4']
         exclude:
-        # remove 3.1 on ubuntu-22.04 to mark as primary
+        # remove 3.4 on ubuntu-22.04 to mark as primary
         - os: ubuntu-22.04
-          ruby: '3.1'
+          ruby: '3.4'
         include:
         - os: ubuntu-22.04
           ruby: jruby-9.2
         - os: ubuntu-22.04
           ruby: truffleruby
         - os: macos-latest
-          ruby: '3.1'
+          ruby: '3.4'
         - os: ubuntu-22.04
-          ruby: '3.1'
+          ruby: '3.4'
           primary: primary
     runs-on: ${{ matrix.os }}
     env:
