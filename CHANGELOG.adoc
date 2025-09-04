@@ -5,13 +5,17 @@
 This document provides a high-level view of the changes to {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
-== Unreleased
+== 2.1.1 (2025-09-04) - @mojavelinux
 
 === Fixed
 
 * Convert language tag on source block to lowercase (#106)
 * Turn off system-dependent newline conversion when writing output file
 * Remove direct runtime dependency on rexml as the latest version is already pulled in by kramdown (#122)
+
+=== Details
+
+{url-repo}/releases/tag/v2.1.1[git tag] | {url-repo}/compare/v2.1.0\...v2.1.1[full diff]
 
 == 2.1.0 (2022-07-04) - @mojavelinux
 
