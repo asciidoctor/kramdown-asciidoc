@@ -11,6 +11,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 * Convert language tag on source block to lowercase (#106)
 * Turn off system-dependent newline conversion when writing output file
+* Remove direct runtime dependency on rexml as the latest version is already pulled in by kramdown (#122)
 
 == 2.1.0 (2022-07-04) - @mojavelinux
 

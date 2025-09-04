@@ -4,6 +4,8 @@ source 'https://rubygems.org'
 
 gemspec
 
+gem 'rexml', '~> 3.2.0' if (Gem::Version.new RUBY_VERSION) < (Gem::Version.new '2.5.0')
+
 group :coverage do
   gem 'deep-cover-core', '~> 1.1.0', require: false
   gem 'simplecov', '~> 0.21.0', require: false
