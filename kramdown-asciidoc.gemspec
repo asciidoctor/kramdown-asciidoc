@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
     'bug_tracker_uri' => 'https://github.com/asciidoctor/kramdown-asciidoc/issues',
     'changelog_uri' => 'https://github.com/asciidoctor/kramdown-asciidoc/blob/master/CHANGELOG.adoc',
     'mailing_list_uri' => 'http://discuss.asciidoctor.org',
-    'source_code_uri' => 'https://github.com/asciidoctor/kramdown-asciidoc'
+    'source_code_uri' => 'https://github.com/asciidoctor/kramdown-asciidoc',
   }
   # NOTE required ruby version is informational only; it's not enforced since it can't be overridden and can cause builds to break
   #s.required_ruby_version = '>= 2.3.0'
@@ -32,8 +32,8 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
 
   s.add_runtime_dependency 'kramdown', '~> 2.4.0'
-  s.add_runtime_dependency 'rexml', '~> 3.2.0'
   s.add_runtime_dependency 'kramdown-parser-gfm', '~> 1.1.0'
+  s.add_runtime_dependency 'rexml', '~> 3.4.2'
 
   s.add_development_dependency 'rake', '~> 13.0.0'
   s.add_development_dependency 'rspec', '~> 3.11.0'
