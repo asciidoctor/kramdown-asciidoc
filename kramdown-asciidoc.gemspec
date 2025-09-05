@@ -34,6 +34,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'kramdown', '~> 2.5.0'
   s.add_runtime_dependency 'kramdown-parser-gfm', '~> 1.1.0'
 
-  s.add_development_dependency 'rake', '~> 13.0.0'
-  s.add_development_dependency 'rspec', '~> 3.11.0'
+  s.add_development_dependency 'rake', '~> 13.3.0'
+  s.add_development_dependency 'rspec', '~> 3.13.0'
 end
