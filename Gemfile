@@ -15,6 +15,7 @@ group :docs do
 end
 
 group :lint do
+  gem 'base64', require: false
   gem 'json', '~> 2.6.0', require: false
   gem 'rubocop', '~> 1.36.0', require: false
   gem 'rubocop-rake', '~> 0.6.0', require: false
